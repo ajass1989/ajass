@@ -1,4 +1,6 @@
 {
+  "name": "ajass",
+  "version": "0.0.0",
   "private": true,
   "prisma": {
     "schema": "packages/database/prisma/schema.prisma",
@@ -16,16 +18,18 @@
   },
   "devDependencies": {
     "@repo/eslint-config": "*",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.3",
     "prettier": "^3.2.5",
     "tsx": "^4.7.1",
     "turbo": "latest"
   },
-  "engines": {
-    "node": ">=18"
-  },
-  "packageManager": "npm@10.2.5",
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "volta": {
+    "node": "20.11.0",
+    "npm": "10.4.0"
+  }
 }

@@ -18,7 +18,7 @@ const TEST_TEAMS = [
     fullname: "会社C",
     shortname: "CCC",
   },
-];// as Array<Partial<Team>>;
+]; // as Array<Partial<Team>>;
 
 const TEST_RACERS = [
   // ジュニア
@@ -436,7 +436,7 @@ const TEST_RACERS = [
     firstParticipate: false,
     age: 20,
   },
-];// as Array<Partial<Racer>>;
+]; // as Array<Partial<Racer>>;
 
 const TEST_RACER_RESULTS = [
   {
@@ -462,7 +462,7 @@ const TEST_RACER_RESULTS = [
           create: {
             ...team,
           },
-        })
+        }),
       ),
     );
     await Promise.all(
@@ -476,8 +476,8 @@ const TEST_RACER_RESULTS = [
           },
           create: {
             ...racer,
-          }
-        })
+          },
+        }),
       ),
     );
     await Promise.all(
@@ -487,15 +487,15 @@ const TEST_RACER_RESULTS = [
             set_racerId: {
               set: result.set!,
               racerId: result.racerId!,
-            }
+            },
           },
           update: {
             ...result,
           },
           create: {
             ...result,
-          }
-        })
+          },
+        }),
       ),
     );
   } catch (error) {
