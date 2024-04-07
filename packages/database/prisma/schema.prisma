@@ -2,19 +2,51 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 datasource db {
-  provider = "mysql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
-  referentialIntegrity = "prisma"
+  // referentialIntegrity = "prisma"
 }
 
 generator client {
   provider = "prisma-client-js"
-  previewFeatures = ["referentialIntegrity"]
+  // previewFeatures = ["referentialIntegrity"]
 }
 
-model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
+model Team {
+  id        String   @id @default(cuid())
+  fullname  String   @unique
+  shortname String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  racers    Racer[]
+}
+
+model Racer {
+  id               String        @id @default(cuid())
+  name             String
+  kana             String
+  event            String // ski, snowboard
+  bib              Int           @unique
+  gender           String // f, m
+  seed             Int
+  teamId           String?
+  firstParticipate Boolean
+  age              Int?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  team             Team?         @relation(fields: [teamId], references: [id])
+  results          RacerResult[]
+}
+
+model RacerResult {
+  id        String   @id @default(cuid())
+  set       Int
+  time      Int?
+  status    String? // ds, dq, df
+  racerId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  racer     Racer    @relation(fields: [racerId], references: [id])
+
+  @@unique([set, racerId])
 }
