@@ -59,9 +59,7 @@ export default async function PrepareRacesPage() {
 
   return (
     <div>
-      <h1>競技</h1>
-      <Button type="primary">追加</Button>
-      <Table columns={columns} dataSource={data} />
+      <h1>競技追加</h1>
     </div>
   );
 }
