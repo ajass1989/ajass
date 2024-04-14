@@ -1,4 +1,17 @@
 -- CreateTable
+CREATE TABLE "Race" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "name" TEXT NOT NULL,
+    "date" DATETIME,
+    "location" TEXT,
+    "race" TEXT,
+    "setter" TEXT,
+    "management" TEXT,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL
+);
+
+-- CreateTable
 CREATE TABLE "Team" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "fullname" TEXT NOT NULL,

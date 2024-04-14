@@ -31,5 +31,8 @@
   "volta": {
     "node": "20.11.0",
     "npm": "10.4.0"
+  },
+  "dependencies": {
+    "@ant-design/cssinjs": "^1.19.1"
   }
 }

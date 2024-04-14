@@ -15,11 +15,11 @@ generator client {
 model Race {
   id          String   @id @default(cuid())
   name        String
-  date        DateTime @unique
-  location    String
-  race        String
-  setter      String
-  management  String
+  date        DateTime?
+  location    String?
+  race        String?
+  setter      String?
+  management  String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

@@ -467,7 +467,7 @@ const TEST_RACER_RESULTS = [
       TEST_RACES.map((race) =>
         prisma.race.upsert({
           where: {
-            date: race.date!,
+            id: race.id,
           },
           update: {
             ...race,
