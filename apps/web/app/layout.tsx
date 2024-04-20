@@ -3,18 +3,12 @@ import './global.css';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
 import { Breadcrumb, Layout, Menu, MenuProps, theme } from 'antd';
 import Sider from 'antd/es/layout/Sider';
-import IndexPage from './page';
 import { useState } from 'react';
 import { Content, Footer, Header } from 'antd/es/layout/layout';
 import {
-  DesktopOutlined,
   EditOutlined,
-  ManOutlined,
-  OrderedListOutlined,
   TeamOutlined,
   UnorderedListOutlined,
-  UserOutlined,
-  WomanOutlined,
 } from '@ant-design/icons';
 import Link from 'next/link';
 
@@ -37,7 +31,7 @@ function getItem(
 const items: MenuItem[] = [
   getItem('準備', 'settings', <UnorderedListOutlined />, [
     getItem(
-      <Link href="/prepare/races">競技</Link>,
+      <Link href="/prepare/events">大会</Link>,
       '21',
       <UnorderedListOutlined />,
     ),

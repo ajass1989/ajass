@@ -1,27 +1,37 @@
 'use client';
-import { Button, Form, FormProps, Input } from 'antd';
-import { hoge } from './actions';
-import { Race } from '@prisma/client';
+import { Button, DatePicker, Form, FormProps, Input } from 'antd';
+import { EventType, updateEvent } from './actions';
+import { Event } from '@repo/database';
+import moment from 'moment';
 
 type Props = {
-  dataSource: Race;
+  dataSource: Event;
 };
 
-type FieldType = {
+export type FieldType = {
   key: string;
   name: string;
-  date?: Date;
-  location?: string;
-  race?: string;
-  setter?: string;
-  management?: string;
+  date: Date;
+  location: string;
+  race: string;
+  setter: string;
+  management: string;
 };
 
 const onFinish: FormProps<FieldType>['onFinish'] = async (
   values: FieldType,
 ) => {
   console.log('Success:', values);
-  hoge(values);
+  const event: EventType = {
+    id: values.key,
+    name: values.name,
+    date: values.date.toISOString(),
+    location: values.location,
+    race: values.race,
+    setter: values.setter,
+    management: values.management,
+  };
+  updateEvent(event);
 };
 
 const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (errorInfo) => {
@@ -29,11 +39,10 @@ const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (errorInfo) => {
 };
 
 export default async function ClientForm(props: Props) {
-  const a = props.dataSource;
-  console.log(a);
+  const data = props.dataSource;
   return (
     <div>
-      <h1>競技編集</h1>
+      <h1>大会</h1>
 
       <Form
         name="basic"
@@ -45,7 +54,7 @@ export default async function ClientForm(props: Props) {
         onFinishFailed={onFinishFailed}
         autoComplete="off"
       >
-        <Form.Item<FieldType> name="key" initialValue={a.id}>
+        <Form.Item<FieldType> name="key" initialValue={data.id}>
           <Input type="hidden" />
         </Form.Item>
 
@@ -53,31 +62,36 @@ export default async function ClientForm(props: Props) {
           label="大会名"
           name="name"
           rules={[{ required: true, message: '大会名は必須です。' }]}
-          initialValue={a.name}
+          initialValue={data.name}
         >
           <Input />
         </Form.Item>
 
-        <Form.Item<FieldType> label="開催日" name="date" initialValue={a.date}>
-          <Input />
+        <Form.Item<FieldType>
+          label="開催日"
+          name="date"
+          rules={[{ required: true, message: '開催日は必須です。' }]}
+          initialValue={moment(data.date)}
+        >
+          <DatePicker />
         </Form.Item>
 
         <Form.Item<FieldType>
           label="開催地"
           name="location"
-          initialValue={a.location}
+          initialValue={data.location}
         >
           <Input />
         </Form.Item>
 
-        <Form.Item<FieldType> label="競技" name="race" initialValue={a.race}>
+        <Form.Item<FieldType> label="競技" name="race" initialValue={data.race}>
           <Input />
         </Form.Item>
 
         <Form.Item<FieldType>
           label="ポールセッター"
           name="setter"
-          initialValue={a.setter}
+          initialValue={data.setter}
         >
           <Input />
         </Form.Item>
@@ -85,7 +99,7 @@ export default async function ClientForm(props: Props) {
         <Form.Item<FieldType>
           label="幹事会社"
           name="management"
-          initialValue={a.management}
+          initialValue={data.management}
         >
           <Input />
         </Form.Item>

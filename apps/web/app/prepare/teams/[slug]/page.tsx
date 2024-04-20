@@ -1,13 +1,10 @@
-import { Race } from '@prisma/client';
-import { prisma } from '../../../prisma';
+import { Team, prisma } from '@repo/database';
 import ClientForm from './clientForm';
 
 export default async function Page({ params }: { params: { slug: string } }) {
-  console.log('params.slug:', params.slug);
-  const dataSource: Race = await prisma.race.findFirstOrThrow({
+  const dataSource: Team = await prisma.team.findFirstOrThrow({
     where: { id: params.slug },
   });
   console.log('dataSource:', dataSource);
-
   return <ClientForm dataSource={dataSource} />;
 }

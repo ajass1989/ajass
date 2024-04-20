@@ -1,13 +1,14 @@
-import { prisma } from '@repo/database';
-import { Button } from 'antd';
+import { Team, prisma } from '@repo/database';
+import ClientTable from './clientTable';
 
 export default async function PrepareTeamsPage() {
-  const users = await prisma.racer.findMany();
-
-  return (
-    <div>
-      <h1>チーム</h1>
-      <Button type="primary">Button</Button>
-    </div>
-  );
+  const dataSource: Team[] = await prisma.team.findMany({
+    where: {
+      eventId: '2023',
+    },
+    orderBy: {
+      fullname: 'asc',
+    },
+  });
+  return <ClientTable dataSource={dataSource} />;
 }
