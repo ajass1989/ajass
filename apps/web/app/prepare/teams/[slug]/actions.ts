@@ -1,19 +1,11 @@
 'use server';
 import { Prisma, prisma } from '@repo/database';
 import { ActionResult } from '../../../actionResult';
-
-export type TeamType = {
-  id?: string;
-  fullname: string;
-  shortname: string;
-  eventId: string;
-  createdAt?: number;
-  updatedAt?: number;
-};
+import { TeamDto } from '../teamDto';
 
 export async function updateTeam(
-  values: TeamType,
-): Promise<ActionResult<TeamType>> {
+  values: TeamDto,
+): Promise<ActionResult<TeamDto>> {
   try {
     const data: Prisma.TeamUncheckedUpdateInput = {
       fullname: values.fullname,

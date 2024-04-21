@@ -1,19 +1,9 @@
 'use server';
 import { Prisma, prisma } from '@repo/database';
 import { ActionResult } from '../../../actionResult';
+import { TeamDto } from '../teamDto';
 
-export type TeamType = {
-  id?: string;
-  fullname: string;
-  shortname: string;
-  eventId: string;
-  createdAt?: number;
-  updatedAt?: number;
-};
-
-export async function addTeam(
-  values: TeamType,
-): Promise<ActionResult<TeamType>> {
+export async function addTeam(values: TeamDto): Promise<ActionResult<TeamDto>> {
   try {
     const data: Prisma.TeamUncheckedCreateInput = {
       fullname: values.fullname,

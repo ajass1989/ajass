@@ -67,10 +67,10 @@ export default function ClientTable(props: Props) {
       render: (_: any, record: DataType) =>
         data.length >= 1 ? (
           <Popconfirm
-            title="Sure to delete?"
+            title="削除してもいいですか？"
             onConfirm={() => onDelete(record.key)}
           >
-            <a>Delete</a>
+            <a>削除</a>
           </Popconfirm>
         ) : null,
     },

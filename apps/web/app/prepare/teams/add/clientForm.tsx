@@ -1,8 +1,9 @@
 'use client';
 import { Alert, Button, Form, FormInstance, FormProps, Input } from 'antd';
-import { TeamType, addTeam } from './actions';
+import { addTeam } from './actions';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { TeamDto } from '../teamDto';
 
 type FieldType = {
   key: string;
@@ -31,7 +32,7 @@ export default function ClientForm() {
   const onFinish: FormProps<FieldType>['onFinish'] = async (
     values: FieldType,
   ) => {
-    const team: TeamType = {
+    const team: TeamDto = {
       fullname: values.fullname,
       shortname: values.shortname,
       eventId: values.eventId,

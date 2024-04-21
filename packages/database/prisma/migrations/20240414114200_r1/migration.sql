@@ -1,12 +1,12 @@
 -- CreateTable
-CREATE TABLE "Race" (
+CREATE TABLE "Event" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "name" TEXT NOT NULL,
-    "date" DATETIME,
-    "location" TEXT,
-    "race" TEXT,
-    "setter" TEXT,
-    "management" TEXT,
+    "date" DATETIME NOT NULL,
+    "location" TEXT NOT NULL,
+    "race" TEXT NOT NULL,
+    "setter" TEXT NOT NULL,
+    "management" TEXT NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL
 );
@@ -16,8 +16,10 @@ CREATE TABLE "Team" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "fullname" TEXT NOT NULL,
     "shortname" TEXT NOT NULL,
+    "eventId" TEXT NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL
+    "updatedAt" DATETIME NOT NULL,
+    CONSTRAINT "Team_eventId_fkey" FOREIGN KEY ("eventId") REFERENCES "Event" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -25,12 +27,12 @@ CREATE TABLE "Racer" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "name" TEXT NOT NULL,
     "kana" TEXT NOT NULL,
-    "event" TEXT NOT NULL,
+    "category" TEXT NOT NULL,
     "bib" INTEGER NOT NULL,
     "gender" TEXT NOT NULL,
     "seed" INTEGER NOT NULL,
     "teamId" TEXT,
-    "firstParticipate" BOOLEAN NOT NULL,
+    "isFirstTime" BOOLEAN NOT NULL,
     "age" INTEGER,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
@@ -38,7 +40,7 @@ CREATE TABLE "Racer" (
 );
 
 -- CreateTable
-CREATE TABLE "RacerResult" (
+CREATE TABLE "Result" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "set" INTEGER NOT NULL,
     "time" INTEGER,
@@ -46,7 +48,7 @@ CREATE TABLE "RacerResult" (
     "racerId" TEXT NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
-    CONSTRAINT "RacerResult_racerId_fkey" FOREIGN KEY ("racerId") REFERENCES "Racer" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "Result_racerId_fkey" FOREIGN KEY ("racerId") REFERENCES "Racer" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateIndex
@@ -56,4 +58,4 @@ CREATE UNIQUE INDEX "Team_fullname_key" ON "Team"("fullname");
 CREATE UNIQUE INDEX "Racer_bib_key" ON "Racer"("bib");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "RacerResult_set_racerId_key" ON "RacerResult"("set", "racerId");
+CREATE UNIQUE INDEX "Result_set_racerId_key" ON "Result"("set", "racerId");

@@ -12,24 +12,27 @@ generator client {
   // previewFeatures = ["referentialIntegrity"]
 }
 
-model Race {
-  id          String   @id @default(cuid())
+model Event {
+  id          String   @id
   name        String
-  date        DateTime?
-  location    String?
-  race        String?
-  setter      String?
-  management  String?
+  date        DateTime
+  location    String
+  race        String
+  setter      String
+  management  String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  teams       Team[]
 }
 
 model Team {
   id        String   @id @default(cuid())
   fullname  String   @unique
   shortname String
+  eventId   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  event     Event   @relation(fields: [eventId], references: [id])
   racers    Racer[]
 }
 
@@ -37,22 +40,22 @@ model Racer {
   id               String        @id @default(cuid())
   name             String
   kana             String
-  event            String // ski, snowboard
+  category         String // ski, snowboard
   bib              Int           @unique
   gender           String // f, m
   seed             Int
   teamId           String?
-  firstParticipate Boolean
+  isFirstTime      Boolean
   age              Int?
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
   team             Team?         @relation(fields: [teamId], references: [id])
-  results          RacerResult[]
+  results          Result[]
 }
 
-model RacerResult {
+model Result {
   id        String   @id @default(cuid())
-  set       Int
+  set       Int     // 1, 2
   time      Int?
   status    String? // ds, dq, df
   racerId   String
