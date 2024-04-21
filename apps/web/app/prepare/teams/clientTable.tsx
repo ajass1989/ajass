@@ -3,8 +3,8 @@ import { Team } from '@repo/database';
 import { Button, Popconfirm, Table, TableProps } from 'antd';
 import Link from 'next/link';
 import { deleteTeam } from './actions';
-import { useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { TeamDto } from './teamDto';
 
 type Props = {
   dataSource: Team[];
@@ -18,23 +18,29 @@ interface DataType {
 
 export default function ClientTable(props: Props) {
   const [dataSource, setDataSource] = useState<Team[]>(props.dataSource);
-  const searchParams = useSearchParams();
+
+  const [newTeam, setNewTeam] = useState<TeamDto | null>(null);
+
+  useEffect(() => {
+    const teamData = localStorage.getItem('newTeam');
+    if (teamData) {
+      setNewTeam(JSON.parse(teamData));
+      localStorage.removeItem('newTeam'); // 読み込み後は削除
+    }
+  }, []);
 
   const data: DataType[] = dataSource.map((d: Team) => ({
     key: d.id,
     fullname: d.fullname,
     shortname: d.shortname,
   }));
-  const queryString = searchParams.get('newTeam');
-  if (queryString) {
-    const newTeam: Team = JSON.parse(queryString) as Team;
+  if (newTeam) {
     const index = data.findIndex((item) => item.key === newTeam.id);
-    // QueryStringからUpsert
     if (index !== -1) {
       data[index] = { ...data[index], ...newTeam };
     } else {
       data.push({
-        key: newTeam.id,
+        key: newTeam.id!,
         fullname: newTeam.fullname,
         shortname: newTeam.shortname,
       });

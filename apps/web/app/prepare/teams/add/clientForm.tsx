@@ -1,5 +1,5 @@
 'use client';
-import { Alert, Button, Form, FormInstance, FormProps, Input } from 'antd';
+import { Alert, Button, Form, FormProps, Input } from 'antd';
 import { addTeam } from './actions';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -39,7 +39,8 @@ export default function ClientForm() {
     };
     const res = await addTeam(team);
     if (res.success) {
-      router.push(`/prepare/teams?newTeam=${JSON.stringify(res.result)}`);
+      localStorage.setItem('newTeam', JSON.stringify(res.result)); // ローカルストレージに保存
+      router.push(`/prepare/teams`);
     } else {
       showAlert(res.error);
     }

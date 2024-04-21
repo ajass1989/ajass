@@ -44,7 +44,8 @@ export default function ClientForm(props: Props) {
     };
     const res = await updateTeam(team);
     if (res.success) {
-      router.push(`/prepare/teams?newTeam=${JSON.stringify(res.result)}`);
+      localStorage.setItem('newTeam', JSON.stringify(res.result)); // ローカルストレージに保存
+      router.push(`/prepare/teams`);
     } else {
       showAlert(res.error);
     }
