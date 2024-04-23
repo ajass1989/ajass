@@ -1,8 +1,10 @@
 'use client';
-import { Button, DatePicker, Form, FormProps, Input } from 'antd';
-import { EventType, updateEvent } from './actions';
 import { Event } from '@repo/database';
+import { Alert, Button, DatePicker, Form, FormProps, Input } from 'antd';
+import { EventType, updateEvent } from './actions';
 import moment from 'moment';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 type Props = {
   dataSource: Event;
@@ -18,32 +20,61 @@ export type FieldType = {
   management: string;
 };
 
-const onFinish: FormProps<FieldType>['onFinish'] = async (
-  values: FieldType,
-) => {
-  console.log('Success:', values);
-  const event: EventType = {
-    id: values.key,
-    name: values.name,
-    date: values.date.toISOString(),
-    location: values.location,
-    race: values.race,
-    setter: values.setter,
-    management: values.management,
-  };
-  updateEvent(event);
-};
-
-const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (errorInfo) => {
-  console.log('Failed:', errorInfo);
-};
-
 export default async function ClientForm(props: Props) {
+  const router = useRouter();
+  const [alertVisible, setAlertVisible] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>('');
+
+  // Alert を表示する関数
+  const showAlert = (error?: string) => {
+    setErrorMessage(error ?? '');
+    setAlertVisible(true);
+  };
+
+  // Alert を非表示にする関数
+  const closeAlert = () => {
+    setErrorMessage('');
+    setAlertVisible(false);
+  };
+
+  const onFinish: FormProps<FieldType>['onFinish'] = async (
+    values: FieldType,
+  ) => {
+    console.log('Success:', values);
+    const event: EventType = {
+      id: values.key,
+      name: values.name,
+      date: values.date.toISOString(),
+      location: values.location,
+      race: values.race,
+      setter: values.setter,
+      management: values.management,
+    };
+    const res = await updateEvent(event);
+    if (res.success) {
+    } else {
+      showAlert(res.error);
+    }
+  };
+
+  const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (
+    errorInfo,
+  ) => {
+    console.log('Failed:', errorInfo);
+  };
+
   const data = props.dataSource;
   return (
     <div>
       <h1>大会</h1>
-
+      {alertVisible && (
+        <Alert
+          message={errorMessage}
+          type="error"
+          closable
+          onClose={closeAlert}
+        />
+      )}
       <Form
         name="basic"
         labelCol={{ span: 8 }}
