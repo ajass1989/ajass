@@ -21,18 +21,24 @@ const TEST_TEAMS = [
     fullname: '会社A',
     shortname: 'AAA',
     eventId: '2023',
+    orderMale: 1,
+    orderFemale: 2,
   },
   {
     id: 'bbb',
     fullname: '会社B',
     shortname: 'BBB',
     eventId: '2023',
+    orderMale: 2,
+    orderFemale: 3,
   },
   {
     id: 'ccc',
     fullname: '会社C',
     shortname: 'CCC',
     eventId: '2023',
+    orderMale: 3,
+    orderFemale: 1,
   },
 ];
 

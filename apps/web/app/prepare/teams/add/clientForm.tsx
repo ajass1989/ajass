@@ -1,5 +1,5 @@
 'use client';
-import { Alert, Button, Form, FormProps, Input } from 'antd';
+import { Alert, Button, Form, FormProps, Input, InputNumber } from 'antd';
 import { addTeam } from './actions';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -10,6 +10,8 @@ type FieldType = {
   fullname: string;
   shortname: string;
   eventId: string;
+  orderMale: number;
+  orderFemale: number;
 };
 
 export default function ClientForm() {
@@ -36,6 +38,8 @@ export default function ClientForm() {
       fullname: values.fullname,
       shortname: values.shortname,
       eventId: values.eventId,
+      orderMale: values.orderMale,
+      orderFemale: values.orderFemale,
     };
     const res = await addTeam(team);
     if (res.success) {
@@ -89,8 +93,28 @@ export default function ClientForm() {
           <Input />
         </Form.Item>
 
-        <Form.Item<FieldType> name="eventId" initialValue={'2023'}>
-          <Input type="hidden" />
+        <Form.Item<FieldType>
+          label="男子滑走順"
+          name="orderMale"
+          rules={[{ required: true, message: '男子滑走順は必須です。' }]}
+        >
+          <InputNumber />
+        </Form.Item>
+
+        <Form.Item<FieldType>
+          label="女子滑走順"
+          name="orderFemale"
+          rules={[{ required: true, message: '女子滑走順は必須です。' }]}
+        >
+          <InputNumber />
+        </Form.Item>
+
+        <Form.Item<FieldType>
+          name="eventId"
+          initialValue={'2023'}
+          hidden={true}
+        >
+          <Input />
         </Form.Item>
 
         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>

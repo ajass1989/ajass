@@ -1,12 +1,24 @@
 'use client';
-import { Alert, Button, Form, FormProps, Input } from 'antd';
+import {
+  Alert,
+  Button,
+  Checkbox,
+  Form,
+  FormProps,
+  Input,
+  InputNumber,
+  Table,
+  TableProps,
+} from 'antd';
 import { updateTeam } from './actions';
 import { useRouter } from 'next/navigation';
-import { Team } from '@repo/database';
+import { Racer, Team } from '@repo/database';
 import { useState } from 'react';
 
 type Props = {
-  dataSource: Team;
+  team: Team & {
+    racers: Racer[];
+  };
 };
 
 type FieldType = {
@@ -14,13 +26,36 @@ type FieldType = {
   fullname: string;
   shortname: string;
   eventId: string;
+  orderMale: number;
+  orderFemale: number;
 };
+
+interface RacerType {
+  key: string;
+  name: string;
+  kana: string;
+  category: string; // ski, snowboard
+  seed: number;
+  age: number | null;
+  isFirstTime: boolean;
+}
 
 export default function ClientForm(props: Props) {
   const router = useRouter();
   const [alertVisible, setAlertVisible] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
 
+  const convertRacerType = (racer: Racer) => {
+    return {
+      key: racer.id,
+      name: racer.name,
+      kana: racer.kana,
+      category: racer.category,
+      seed: racer.seed,
+      age: racer.age,
+      isFirstTime: racer.isFirstTime,
+    };
+  };
   // Alert を表示する関数
   const showAlert = (error?: string) => {
     setErrorMessage(error ?? '');
@@ -41,6 +76,8 @@ export default function ClientForm(props: Props) {
       fullname: values.fullname,
       shortname: values.shortname,
       eventId: values.eventId,
+      orderMale: values.orderMale,
+      orderFemale: values.orderFemale,
     };
     const res = await updateTeam(team);
     if (res.success) {
@@ -57,7 +94,89 @@ export default function ClientForm(props: Props) {
     console.log('Failed:', errorInfo);
   };
 
-  const data = props.dataSource;
+  const columns: TableProps<RacerType>['columns'] = [
+    {
+      title: 'シード',
+      dataIndex: 'seed',
+      key: 'seed',
+    },
+    {
+      title: '選手名',
+      dataIndex: 'name',
+      key: 'name',
+      // inputType: 'text',
+    },
+    {
+      title: 'かな',
+      dataIndex: 'kana',
+      key: 'kana',
+    },
+    {
+      title: '競技',
+      dataIndex: 'category',
+      key: 'category',
+      render: (_: any, record: RacerType) =>
+        record.category == 'ski' ? (
+          <span>スキー</span>
+        ) : (
+          <span>スノーボード</span>
+        ),
+    },
+    {
+      title: '年齢',
+      dataIndex: 'age',
+      key: 'age',
+    },
+    {
+      title: '初参加',
+      dataIndex: 'isFirstTime',
+      key: 'isFirstTime',
+      render: (_: any, record: RacerType) => (
+        <Checkbox disabled checked={record.isFirstTime} />
+      ),
+    },
+  ];
+  const team = props.team;
+  const racers: RacerType[] = team.racers.map((racer) => {
+    return {
+      key: racer.id,
+      name: racer.name,
+      kana: racer.kana,
+      category: racer.category,
+      seed: racer.seed,
+      age: racer.age,
+      isFirstTime: racer.isFirstTime,
+    };
+  });
+  const snowboardMaleRacers: RacerType[] = team.racers
+    .filter((racer) => {
+      return racer.gender == 'm' && racer.category == 'snowboard';
+    })
+    .map((racer) => {
+      return convertRacerType(racer);
+    });
+  const snowboardFemaleRacers: RacerType[] = team.racers
+    .filter((racer) => {
+      return racer.gender == 'f' && racer.category == 'snowboard';
+    })
+    .map((racer) => {
+      return convertRacerType(racer);
+    });
+  const skiMaleRacers: RacerType[] = team.racers
+    .filter((racer) => {
+      return racer.gender == 'm' && racer.category == 'ski';
+    })
+    .map((racer) => {
+      return convertRacerType(racer);
+    });
+  const skiFemaleRacers: RacerType[] = team.racers
+    .filter((racer) => {
+      return racer.gender == 'f' && racer.category == 'ski';
+    })
+    .map((racer) => {
+      return convertRacerType(racer);
+    });
+
   return (
     <div>
       <h1>チーム編集</h1>
@@ -79,15 +198,23 @@ export default function ClientForm(props: Props) {
         onFinishFailed={onFinishFailed}
         autoComplete="off"
       >
-        <Form.Item<FieldType> name="key" initialValue={data.id}>
-          <Input type="hidden" />
+        <Form.Item<FieldType> name="key" initialValue={team.id} hidden={true}>
+          <Input />
+        </Form.Item>
+
+        <Form.Item<FieldType>
+          name="eventId"
+          initialValue={team.eventId}
+          hidden={true}
+        >
+          <Input />
         </Form.Item>
 
         <Form.Item<FieldType>
           label="チーム名"
           name="fullname"
           rules={[{ required: true, message: 'チーム名は必須です。' }]}
-          initialValue={data.fullname}
+          initialValue={team.fullname}
         >
           <Input />
         </Form.Item>
@@ -96,13 +223,25 @@ export default function ClientForm(props: Props) {
           label="略称"
           name="shortname"
           rules={[{ required: true, message: '略称は必須です。' }]}
-          initialValue={data.shortname}
+          initialValue={team.shortname}
         >
           <Input />
         </Form.Item>
 
-        <Form.Item<FieldType> name="eventId" initialValue={data.eventId}>
-          <Input type="hidden" />
+        <Form.Item<FieldType>
+          label="男子滑走順"
+          name="orderMale"
+          initialValue={team.orderMale}
+        >
+          <InputNumber />
+        </Form.Item>
+
+        <Form.Item<FieldType>
+          label="女子滑走順"
+          name="orderFemale"
+          initialValue={team.orderFemale}
+        >
+          <InputNumber />
         </Form.Item>
 
         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
@@ -111,6 +250,19 @@ export default function ClientForm(props: Props) {
           </Button>
         </Form.Item>
       </Form>
+
+      <h2>スノーボード男子</h2>
+      <Button type="primary">追加</Button>
+      <Table columns={columns} dataSource={snowboardMaleRacers} />
+      <h2>スノーボード女子</h2>
+      <Button type="primary">追加</Button>
+      <Table columns={columns} dataSource={snowboardFemaleRacers} />
+      <h2>スキー男子</h2>
+      <Button type="primary">追加</Button>
+      <Table columns={columns} dataSource={skiMaleRacers} />
+      <h2>スキー女子</h2>
+      <Button type="primary">追加</Button>
+      <Table columns={columns} dataSource={skiFemaleRacers} />
     </div>
   );
 }

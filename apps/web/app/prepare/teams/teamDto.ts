@@ -3,6 +3,8 @@ export type TeamDto = {
   fullname: string;
   shortname: string;
   eventId: string;
+  orderMale: number;
+  orderFemale: number;
   createdAt?: number;
   updatedAt?: number;
 };

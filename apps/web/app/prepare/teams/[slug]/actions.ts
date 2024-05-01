@@ -11,6 +11,8 @@ export async function updateTeam(
       fullname: values.fullname,
       shortname: values.shortname,
       eventId: values.eventId,
+      orderMale: values.orderMale,
+      orderFemale: values.orderFemale,
     };
     const newValues = await prisma.team.update({
       where: { id: values.id },
@@ -23,6 +25,8 @@ export async function updateTeam(
         fullname: newValues.fullname,
         shortname: newValues.shortname,
         eventId: newValues.eventId,
+        orderMale: newValues.orderMale,
+        orderFemale: newValues.orderFemale,
         createdAt: newValues.createdAt.getTime(),
         updatedAt: newValues.updatedAt.getTime(),
       },

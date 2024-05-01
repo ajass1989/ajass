@@ -30,6 +30,8 @@ model Team {
   fullname  String   @unique
   shortname String
   eventId   String
+  orderMale Int      @unique
+  orderFemale Int    @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   event     Event   @relation(fields: [eventId], references: [id])
