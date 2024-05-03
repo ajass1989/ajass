@@ -43,10 +43,11 @@ model Racer {
   name             String
   kana             String
   category         String // ski, snowboard
-  bib              Int           @unique
+  bib              Int?
   gender           String // f, m
   seed             Int
   teamId           String?
+  special          String?  // senior, junior
   isFirstTime      Boolean
   age              Int?
   createdAt        DateTime      @default(now())
