@@ -20,6 +20,8 @@ type Props = {
   title: string;
   teamId: string;
   special: string;
+  gender?: string;
+  category?: string;
   dataSource: RacerType[];
 };
 
@@ -121,7 +123,7 @@ interface DataType {
   seed: number;
 }
 
-export default function ClientTable(props: Props) {
+export function RacerTable(props: Props) {
   const [form] = Form.useForm();
   const _data: DataType[] = props.dataSource.map((item: RacerType) => ({
     key: item.key,
@@ -188,15 +190,16 @@ export default function ClientTable(props: Props) {
       const row = (await form.validateFields()) as Item; // TODO調査 個々で取得したrowでgenderの値がundefinedになっている。画面から取得しようとしているのが原因
       const newDataSource = [...dataSource];
       const index = dataSource.findIndex((item) => key === item.key);
-      console.log(`handleSave: index: ${index}`);
-      console.log(`handleSave: seed: ${row.seed}`);
       let result: ActionResult<RacerDto>;
+      const gender = props.special == 'normal' ? props.gender! : row.gender;
+      const category =
+        props.special == 'normal' ? props.category! : row.category;
       if (key === 'add') {
         result = await addRacer({
           name: row.name,
           kana: row.kana,
-          category: row.category,
-          gender: row.gender,
+          category: category,
+          gender: gender,
           seed: dataSource[index].seed, // seedはformから取得できない
           teamId: props.teamId,
           isFirstTime: row.isFirstTime,
@@ -208,8 +211,8 @@ export default function ClientTable(props: Props) {
           id: dataSource[index].key,
           name: row.name,
           kana: row.kana,
-          category: row.category,
-          gender: row.gender,
+          category: category,
+          gender: gender,
           seed: dataSource[index].seed, // seedはformから取得できない
           teamId: props.teamId,
           isFirstTime: row.isFirstTime,
@@ -244,6 +247,7 @@ export default function ClientTable(props: Props) {
       title: 'シード',
       dataIndex: 'seed',
       inputType: 'number',
+      visible: true,
     },
     {
       title: '選手名',
@@ -251,17 +255,20 @@ export default function ClientTable(props: Props) {
       width: '30%',
       inputType: 'text',
       editable: true,
+      visible: true,
     },
     {
       title: 'かな',
       dataIndex: 'kana',
       inputType: 'text',
       editable: true,
+      visible: true,
     },
     {
       title: '競技',
       dataIndex: 'category',
       editable: true,
+      visible: props.special != 'normal',
       inputType: 'category',
       render: (_: any, record: Item) =>
         record.category == 'ski' ? (
@@ -276,6 +283,7 @@ export default function ClientTable(props: Props) {
       key: 'gender',
       inputType: 'gender',
       editable: true,
+      visible: props.special != 'normal',
       render: (_: any, record: Item) =>
         record.gender == 'f' ? <span>女性</span> : <span>男性</span>,
     },
@@ -284,12 +292,14 @@ export default function ClientTable(props: Props) {
       dataIndex: 'age',
       editable: true,
       inputType: 'number',
+      visible: props.special != 'normal',
     },
     {
       title: '初参加',
       dataIndex: 'isFirstTime',
       editable: true,
       inputType: 'boolean',
+      visible: true,
       render: (_: any, record: Item) => (
         <Switch disabled defaultChecked={record.isFirstTime} />
       ),
@@ -297,6 +307,7 @@ export default function ClientTable(props: Props) {
     {
       title: '操作',
       dataIndex: 'operation',
+      visible: true,
       render: (_: any, record: Item) => {
         const editable = isEditing(record);
         return editable ? (
@@ -334,7 +345,9 @@ export default function ClientTable(props: Props) {
     },
   ];
 
-  const mergedColumns: TableProps['columns'] = columns.map((col) => {
+  const filteredColumns = columns.filter((col) => col.visible);
+
+  const mergedColumns: TableProps['columns'] = filteredColumns.map((col) => {
     if (!col.editable) {
       return col;
     }

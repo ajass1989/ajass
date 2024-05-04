@@ -47,7 +47,7 @@ model Racer {
   gender           String // f, m
   seed             Int
   teamId           String?
-  special          String?  // senior, junior
+  special          String  // normal, senior, junior
   isFirstTime      Boolean
   age              Int?
   createdAt        DateTime      @default(now())

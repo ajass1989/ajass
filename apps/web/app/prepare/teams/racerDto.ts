@@ -9,7 +9,7 @@ export type RacerDto = {
   teamId: string | null;
   isFirstTime: boolean;
   age: number | null;
-  special: string | null;
+  special: string;
   createdAt?: number;
   updatedAt?: number;
 };

@@ -2,23 +2,17 @@
 import {
   Alert,
   Button,
-  Checkbox,
   Form,
   FormInstance,
   FormProps,
-  GetRef,
   Input,
   InputNumber,
-  InputRef,
-  Popconfirm,
-  Table,
-  TableProps,
 } from 'antd';
 import { updateTeam } from './actions';
 import { useRouter } from 'next/navigation';
 import { Racer, Team } from '@repo/database';
-import React, { useContext, useEffect, useRef, useState } from 'react';
-import ClientTable from './clientTable';
+import React, { useState } from 'react';
+import { RacerTable } from './racerTable';
 
 type Props = {
   team: Team & {
@@ -41,92 +35,6 @@ interface EditableRowProps {
   index: number;
 }
 
-const EditableRow: React.FC<EditableRowProps> = ({ index, ...props }) => {
-  const [form] = Form.useForm();
-  return (
-    <Form form={form} component={false}>
-      <EditableContext.Provider value={form}>
-        <tr {...props} />
-      </EditableContext.Provider>
-    </Form>
-  );
-};
-
-interface EditableCellProps {
-  title: React.ReactNode;
-  editable: boolean;
-  children: React.ReactNode;
-  dataIndex: keyof RacerType;
-  record: RacerType;
-  handleSave: (record: RacerType) => void;
-}
-
-const EditableCell: React.FC<EditableCellProps> = ({
-  title,
-  editable,
-  children,
-  dataIndex,
-  record,
-  handleSave,
-  ...restProps
-}) => {
-  const [editing, setEditing] = useState(false);
-  const inputRef = useRef<InputRef>(null);
-  const form = useContext(EditableContext)!;
-
-  useEffect(() => {
-    if (editing) {
-      inputRef.current?.focus();
-    }
-  }, [editing]);
-
-  const toggleEdit = () => {
-    setEditing(!editing);
-    form.setFieldsValue({ [dataIndex]: record[dataIndex] });
-  };
-
-  const save = async () => {
-    try {
-      const values = await form.validateFields();
-      toggleEdit();
-      handleSave({ ...record, ...values });
-    } catch (errInfo) {
-      console.log('Save failed: ', errInfo);
-    }
-  };
-
-  let childNode = children;
-
-  if (editable) {
-    childNode = editing ? (
-      <Form.Item
-        style={{ margin: 0 }}
-        name={dataIndex}
-        rules={[
-          {
-            required: true,
-            message: `${title} is required.`,
-          },
-        ]}
-      >
-        <Input ref={inputRef} onPressEnter={save} onBlur={save} />
-      </Form.Item>
-    ) : (
-      <div
-        className="editable-cell-value-wrap"
-        style={{ paddingRight: 24 }}
-        onClick={toggleEdit}
-      >
-        {children}
-      </div>
-    );
-  }
-
-  return <td {...restProps}>{childNode}</td>;
-};
-
-type EditableTableProps = Parameters<typeof Table>[0];
-
 export interface RacerType {
   key: string;
   name: string;
@@ -138,8 +46,6 @@ export interface RacerType {
   bib: number | null;
   gender: string; // f, m
 }
-
-type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
 
 export default function ClientForm(props: Props) {
   const router = useRouter();
@@ -187,133 +93,6 @@ export default function ClientForm(props: Props) {
     console.log('Failed:', errorInfo);
   };
 
-  const defaultColumns: (ColumnTypes[number] & {
-    editable?: boolean;
-    dataIndex: string;
-  })[] = [
-    {
-      title: 'シード',
-      dataIndex: 'seed',
-      key: 'seed',
-    },
-    {
-      title: '選手名',
-      dataIndex: 'name',
-      key: 'name',
-      editable: true,
-    },
-    {
-      title: 'かな',
-      dataIndex: 'kana',
-      key: 'kana',
-      editable: true,
-    },
-    {
-      title: '操作',
-      dataIndex: 'operation',
-      // render: (_, record) => {},
-      // dataSource.length >= 1 ? (
-      //   <Popconfirm
-      //     title="Sure to delete?"
-      //     onConfirm={() => handleDelete(record.key)}
-      //   >
-      //     <a>Delete</a>
-      //   </Popconfirm>
-      // ) : null,
-    },
-  ];
-
-  const components = {
-    body: {
-      row: EditableRow,
-      cell: EditableCell,
-    },
-  };
-
-  // const columns = defaultColumns.map((col) => {
-  //   if (!col.editable) {
-  //     return col;
-  //   }
-  //   return {
-  //     ...col,
-  //     onCell: (record: DataType) => ({
-  //       record,
-  //       editable: col.editable,
-  //       dataIndex: col.dataIndex,
-  //       title: col.title,
-  //       handleSave,
-  //     }),
-  //   };
-  // });
-
-  const normalColumns: TableProps<RacerType>['columns'] = [
-    {
-      title: 'シード',
-      dataIndex: 'seed',
-      key: 'seed',
-    },
-    {
-      title: '選手名',
-      dataIndex: 'name',
-      key: 'name',
-    },
-    {
-      title: 'かな',
-      dataIndex: 'kana',
-      key: 'kana',
-    },
-    {
-      title: '初参加',
-      dataIndex: 'isFirstTime',
-      key: 'isFirstTime',
-      render: (_: any, record: RacerType) => (
-        <Checkbox disabled checked={record.isFirstTime} />
-      ),
-    },
-  ];
-
-  const specialColumns: TableProps<RacerType>['columns'] = [
-    {
-      title: 'シード',
-      dataIndex: 'seed',
-      key: 'seed',
-    },
-    {
-      title: '選手名',
-      dataIndex: 'name',
-      key: 'name',
-    },
-    {
-      title: 'かな',
-      dataIndex: 'kana',
-      key: 'kana',
-    },
-    {
-      title: '競技',
-      dataIndex: 'category',
-      key: 'category',
-      render: (_: any, record: RacerType) =>
-        record.category == 'ski' ? (
-          <span>スキー</span>
-        ) : (
-          <span>スノーボード</span>
-        ),
-    },
-    {
-      title: '年齢',
-      dataIndex: 'age',
-      key: 'age',
-    },
-    {
-      title: '初参加',
-      dataIndex: 'isFirstTime',
-      key: 'isFirstTime',
-      render: (_: any, record: RacerType) => (
-        <Checkbox disabled checked={record.isFirstTime} />
-      ),
-    },
-  ];
-
   const team = props.team;
   const originRacers = props.team.racers.map((racer) => {
     return {
@@ -329,21 +108,13 @@ export default function ClientForm(props: Props) {
       bib: racer.bib,
     };
   });
-  const [racers, setRacers] = useState(originRacers);
-  const isEditing = (record: RacerType) => record.key === editingKey;
-  const edit = (record: Partial<RacerType> & { key: React.Key }) => {
-    form.setFieldsValue({
-      ...record,
-    });
-    setEditingKey(record.key as string);
-  };
 
   const snowboardMaleRacers: RacerType[] = originRacers
     .filter((racer) => {
       return (
         racer.gender == 'm' &&
         racer.category == 'snowboard' &&
-        racer.special == null
+        racer.special == 'normal'
       );
     })
     .sort((a, b) => {
@@ -354,7 +125,7 @@ export default function ClientForm(props: Props) {
       return (
         racer.gender == 'f' &&
         racer.category == 'snowboard' &&
-        racer.special == null
+        racer.special == 'normal'
       );
     })
     .sort((a, b) => {
@@ -363,7 +134,9 @@ export default function ClientForm(props: Props) {
   const skiMaleRacers: RacerType[] = originRacers
     .filter((racer) => {
       return (
-        racer.gender == 'm' && racer.category == 'ski' && racer.special == null
+        racer.gender == 'm' &&
+        racer.category == 'ski' &&
+        racer.special == 'normal'
       );
     })
     .sort((a, b) => {
@@ -372,7 +145,9 @@ export default function ClientForm(props: Props) {
   const skiFemaleRacers: RacerType[] = originRacers
     .filter((racer) => {
       return (
-        racer.gender == 'f' && racer.category == 'ski' && racer.special == null
+        racer.gender == 'f' &&
+        racer.category == 'ski' &&
+        racer.special == 'normal'
       );
     })
     .sort((a, b) => {
@@ -467,52 +242,45 @@ export default function ClientForm(props: Props) {
         </Form.Item>
       </Form>
 
-      <h2>スノーボード男子</h2>
-      <Button type="primary">追加</Button>
-      <Table
-        components={components}
-        rowClassName={() => 'editable-row'}
-        bordered
+      <RacerTable
         dataSource={snowboardMaleRacers}
-        columns={normalColumns as ColumnTypes}
-        pagination={{ position: [] }}
+        teamId={props.team.id}
+        title="スノーボード男子"
+        special="normal"
+        gender="m"
+        category="snowboard"
       />
-      <h2>スノーボード女子</h2>
-      <Button type="primary">追加</Button>
-      <Table
-        columns={normalColumns}
+      <RacerTable
         dataSource={snowboardFemaleRacers}
-        pagination={{ position: [] }}
+        teamId={props.team.id}
+        title="スノーボード女子"
+        special="normal"
+        gender="f"
+        category="snowboard"
       />
-      <h2>スキー男子</h2>
-      <Button type="primary">追加</Button>
-      <Table
-        columns={normalColumns}
+      <RacerTable
         dataSource={skiMaleRacers}
-        pagination={{ position: [] }}
+        teamId={props.team.id}
+        title="スキー男子"
+        special="normal"
+        gender="m"
+        category="ski"
       />
-      <h2>スキー女子</h2>
-      <Button type="primary">追加</Button>
-      <Table
-        columns={normalColumns}
+      <RacerTable
         dataSource={skiFemaleRacers}
-        pagination={{ position: [] }}
+        teamId={props.team.id}
+        title="スキー女子"
+        special="normal"
+        gender="f"
+        category="ski"
       />
-      <h2>ジュニア</h2>
-      <Button type="primary">追加</Button>
-      <Table
-        columns={specialColumns}
+      <RacerTable
         dataSource={juniorRacers}
-        pagination={{ position: [] }}
+        teamId={props.team.id}
+        title="ジュニア"
+        special="junior"
       />
-      <h2>シニア</h2>
-      <Button type="primary">追加</Button>
-      <Table
-        columns={specialColumns}
-        dataSource={seniorRacers}
-        pagination={{ position: [] }}
-      />
-      <ClientTable
+      <RacerTable
         dataSource={seniorRacers}
         teamId={props.team.id}
         title="シニア"
