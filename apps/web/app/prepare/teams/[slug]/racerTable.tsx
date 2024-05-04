@@ -12,7 +12,7 @@ import {
   Typography,
 } from 'antd';
 import { addRacer, deleteRacer, updateRacer } from './actions';
-import { RacerType } from './clientForm';
+import { RacerType } from './editTeamForm';
 import { ActionResult } from '../../../actionResult';
 import { RacerDto } from '../racerDto';
 
@@ -139,12 +139,30 @@ export function RacerTable(props: Props) {
   const [count, setCount] = useState<number>(_data.length);
 
   const handleDelete = async (key: React.Key) => {
-    const result = await deleteRacer(key as string);
+    const result = await deleteRacer(
+      key as string,
+      props.teamId,
+      props.special,
+      props.category,
+      props.gender,
+    );
     if (!result.success) {
       console.error(`deleteRacer failed`);
       return;
     }
-    const newData = dataSource.filter((item) => item.key !== key);
+    const newData = result.result!.map((racer) => {
+      const r: DataType = {
+        key: racer.id as string,
+        name: racer.name,
+        kana: racer.kana,
+        category: racer.category,
+        gender: racer.gender,
+        seed: racer.seed,
+        isFirstTime: racer.isFirstTime,
+        age: racer.age!,
+      };
+      return r;
+    });
     setDataSource(newData);
   };
 
@@ -156,7 +174,6 @@ export function RacerTable(props: Props) {
   };
 
   const handleCancel = (key: React.Key) => {
-    console.log(`handleCancel: key: ${key}`);
     if ((key as string) == 'add') {
       const newData = dataSource.filter((item) => item.key !== key);
       setDataSource(newData);
@@ -186,7 +203,6 @@ export function RacerTable(props: Props) {
 
   const handleSave = async (key: React.Key) => {
     try {
-      console.log(`handleSave: ${key}`);
       const row = (await form.validateFields()) as Item; // TODO調査 個々で取得したrowでgenderの値がundefinedになっている。画面から取得しようとしているのが原因
       const newDataSource = [...dataSource];
       const index = dataSource.findIndex((item) => key === item.key);

@@ -1,5 +1,5 @@
 import { prisma } from '@repo/database';
-import ClientForm from './clientForm';
+import { EditTeamForm } from './editTeamForm';
 
 export default async function Page({ params }: { params: { slug: string } }) {
   const team = await prisma.team.findFirstOrThrow({
@@ -8,5 +8,5 @@ export default async function Page({ params }: { params: { slug: string } }) {
       racers: true,
     },
   });
-  return <ClientForm team={team} />;
+  return <EditTeamForm team={team} />;
 }

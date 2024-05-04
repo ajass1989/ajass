@@ -3,6 +3,8 @@ import { Prisma, prisma } from '@repo/database';
 import { ActionResult } from '../../../actionResult';
 import { TeamDto } from '../teamDto';
 import { RacerDto } from '../racerDto';
+import { PrismaClient } from '@prisma/client/extension';
+import { resourceLimits } from 'worker_threads';
 
 export async function updateTeam(
   values: TeamDto,
@@ -49,7 +51,6 @@ export async function addRacer(
   values: RacerDto,
 ): Promise<ActionResult<RacerDto>> {
   try {
-    console.log(`addRacer: seed: ${values.seed}`);
     const data: Prisma.RacerUncheckedCreateInput = {
       name: values.name,
       kana: values.kana,
@@ -143,14 +144,47 @@ export async function updateRacer(
   }
 }
 
-export async function deleteRacer(id: string): Promise<ActionResult<void>> {
+export async function deleteRacer(
+  id: string,
+  teamId: string,
+  special: string,
+  category?: string,
+  gender?: string,
+): Promise<ActionResult<RacerDto[]>> {
   try {
-    console.log(`deleteRacer: ${id}`);
-    await prisma.racer.delete({
-      where: { id: id },
+    let results: RacerDto[] = [];
+    await prisma.$transaction(async (prisma: PrismaClient) => {
+      const deleteResult = await prisma.racer.delete({
+        where: { id: id },
+      });
+      const restRecords = await prisma.racer.findMany({
+        where: {
+          AND: [
+            { id: { not: deleteResult.id } }, // 削除されたID以外
+            { teamId: teamId },
+            { gender: gender },
+            { category: category },
+            { special: special },
+          ],
+        },
+        orderBy: {
+          seed: 'asc',
+        },
+      });
+      for (let i = 0; i < restRecords.length; i++) {
+        const newValue = await prisma.racer.update({
+          where: { id: restRecords[i].id },
+          data: {
+            seed: i + 1,
+          },
+        });
+        results.push(newValue);
+      }
     });
+
     return {
       success: true,
+      result: results,
     };
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {

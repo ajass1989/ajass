@@ -1,13 +1,5 @@
 'use client';
-import {
-  Alert,
-  Button,
-  Form,
-  FormInstance,
-  FormProps,
-  Input,
-  InputNumber,
-} from 'antd';
+import { Alert, Button, Form, FormProps, Input, InputNumber } from 'antd';
 import { updateTeam } from './actions';
 import { useRouter } from 'next/navigation';
 import { Racer, Team } from '@repo/database';
@@ -29,12 +21,6 @@ type FieldType = {
   orderFemale: number;
 };
 
-const EditableContext = React.createContext<FormInstance<any> | null>(null);
-
-interface EditableRowProps {
-  index: number;
-}
-
 export interface RacerType {
   key: string;
   name: string;
@@ -47,13 +33,10 @@ export interface RacerType {
   gender: string; // f, m
 }
 
-export default function ClientForm(props: Props) {
+export function EditTeamForm(props: Props) {
   const router = useRouter();
   const [alertVisible, setAlertVisible] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
-  const [form] = Form.useForm();
-  const [editingKey, setEditingKey] = useState('');
-  // const [dataSource, setDataSource] = useState<Racer[]>(props.team.racers);
 
   // Alert を表示する関数
   const showAlert = (error?: string) => {
