@@ -14,7 +14,7 @@ type FieldType = {
   orderFemale: number;
 };
 
-export default function ClientForm() {
+export function AddTeamForm() {
   const router = useRouter();
   const [alertVisible, setAlertVisible] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');

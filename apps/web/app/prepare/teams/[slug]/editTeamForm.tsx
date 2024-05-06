@@ -37,6 +37,7 @@ export function EditTeamForm(props: Props) {
   const router = useRouter();
   const [alertVisible, setAlertVisible] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
+  const [edited, setEdited] = useState<boolean>(false);
 
   // Alert を表示する関数
   const showAlert = (error?: string) => {
@@ -151,6 +152,10 @@ export function EditTeamForm(props: Props) {
       return a.seed - b.seed;
     });
 
+  const handleChange = () => {
+    setEdited(true);
+  };
+
   return (
     <div>
       <h1>チーム編集</h1>
@@ -190,7 +195,7 @@ export function EditTeamForm(props: Props) {
           rules={[{ required: true, message: 'チーム名は必須です。' }]}
           initialValue={team.fullname}
         >
-          <Input />
+          <Input onChange={handleChange} />
         </Form.Item>
 
         <Form.Item<FieldType>
@@ -199,7 +204,7 @@ export function EditTeamForm(props: Props) {
           rules={[{ required: true, message: '略称は必須です。' }]}
           initialValue={team.shortname}
         >
-          <Input />
+          <Input onChange={handleChange} />
         </Form.Item>
 
         <Form.Item<FieldType>
@@ -207,7 +212,7 @@ export function EditTeamForm(props: Props) {
           name="orderMale"
           initialValue={team.orderMale}
         >
-          <InputNumber />
+          <InputNumber onChange={handleChange} />
         </Form.Item>
 
         <Form.Item<FieldType>
@@ -215,11 +220,11 @@ export function EditTeamForm(props: Props) {
           name="orderFemale"
           initialValue={team.orderFemale}
         >
-          <InputNumber />
+          <InputNumber onChange={handleChange} />
         </Form.Item>
 
         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-          <Button type="primary" htmlType="submit">
+          <Button type="primary" htmlType="submit" disabled={!edited}>
             保存
           </Button>
         </Form.Item>

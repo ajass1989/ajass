@@ -15,6 +15,7 @@ import {
 import Link from 'next/link';
 // import { deleteTeam } from './actions';
 import { useEffect, useState } from 'react';
+import { render } from 'react-dom';
 // import { RacerDto } from './racerDto';
 
 type Props = {
@@ -33,6 +34,7 @@ interface Item {
   teamId: string | null;
   isFirstTime: boolean;
   age: number | null;
+  special: string;
 }
 
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
@@ -218,7 +220,30 @@ export default function ClientTable(props: Props) {
     //   setDataSource(newDataSource);
   };
 
+  const summary = (record: Item) => {
+    let summary = '';
+    switch (record.special) {
+      case 'senior':
+        summary += 'シニア';
+        break;
+      case 'junior':
+        summary += 'ジュニア';
+        break;
+      case 'normal':
+        summary += record.gender == 'f' ? '女子' : '男子';
+        break;
+    }
+    summary += record.category == 'ski' ? 'スキー' : 'スノーボード';
+    return <span>{summary}</span>;
+  };
+
   const columns = [
+    {
+      title: '種目',
+      dataIndex: 'summary',
+      key: 'summary',
+      render: (_: any, record: Item) => summary(record),
+    },
     {
       title: 'ビブ',
       dataIndex: 'bib',
@@ -282,13 +307,12 @@ export default function ClientTable(props: Props) {
       ),
     },
     {
-      title: '初参加',
-      dataIndex: 'isFirstTime',
-      key: 'isFirstTime',
-      inputType: 'boolean',
-      editable: true,
+      title: '特別枠',
+      dataIndex: 'special',
+      key: 'special',
+      inputType: 'string',
       render: (_: any, record: Item) => (
-        <Checkbox disabled checked={record.isFirstTime} />
+        <span>{record.special == 'senior' ? 'シニア' : 'ジュニア'}</span>
       ),
     },
     {
@@ -299,35 +323,45 @@ export default function ClientTable(props: Props) {
       editable: true,
     },
     {
-      title: '操作',
-      key: 'action',
-      render: (_: any, record: Item) => {
-        const editable = isEditing(record);
-        return editable ? (
-          <span>
-            <Typography.Link
-              onClick={() => save(record.key)}
-              style={{ marginRight: 8 }}
-            >
-              保存
-            </Typography.Link>
-            <Typography.Link onClick={cancel}>キャンセル</Typography.Link>
-          </span>
-        ) : (
-          <span>
-            <Typography.Link
-              disabled={editingKey !== ''}
-              onClick={() => edit(record)}
-            >
-              編集
-            </Typography.Link>
-            <Popconfirm title="削除します。よろしいですか？" onConfirm={cancel}>
-              削除
-            </Popconfirm>
-          </span>
-        );
-      },
+      title: '初参加',
+      dataIndex: 'isFirstTime',
+      key: 'isFirstTime',
+      inputType: 'boolean',
+      editable: true,
+      render: (_: any, record: Item) => (
+        <Checkbox disabled checked={record.isFirstTime} />
+      ),
     },
+    // {
+    //   title: '操作',
+    //   key: 'action',
+    //   render: (_: any, record: Item) => {
+    //     const editable = isEditing(record);
+    //     return editable ? (
+    //       <span>
+    //         <Typography.Link
+    //           onClick={() => save(record.key)}
+    //           style={{ marginRight: 8 }}
+    //         >
+    //           保存
+    //         </Typography.Link>
+    //         <Typography.Link onClick={cancel}>キャンセル</Typography.Link>
+    //       </span>
+    //     ) : (
+    //       <span>
+    //         <Typography.Link
+    //           disabled={editingKey !== ''}
+    //           onClick={() => edit(record)}
+    //         >
+    //           編集
+    //         </Typography.Link>
+    //         <Popconfirm title="削除します。よろしいですか？" onConfirm={cancel}>
+    //           削除
+    //         </Popconfirm>
+    //       </span>
+    //     );
+    //   },
+    // },
   ];
 
   const mergedColumns: TableProps['columns'] = columns.map((col) => {

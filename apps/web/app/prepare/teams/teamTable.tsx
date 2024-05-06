@@ -14,17 +14,25 @@ import Link from 'next/link';
 import { deleteTeam } from './actions';
 import React, { useEffect, useState } from 'react';
 import { TeamDto } from './teamDto';
+import { TeamsWithRacers } from './page';
 
 type Props = {
-  dataSource: Team[];
+  dataSource: TeamsWithRacers;
 };
 
 interface RecordType {
   key: string;
   fullname: string; // チーム名
-  shortname: string; // 略称
+  //shortname: string; // 略称
   orderMale: number;
   orderFemale: number;
+  racerCount: number;
+  snowboardMaleCount: number;
+  snowboardFemaleCount: number;
+  skiMaleCount: number;
+  skiFemaleCount: number;
+  seniorCount: number;
+  juniorCount: number;
 }
 
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
@@ -37,10 +45,12 @@ interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode;
 }
 
-export default function ClientTable(props: Props) {
+export function TeamTable(props: Props) {
   const [form] = Form.useForm();
   const [editingKey, setEditingKey] = useState('');
-  const [dataSource, setDataSource] = useState<Team[]>(props.dataSource);
+  const [dataSource, setDataSource] = useState<TeamsWithRacers>(
+    props.dataSource,
+  );
   const [newTeam, setNewTeam] = useState<TeamDto | null>(null);
 
   const EditableCell: React.FC<EditableCellProps> = ({
@@ -88,7 +98,7 @@ export default function ClientTable(props: Props) {
   const originTeam = props.dataSource.map((d: Team) => ({
     key: d.id,
     fullname: d.fullname,
-    shortname: d.shortname,
+    // shortname: d.shortname,
     orderMale: d.orderMale,
     orderFemale: d.orderFemale,
   }));
@@ -139,13 +149,44 @@ export default function ClientTable(props: Props) {
     }
   }, []);
 
-  const data: RecordType[] = dataSource.map((d: Team) => ({
-    key: d.id,
-    fullname: d.fullname,
-    shortname: d.shortname,
-    orderMale: d.orderMale,
-    orderFemale: d.orderFemale,
-  }));
+  const data: RecordType[] = dataSource.map((d) => {
+    // const hoge = 1;
+    // d.racers.
+    return {
+      key: d.id,
+      fullname: d.fullname,
+      // shortname: d.shortname,
+      orderMale: d.orderMale,
+      orderFemale: d.orderFemale,
+      racerCount: d.racers.length,
+      snowboardMaleCount: d.racers.filter(
+        (racer) =>
+          racer.category == 'snowboard' &&
+          racer.gender == 'm' &&
+          racer.special == 'normal',
+      ).length,
+      snowboardFemaleCount: d.racers.filter(
+        (racer) =>
+          racer.category == 'snowboard' &&
+          racer.gender == 'f' &&
+          racer.special == 'normal',
+      ).length,
+      skiMaleCount: d.racers.filter(
+        (racer) =>
+          racer.category == 'ski' &&
+          racer.gender == 'm' &&
+          racer.special == 'normal',
+      ).length,
+      skiFemaleCount: d.racers.filter(
+        (racer) =>
+          racer.category == 'ski' &&
+          racer.gender == 'f' &&
+          racer.special == 'normal',
+      ).length,
+      seniorCount: d.racers.filter((racer) => racer.special == 'senior').length,
+      juniorCount: d.racers.filter((racer) => racer.special == 'junior').length,
+    };
+  });
   if (newTeam) {
     const index = data.findIndex((item) => item.key === newTeam.id);
     if (index !== -1) {
@@ -154,9 +195,16 @@ export default function ClientTable(props: Props) {
       data.push({
         key: newTeam.id!,
         fullname: newTeam.fullname,
-        shortname: newTeam.shortname,
+        // shortname: newTeam.shortname,
         orderMale: newTeam.orderMale,
         orderFemale: newTeam.orderFemale,
+        racerCount: 0,
+        snowboardMaleCount: 0,
+        snowboardFemaleCount: 0,
+        skiMaleCount: 0,
+        skiFemaleCount: 0,
+        seniorCount: 0,
+        juniorCount: 0,
       });
     }
   }
@@ -173,31 +221,78 @@ export default function ClientTable(props: Props) {
       dataIndex: 'fullname',
       key: 'fullname',
       inputType: 'text',
-      editable: true,
       render: (_: any, record: RecordType) => (
         <Link href={`/prepare/teams/${record.key}`}>{record.fullname}</Link>
       ),
     },
     {
-      title: '略称',
-      dataIndex: 'shortname',
-      key: 'shortname',
-      inputType: 'text',
-      editable: true,
-    },
-    {
-      title: '男子滑走順',
+      title: '滑走順男子',
       dataIndex: 'orderMale',
       key: 'orderMale',
       inputType: 'number',
       editable: true,
     },
     {
-      title: '女子滑走順',
+      title: '滑走順女子',
       dataIndex: 'orderFemale',
       key: 'orderFemale',
       inputType: 'number',
       editable: true,
+    },
+    {
+      title: '選手数',
+      children: [
+        {
+          title: '合計',
+          dataIndex: 'racerCount',
+          key: 'racerCount',
+        },
+        {
+          title: 'スノーボード',
+          children: [
+            {
+              title: '男子',
+              dataIndex: 'snowboardMaleCount',
+              key: 'snowboardMaleCount',
+            },
+            {
+              title: '女子',
+              dataIndex: 'snowboardFemaleCount',
+              key: 'snowboardFemaleCount',
+            },
+          ],
+        },
+        {
+          title: 'スキー',
+          children: [
+            {
+              title: '男子',
+              dataIndex: 'skiMaleCount',
+              key: 'skiMaleCount',
+            },
+            {
+              title: '女子',
+              dataIndex: 'skiFemaleCount',
+              key: 'skiFemaleCount',
+            },
+          ],
+        },
+        {
+          title: '特別枠',
+          children: [
+            {
+              title: 'シニア',
+              dataIndex: 'seniorCount',
+              key: 'seniorCount',
+            },
+            {
+              title: 'ジュニア',
+              dataIndex: 'juniorCount',
+              key: 'juniorCount',
+            },
+          ],
+        },
+      ],
     },
     {
       title: '操作',
@@ -219,6 +314,7 @@ export default function ClientTable(props: Props) {
             <Typography.Link
               disabled={editingKey !== ''}
               onClick={() => edit(record)}
+              style={{ marginRight: 8 }}
             >
               編集
             </Typography.Link>
@@ -271,6 +367,7 @@ export default function ClientTable(props: Props) {
           dataSource={data}
           columns={mergedColumns}
           pagination={{ onChange: cancel, defaultPageSize: 200 }}
+          bordered
         />
       </Form>
     </div>

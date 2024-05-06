@@ -4,7 +4,6 @@ import { ActionResult } from '../../../actionResult';
 import { TeamDto } from '../teamDto';
 import { RacerDto } from '../racerDto';
 import { PrismaClient } from '@prisma/client/extension';
-import { resourceLimits } from 'worker_threads';
 
 export async function updateTeam(
   values: TeamDto,
