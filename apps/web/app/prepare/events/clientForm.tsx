@@ -3,7 +3,6 @@ import { Event } from '@repo/database';
 import { Alert, Button, DatePicker, Form, FormProps, Input } from 'antd';
 import { EventType, updateEvent } from './actions';
 import moment from 'moment';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 type Props = {
@@ -21,7 +20,6 @@ export type FieldType = {
 };
 
 export default async function ClientForm(props: Props) {
-  const router = useRouter();
   const [alertVisible, setAlertVisible] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
 

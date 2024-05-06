@@ -1,9 +1,7 @@
 'use client';
-import { Team } from '@repo/database';
 import {
   Button,
   Form,
-  Input,
   InputNumber,
   Popconfirm,
   Table,
@@ -11,7 +9,7 @@ import {
   Typography,
 } from 'antd';
 import Link from 'next/link';
-import { deleteTeam } from './actions';
+import { deleteTeam, updateTeamOrder } from './actions';
 import React, { useEffect, useState } from 'react';
 import { TeamDto } from './teamDto';
 import { TeamsWithRacers } from './page';
@@ -23,7 +21,6 @@ type Props = {
 interface RecordType {
   key: string;
   fullname: string; // チーム名
-  //shortname: string; // 略称
   orderMale: number;
   orderFemale: number;
   racerCount: number;
@@ -39,7 +36,7 @@ interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
   editing: boolean;
   dataIndex: string;
   title: any;
-  inputType: 'number' | 'text';
+  inputType: 'number';
   index: number;
   record: RecordType;
   children: React.ReactNode;
@@ -63,16 +60,6 @@ export function TeamTable(props: Props) {
     children,
     ...restProps
   }) => {
-    // 入力ノードの切り替え
-    let inputNode;
-    switch (inputType) {
-      case 'number':
-        inputNode = <InputNumber />;
-        break;
-      case 'text':
-        inputNode = <Input />;
-        break;
-    }
     return (
       <td {...restProps}>
         {editing ? (
@@ -86,7 +73,7 @@ export function TeamTable(props: Props) {
               },
             ]}
           >
-            {inputNode}
+            <InputNumber />
           </Form.Item>
         ) : (
           children
@@ -94,15 +81,6 @@ export function TeamTable(props: Props) {
       </td>
     );
   };
-
-  const originTeam = props.dataSource.map((d: Team) => ({
-    key: d.id,
-    fullname: d.fullname,
-    // shortname: d.shortname,
-    orderMale: d.orderMale,
-    orderFemale: d.orderFemale,
-  }));
-  const [team, setTeam] = useState(originTeam);
 
   const isEditing = (record: RecordType) => record.key === editingKey;
 
@@ -113,27 +91,32 @@ export function TeamTable(props: Props) {
     setEditingKey(record.key as string);
   };
 
-  const cancel = () => {
+  const handleCancel = () => {
     setEditingKey('');
   };
 
-  const save = async (key: React.Key) => {
+  const handleSave = async (key: React.Key) => {
     try {
       const row = (await form.validateFields()) as RecordType;
-
-      const newData = [...data];
-      const index = newData.findIndex((item) => key === item.key);
+      const newData = [...dataSource];
+      const index = newData.findIndex((item) => key === item.id);
       if (index > -1) {
+        const result = await updateTeamOrder(
+          key as string,
+          row.orderFemale,
+          row.orderMale,
+        );
+        if (!result.result) {
+          // TODO 保存に失敗した場合
+        }
         const item = newData[index];
+        item.orderFemale = row.orderFemale;
+        item.orderMale = row.orderMale;
         newData.splice(index, 1, {
           ...item,
           ...row,
         });
-        setTeam(newData);
-        setEditingKey('');
-      } else {
-        newData.push(row);
-        setTeam(newData);
+        setDataSource(newData);
         setEditingKey('');
       }
     } catch (errInfo) {
@@ -150,12 +133,9 @@ export function TeamTable(props: Props) {
   }, []);
 
   const data: RecordType[] = dataSource.map((d) => {
-    // const hoge = 1;
-    // d.racers.
     return {
       key: d.id,
       fullname: d.fullname,
-      // shortname: d.shortname,
       orderMale: d.orderMale,
       orderFemale: d.orderFemale,
       racerCount: d.racers.length,
@@ -195,7 +175,6 @@ export function TeamTable(props: Props) {
       data.push({
         key: newTeam.id!,
         fullname: newTeam.fullname,
-        // shortname: newTeam.shortname,
         orderMale: newTeam.orderMale,
         orderFemale: newTeam.orderFemale,
         racerCount: 0,
@@ -209,8 +188,12 @@ export function TeamTable(props: Props) {
     }
   }
 
-  const onDelete = async (key: React.Key) => {
-    await deleteTeam(key as string);
+  const handleDelete = async (key: React.Key) => {
+    const result = await deleteTeam(key as string);
+    if (!result.success) {
+      console.error(`deleteTeam failed`);
+      return;
+    }
     const newDataSource = dataSource.filter((item) => item.id != key);
     setDataSource(newDataSource);
   };
@@ -224,6 +207,8 @@ export function TeamTable(props: Props) {
       render: (_: any, record: RecordType) => (
         <Link href={`/prepare/teams/${record.key}`}>{record.fullname}</Link>
       ),
+      sorter: (a: RecordType, b: RecordType) =>
+        a.fullname > b.fullname ? 1 : -1,
     },
     {
       title: '滑走順男子',
@@ -231,6 +216,7 @@ export function TeamTable(props: Props) {
       key: 'orderMale',
       inputType: 'number',
       editable: true,
+      sorter: (a: RecordType, b: RecordType) => a.orderMale - b.orderMale,
     },
     {
       title: '滑走順女子',
@@ -238,6 +224,7 @@ export function TeamTable(props: Props) {
       key: 'orderFemale',
       inputType: 'number',
       editable: true,
+      sorter: (a: RecordType, b: RecordType) => a.orderFemale - b.orderFemale,
     },
     {
       title: '選手数',
@@ -246,6 +233,7 @@ export function TeamTable(props: Props) {
           title: '合計',
           dataIndex: 'racerCount',
           key: 'racerCount',
+          sorter: (a: RecordType, b: RecordType) => a.racerCount - b.racerCount,
         },
         {
           title: 'スノーボード',
@@ -254,11 +242,15 @@ export function TeamTable(props: Props) {
               title: '男子',
               dataIndex: 'snowboardMaleCount',
               key: 'snowboardMaleCount',
+              sorter: (a: RecordType, b: RecordType) =>
+                a.snowboardMaleCount - b.snowboardMaleCount,
             },
             {
               title: '女子',
               dataIndex: 'snowboardFemaleCount',
               key: 'snowboardFemaleCount',
+              sorter: (a: RecordType, b: RecordType) =>
+                a.snowboardFemaleCount - b.snowboardFemaleCount,
             },
           ],
         },
@@ -269,11 +261,15 @@ export function TeamTable(props: Props) {
               title: '男子',
               dataIndex: 'skiMaleCount',
               key: 'skiMaleCount',
+              sorter: (a: RecordType, b: RecordType) =>
+                a.skiMaleCount - b.skiMaleCount,
             },
             {
               title: '女子',
               dataIndex: 'skiFemaleCount',
               key: 'skiFemaleCount',
+              sorter: (a: RecordType, b: RecordType) =>
+                a.skiFemaleCount - b.skiFemaleCount,
             },
           ],
         },
@@ -284,11 +280,15 @@ export function TeamTable(props: Props) {
               title: 'シニア',
               dataIndex: 'seniorCount',
               key: 'seniorCount',
+              sorter: (a: RecordType, b: RecordType) =>
+                a.seniorCount - b.seniorCount,
             },
             {
               title: 'ジュニア',
               dataIndex: 'juniorCount',
               key: 'juniorCount',
+              sorter: (a: RecordType, b: RecordType) =>
+                a.juniorCount - b.juniorCount,
             },
           ],
         },
@@ -302,12 +302,12 @@ export function TeamTable(props: Props) {
         return editable ? (
           <span>
             <Typography.Link
-              onClick={() => save(record.key)}
+              onClick={() => handleSave(record.key)}
               style={{ marginRight: 8 }}
             >
               保存
             </Typography.Link>
-            <Typography.Link onClick={cancel}>キャンセル</Typography.Link>
+            <Typography.Link onClick={handleCancel}>キャンセル</Typography.Link>
           </span>
         ) : (
           <span>
@@ -318,19 +318,16 @@ export function TeamTable(props: Props) {
             >
               編集
             </Typography.Link>
-            <Popconfirm title="削除します。よろしいですか？" onConfirm={cancel}>
-              <a>削除</a>
+            <Popconfirm
+              title="削除します。よろしいですか？"
+              onConfirm={() => handleDelete(record.key)}
+            >
+              <Typography.Link disabled={editingKey !== ''}>
+                削除
+              </Typography.Link>
             </Popconfirm>
           </span>
         );
-        // data.length >= 1 ? (
-        //   <Popconfirm
-        //     title="削除します。よろしいですか？"
-        //     onConfirm={() => onDelete(record.key)}
-        //   >
-        //     <a>削除</a>
-        //   </Popconfirm>
-        // ) : null,
       },
     },
   ];
@@ -354,7 +351,7 @@ export function TeamTable(props: Props) {
   return (
     <div>
       <h1>チーム</h1>
-      <Button type="primary">
+      <Button type="primary" style={{ marginBottom: 16 }}>
         <Link href="/prepare/teams/add">追加</Link>
       </Button>
       <Form form={form} component={false}>
@@ -364,10 +361,10 @@ export function TeamTable(props: Props) {
               cell: EditableCell,
             },
           }}
+          bordered
           dataSource={data}
           columns={mergedColumns}
-          pagination={{ onChange: cancel, defaultPageSize: 200 }}
-          bordered
+          pagination={{ position: [] }}
         />
       </Form>
     </div>
