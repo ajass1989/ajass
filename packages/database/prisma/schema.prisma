@@ -68,3 +68,20 @@ model Result {
 
   @@unique([set, racerId])
 }
+
+model Point {
+  id        String   @id @default(cuid())
+  category  String
+  gender    String
+  rank      Int
+  point     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SpecialPoint {
+  id        String   @id
+  point     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

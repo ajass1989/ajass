@@ -504,6 +504,34 @@ const TEST_RESULTS = [
   },
 ];
 
+const TEST_POINTS = [
+  {
+    id: 'male-ski-1',
+    category: 'ski',
+    gender: 'male',
+    rank: 1,
+    point: 130,
+  },
+  {
+    id: 'male-ski-2',
+    category: 'ski',
+    gender: 'male',
+    rank: 2,
+    point: 120,
+  },
+];
+
+const TEST_SPECIAL_POINTS = [
+  {
+    id: 'booby',
+    point: 20,
+  },
+  {
+    id: 'booby_maker',
+    point: 15,
+  },
+];
+
 (async () => {
   try {
     await Promise.all(
@@ -560,6 +588,36 @@ const TEST_RESULTS = [
               set: result.set!,
               racerId: result.racerId!,
             },
+          },
+          update: {
+            ...result,
+          },
+          create: {
+            ...result,
+          },
+        }),
+      ),
+    );
+    await Promise.all(
+      TEST_POINTS.map((result) =>
+        prisma.point.upsert({
+          where: {
+            id: result.id,
+          },
+          update: {
+            ...result,
+          },
+          create: {
+            ...result,
+          },
+        }),
+      ),
+    );
+    await Promise.all(
+      TEST_SPECIAL_POINTS.map((result) =>
+        prisma.specialPoint.upsert({
+          where: {
+            id: result.id,
           },
           update: {
             ...result,
