@@ -3,6 +3,26 @@ import { Prisma, prisma } from '@repo/database';
 import { ActionResult } from '../../actionResult';
 import { TeamDto } from './teamDto';
 
+export async function listTeams(): Promise<TeamDto[]> {
+  const teams = await prisma.team.findMany({
+    orderBy: {
+      fullname: 'asc',
+    },
+  });
+  return teams.map((team) => {
+    return {
+      key: team.id,
+      fullname: team.fullname,
+      shortname: team.shortname,
+      eventId: team.eventId,
+      orderMale: team.orderMale,
+      orderFemale: team.orderFemale,
+      createdAt: team.createdAt.getTime(),
+      updatedAt: team.updatedAt.getTime(),
+    };
+  });
+}
+
 export async function deleteTeam(id: string): Promise<ActionResult<void>> {
   try {
     await prisma.team.delete({

@@ -36,7 +36,7 @@ const items: MenuItem[] = [
       <UnorderedListOutlined />,
     ),
     getItem(<Link href="/prepare/teams">チーム</Link>, '22', <EditOutlined />),
-    getItem(<Link href="/prepare/racers">選手</Link>, '23', <EditOutlined />),
+    getItem(<Link href="/prepare/bibs">ビブ管理</Link>, '23', <EditOutlined />),
     getItem(
       <Link href="/prepare/points">ポイント</Link>,
       '24',

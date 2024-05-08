@@ -1,8 +1,8 @@
 import { prisma } from '@repo/database';
-import ClientTable from './clientTable';
+import { BibTable } from './bibTable';
 
 export default async function PrepareRacersPage() {
-  const dataSource = await prisma.racer.findMany({
+  const racers = await prisma.racer.findMany({
     where: {
       // eventId: '2023',
     },
@@ -16,5 +16,5 @@ export default async function PrepareRacersPage() {
       fullname: 'asc',
     },
   });
-  return <ClientTable dataSource={dataSource} teams={teams} />;
+  return <BibTable racers={racers} teams={teams} />;
 }
