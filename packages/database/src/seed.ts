@@ -506,18 +506,25 @@ const TEST_RESULTS = [
 
 const TEST_POINTS = [
   {
-    id: 'male-ski-1',
-    category: 'ski',
-    gender: 'male',
-    rank: 1,
-    point: 130,
+    id: 1,
+    pointSkiMale: 130,
+    pointSkiFemale: 130,
+    pointSnowboardMale: 65,
+    pointSnowboardFemale: 65,
   },
   {
-    id: 'male-ski-2',
-    category: 'ski',
-    gender: 'male',
-    rank: 2,
-    point: 120,
+    id: 2,
+    pointSkiMale: 120,
+    pointSkiFemale: 105,
+    pointSnowboardMale: 56,
+    pointSnowboardFemale: 42,
+  },
+  {
+    id: 3,
+    pointSkiMale: 112,
+    pointSkiFemale: 90,
+    pointSnowboardMale: 48,
+    pointSnowboardFemale: 30,
   },
 ];
 

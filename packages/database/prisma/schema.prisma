@@ -70,11 +70,11 @@ model Result {
 }
 
 model Point {
-  id        String   @id @default(cuid())
-  category  String
-  gender    String
-  rank      Int
-  point     Int
+  id                    Int      @id
+  pointSkiMale          Int
+  pointSkiFemale        Int
+  pointSnowboardMale    Int
+  pointSnowboardFemale  Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
