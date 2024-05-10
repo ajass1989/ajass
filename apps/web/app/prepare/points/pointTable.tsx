@@ -9,7 +9,6 @@ type Props = {
 
 type EditableTableProps = Parameters<typeof Table>[0];
 interface DataType {
-  //   key: string;
   key: number;
   pointSkiMale: number;
   pointSkiFemale: number;
