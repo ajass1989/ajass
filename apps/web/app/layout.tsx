@@ -1,10 +1,10 @@
 'use client';
 import './global.css';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
-import { Breadcrumb, Layout, Menu, MenuProps, theme } from 'antd';
+import { Layout, Menu, MenuProps, theme } from 'antd';
 import Sider from 'antd/es/layout/Sider';
 import { useState } from 'react';
-import { Content, Footer, Header } from 'antd/es/layout/layout';
+import { Content, Footer } from 'antd/es/layout/layout';
 import {
   EditOutlined,
   TeamOutlined,

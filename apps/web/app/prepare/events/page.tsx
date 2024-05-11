@@ -1,5 +1,5 @@
 import { prisma, Event } from '@repo/database';
-import ClientForm from './clientForm';
+import { ClientForm } from './clientForm';
 
 export default async function Page() {
   const dataSource: Event = await prisma.event.findFirstOrThrow({

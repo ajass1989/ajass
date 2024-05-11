@@ -1,4 +1,3 @@
-import { prisma } from '@repo/database';
 import { Button, Form, Input } from 'antd';
 
 type FieldType = {
@@ -7,15 +6,15 @@ type FieldType = {
 
 export default async function InputPage() {
   // const users = await prisma.racer.findMany();
-  async function hoge() {
-    'use server';
-    console.log('hoge');
-  }
+  // async function hoge() {
+  //   'use server';
+  //   console.log('hoge');
+  // }
 
   return (
     <div>
       <h1>入力</h1>
-      <Button type="primary" onClick={hoge}>
+      {/* <Button type="primary" onClick={hoge}>
         Button
       </Button>
       <form action={hoge}>
@@ -41,7 +40,7 @@ export default async function InputPage() {
         >
           <Input />
         </Form.Item>
-      </Form>
+      </Form> */}
     </div>
   );
 }

@@ -10,12 +10,10 @@ import {
   PopconfirmProps,
   Table,
 } from 'antd';
-import Link from 'next/link';
 import React, { useContext, useEffect, useRef } from 'react';
 import { useState } from 'react';
 import { UpdateBibParams, updateBibs } from './actions';
-import Search from 'antd/es/transfer/search';
-import { EditOutlined, SaveOutlined, SearchOutlined } from '@ant-design/icons';
+import { EditOutlined, SaveOutlined } from '@ant-design/icons';
 
 type Props = {
   racers: Racer[];

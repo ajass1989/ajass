@@ -19,7 +19,7 @@ export type FieldType = {
   management: string;
 };
 
-export default async function ClientForm(props: Props) {
+export function ClientForm(props: Props) {
   const [alertVisible, setAlertVisible] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
 

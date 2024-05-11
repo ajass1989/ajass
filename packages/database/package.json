@@ -10,7 +10,7 @@
     "db:reset": "prisma migrate reset --force",
     "db:push": "prisma db push",
     "db:seed": "tsx src/seed.ts",
-    "dev": "tsup --watch",
+    "dev": "prisma generate",
     "format": "prisma format",
     "generate": "prisma generate",
     "lint": "eslint . --max-warnings 0",
@@ -19,14 +19,15 @@
     "db:studio": "prisma studio"
   },
   "dependencies": {
-    "@prisma/client": "^5.10.2"
+    "@prisma/client": "^5.10.2",
+    "ts-node": "^10.9.2"
   },
   "devDependencies": {
     "@repo/eslint-config": "*",
+    "@repo/typescript-config": "*",
     "eslint": "^8.57.0",
     "prisma": "^5.10.2",
     "rimraf": "^5.0.5",
-    "@repo/typescript-config": "*",
     "tsx": "^4.7.1",
     "typescript": "^5.3.3"
   },
