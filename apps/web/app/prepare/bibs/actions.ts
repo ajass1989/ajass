@@ -16,7 +16,6 @@ export async function updateBibs(
     let results: RacerDto[] = [];
     await prisma.$transaction(async (prisma: PrismaClient) => {
       const promises = params.map(async (param: UpdateBibParams) => {
-        console.log(`updateBibs: ${param.id}, bib: ${param.bib}`);
         const newValue = await prisma.racer.update({
           where: { id: param.id },
           data: { bib: param.bib },

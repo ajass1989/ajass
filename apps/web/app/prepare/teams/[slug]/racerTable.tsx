@@ -9,12 +9,17 @@ import {
   Select,
   Switch,
   Table,
-  Typography,
 } from 'antd';
 import { addRacer, deleteRacer, updateRacer } from './actions';
 import { RacerType } from './editTeamForm';
 import { ActionResult } from '../../../actionResult';
 import { RacerDto } from '../racerDto';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  RollbackOutlined,
+  SaveOutlined,
+} from '@ant-design/icons';
 
 type Props = {
   title: string;
@@ -53,7 +58,6 @@ const EditableCell: React.FC<EditableCellProps> = ({
   title,
   inputType,
   record,
-  index,
   children,
   ...restProps
 }) => {
@@ -328,32 +332,43 @@ export function RacerTable(props: Props) {
         const editable = isEditing(record);
         return editable ? (
           <span>
-            <Typography.Link
+            <Button
+              icon={<SaveOutlined />}
               onClick={() => handleSave(record.key)}
+              size="small"
               style={{ marginRight: 8 }}
-            >
-              保存
-            </Typography.Link>
-            <Typography.Link onClick={() => handleCancel(record.key)}>
-              キャンセル
-            </Typography.Link>
+              title="保存"
+              type="primary"
+            />
+            <Button
+              icon={<RollbackOutlined />}
+              onClick={() => handleCancel(record.key)}
+              size="small"
+              title="キャンセル"
+            />
           </span>
         ) : (
           <span>
-            <Typography.Link
+            <Button
               disabled={editingKey !== ''}
-              style={{ marginRight: 8 }}
+              icon={<EditOutlined />}
               onClick={() => handleEdit(record)}
-            >
-              編集
-            </Typography.Link>
+              size="small"
+              style={{ marginRight: 8 }}
+              title="編集"
+              type="default"
+            />
             <Popconfirm
-              title="削除します。よろしいですか？"
               onConfirm={() => handleDelete(record.key)}
+              title="削除します。よろしいですか？"
             >
-              <Typography.Link disabled={editingKey !== ''}>
-                削除
-              </Typography.Link>
+              <Button
+                danger
+                disabled={editingKey !== ''}
+                icon={<DeleteOutlined />}
+                size="small"
+                title="削除"
+              />
             </Popconfirm>
           </span>
         );
@@ -404,7 +419,7 @@ export function RacerTable(props: Props) {
           bordered
           dataSource={dataSource}
           columns={mergedColumns}
-          pagination={{ position: [] }}
+          pagination={{ disabled: true }}
         />
       </Form>
     </div>

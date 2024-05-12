@@ -1,4 +1,4 @@
-import { Racer, Team, prisma } from '@repo/database';
+import { prisma } from '@repo/database';
 import { Prisma } from '@prisma/client';
 // import type { PrismaClient } from '@repo/database';
 import { TeamTable } from './teamTable';

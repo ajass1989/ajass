@@ -1,11 +1,11 @@
 'use client';
-import { Team, Racer } from '@repo/database';
+import { Racer, Team } from '@repo/database';
 import {
+  Alert,
   Button,
   Form,
-  FormInstance,
+  GetRef,
   InputNumber,
-  InputRef,
   Popconfirm,
   PopconfirmProps,
   Table,
@@ -13,12 +13,15 @@ import {
 import React, { useContext, useEffect, useRef } from 'react';
 import { useState } from 'react';
 import { UpdateBibParams, updateBibs } from './actions';
-import { EditOutlined, SaveOutlined } from '@ant-design/icons';
+import { EditOutlined } from '@ant-design/icons';
+import { AlertType } from '../../components/alertType';
 
 type Props = {
   racers: Racer[];
   teams: Team[];
 };
+
+type FormInstance<T> = GetRef<typeof Form<T>>;
 
 const EditableContext = React.createContext<FormInstance<any> | null>(null);
 
@@ -39,6 +42,7 @@ interface EditableRowProps {
   index: number;
 }
 
+// eslint-disable-next-line no-unused-vars
 const EditableRow: React.FC<EditableRowProps> = ({ index, ...props }) => {
   const [form] = Form.useForm();
   return (
@@ -56,11 +60,11 @@ interface EditableCellProps {
   children: React.ReactNode;
   dataIndex: keyof Item;
   record: Item;
+  // eslint-disable-next-line no-unused-vars
   handleSave: (record: Item) => void;
 }
 
 const EditableCell: React.FC<EditableCellProps> = ({
-  title,
   editable,
   children,
   dataIndex,
@@ -69,8 +73,9 @@ const EditableCell: React.FC<EditableCellProps> = ({
   ...restProps
 }) => {
   const [editing, setEditing] = useState(false);
-  const inputRef = useRef<InputRef>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const form = useContext(EditableContext)!;
+  const [editButtonVisible, setEditButtonVisible] = useState(false);
 
   useEffect(() => {
     if (editing) {
@@ -83,53 +88,53 @@ const EditableCell: React.FC<EditableCellProps> = ({
     form.setFieldsValue({ [dataIndex]: record[dataIndex] });
   };
 
+  const showEditButton = () => {
+    setEditButtonVisible(true);
+  };
+
+  const hideEditButton = () => {
+    setEditButtonVisible(false);
+  };
+
   const save = async () => {
     try {
       const values = await form.validateFields();
       toggleEdit();
+      setEditButtonVisible(false);
       handleSave({ ...record, ...values });
     } catch (errInfo) {
-      console.log('Save failed:', errInfo);
+      // showAlert('error', '保存に失敗しました。');
+      console.error('Save failed:', errInfo);
     }
   };
 
   let childNode = children;
 
   if (editable) {
+    // console.log(`editable ${record['bib']} ${dataIndex}`);
     childNode = editing ? (
-      <div style={{ display: 'flex' }}>
-        <Button
-          icon={<SaveOutlined />}
-          size="small"
-          style={{ marginRight: 8 }}
-          onClick={save}
-        />
-        <Form.Item
-          style={{ margin: 0 }}
-          name={dataIndex}
-          rules={[
-            {
-              required: true,
-              message: `${title} is required.`,
-            },
-          ]}
-        >
-          <InputNumber />
-        </Form.Item>
-      </div>
+      <Form.Item
+        style={{ margin: 0 }}
+        name={dataIndex}
+        initialValue={record['bib']}
+      >
+        <InputNumber ref={inputRef} onPressEnter={save} onBlur={save} />
+      </Form.Item>
     ) : (
-      <div className="editable-cell-value-wrap" style={{ paddingRight: 8 }}>
-        <Button
-          icon={<EditOutlined />}
-          size="small"
-          style={{ marginRight: 8 }}
-          onClick={toggleEdit}
-        />
+      <div
+        className="editable-cell-value-wrap"
+        style={{ paddingRight: 24 }}
+        onClick={toggleEdit}
+        onMouseOver={showEditButton}
+        onMouseOut={hideEditButton}
+      >
+        {editButtonVisible && <Button icon={<EditOutlined />} size="small" />}
         {children}
       </div>
     );
+  } else {
+    // console.log(`not editable`);
   }
-
   return <td {...restProps}>{childNode}</td>;
 };
 
@@ -151,7 +156,9 @@ interface DataType {
 type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
 
 export function BibTable(props: Props) {
-  // const [form] = Form.useForm();
+  const [alertType, setAlertType] = useState<AlertType>('error');
+  const [alertVisible, setAlertVisible] = useState<boolean>(false);
+  const [alertMessage, setAlertMessage] = useState<string>('');
 
   // 種目の値構築
   const summary = (record: Racer) => {
@@ -172,7 +179,8 @@ export function BibTable(props: Props) {
   };
 
   // ソート順を定義
-  const sortOrderSummary: { [key in Item['summary']]: number } = {
+  // eslint-disable-next-line no-unused-vars
+  const sortOrderSummary: { [key in DataType['summary']]: number } = {
     ジュニア: 0,
     女子スノーボード: 1,
     男子スノーボード: 2,
@@ -250,13 +258,6 @@ export function BibTable(props: Props) {
     });
 
   const [dataSource, setDataSource] = useState<DataType[]>(data);
-  const [editingKey, setEditingKey] = useState('');
-
-  const isEditing = (record: Item) => record.key === editingKey;
-
-  const cancel = () => {
-    setEditingKey('');
-  };
 
   const defaultColumns: (ColumnTypes[number] & {
     editable?: boolean;
@@ -265,33 +266,27 @@ export function BibTable(props: Props) {
     {
       title: '種目',
       dataIndex: 'summary',
-      key: 'summary',
     },
     {
       title: 'ビブ',
       dataIndex: 'bib',
-      key: 'bib',
       editable: true,
     },
     {
       title: 'シード',
       dataIndex: 'seed',
-      key: 'seed',
     },
     {
       title: '選手名',
       dataIndex: 'name',
-      key: 'name',
     },
     {
       title: 'ふりがな',
       dataIndex: 'kana',
-      key: 'kana',
     },
     {
       title: '所属',
       dataIndex: 'team',
-      key: 'team',
       render: (_: any, record) => (
         <span>
           {props.teams.find((item: Team) => item.id == record.teamId)
@@ -302,7 +297,6 @@ export function BibTable(props: Props) {
   ];
 
   const handleSave = async (row: DataType) => {
-    console.log('handleSave()');
     const result = await updateBibs([{ id: row.key, bib: row.bib }]);
     if (result.success) {
       const newData = [...dataSource];
@@ -314,7 +308,7 @@ export function BibTable(props: Props) {
       });
       setDataSource(newData);
     } else {
-      // TODO エラー表示
+      showAlert('error', result.error);
     }
   };
 
@@ -324,7 +318,7 @@ export function BibTable(props: Props) {
     }
     return {
       ...col,
-      onCell: (record: Item) => ({
+      onCell: (record: DataType) => ({
         record,
         editable: col.editable,
         dataIndex: col.dataIndex,
@@ -334,7 +328,7 @@ export function BibTable(props: Props) {
     };
   });
 
-  const getRowStyle = (record: DataType, index: number) => {
+  const getRowStyle = (record: DataType) => {
     // インデックスに基づいて交互に色を変更する例
     switch (record.summary) {
       case 'ジュニア':
@@ -353,13 +347,12 @@ export function BibTable(props: Props) {
     return { backgroundColor: '#ffffff' };
   };
 
-  const handleUpdateBibs: PopconfirmProps['onConfirm'] = async (e) => {
-    console.log(`handleUpdateBibs()`);
+  const handleUpdateBibs: PopconfirmProps['onConfirm'] = async () => {
     const params = dataSource.map((data, index): UpdateBibParams => {
       return { id: data.key, bib: index + 1 };
     });
     const result = await updateBibs(params);
-    if (result) {
+    if (result.success) {
       const newDataSource: DataType[] = dataSource.map((data) => {
         return {
           ...data,
@@ -367,10 +360,23 @@ export function BibTable(props: Props) {
         };
       });
       setDataSource(newDataSource);
+      showAlert('success', 'ビブを一括付与しました。');
     } else {
-      // TODO エラー表示
+      showAlert('error', 'ビブの一括付与に失敗しました。');
     }
-    console.log(`result: ${result.success}`);
+  };
+
+  // Alert を表示する関数
+  const showAlert = (alertType: AlertType, error?: string) => {
+    setAlertMessage(error ?? '');
+    setAlertVisible(true);
+    setAlertType(alertType);
+  };
+
+  // Alert を非表示にする関数
+  const closeAlert = () => {
+    setAlertMessage('');
+    setAlertVisible(false);
   };
 
   return (
@@ -383,10 +389,18 @@ export function BibTable(props: Props) {
         okText="はい"
         cancelText="キャンセル"
       >
-        <Button type="primary" style={{ marginBottom: 16, marginRight: 16 }}>
+        <Button style={{ marginBottom: 16, marginRight: 16 }} type="primary">
           ビブ一括付与
         </Button>
       </Popconfirm>
+      {alertVisible && (
+        <Alert
+          message={alertMessage}
+          type={alertType}
+          closable
+          onClose={closeAlert}
+        />
+      )}
       <Table
         components={{
           body: {
@@ -396,10 +410,10 @@ export function BibTable(props: Props) {
         }}
         dataSource={dataSource}
         columns={columns as ColumnTypes}
-        pagination={{ position: [], defaultPageSize: 200 }}
-        onRow={(record: any, index: any) => {
+        pagination={{ disabled: true }}
+        onRow={(record: any) => {
           return {
-            style: getRowStyle(record, index || 0), // 背景色をスタイルで指定
+            style: getRowStyle(record), // 背景色をスタイルで指定
           };
         }}
       />

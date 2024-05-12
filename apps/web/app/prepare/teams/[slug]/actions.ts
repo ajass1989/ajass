@@ -82,15 +82,10 @@ export async function addRacer(
       },
     };
   } catch (e) {
-    // if (e instanceof Prisma.PrismaClientKnownRequestError) {
-    //   if (e.code === 'P2025') {
-    //     return {
-    //       success: false,
-    //       error: '保存に失敗しました。指定したキーが見つかりません。',
-    //     };
-    //   }
-    // }
-    throw e;
+    return {
+      success: false,
+      error: '追加に失敗しました。',
+    };
   }
 }
 
