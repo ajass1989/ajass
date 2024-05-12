@@ -419,7 +419,7 @@ export function RacerTable(props: Props) {
           bordered
           dataSource={dataSource}
           columns={mergedColumns}
-          pagination={{ disabled: true }}
+          pagination={false}
         />
       </Form>
     </div>

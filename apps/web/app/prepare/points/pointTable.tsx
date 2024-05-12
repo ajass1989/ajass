@@ -211,7 +211,7 @@ export function PointTable(props: Props) {
         columns={columns as ColumnTypes}
         components={{ body: { row: EditableRow, cell: EditableCell } }}
         dataSource={data}
-        pagination={{ disabled: true }}
+        pagination={false}
       />
     </>
   );

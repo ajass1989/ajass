@@ -15,6 +15,15 @@ import { useState } from 'react';
 import { UpdateBibParams, updateBibs } from './actions';
 import { EditOutlined } from '@ant-design/icons';
 import { AlertType } from '../../components/alertType';
+import {
+  bgColorDefault,
+  bgColorJunior,
+  bgColorSenior,
+  bgColorSkiFemale,
+  bgColorSkiMale,
+  bgColorSnowboardFemale,
+  bgColorSnowboardMale,
+} from '../../colors';
 
 type Props = {
   racers: Racer[];
@@ -332,19 +341,19 @@ export function BibTable(props: Props) {
     // インデックスに基づいて交互に色を変更する例
     switch (record.summary) {
       case 'ジュニア':
-        return { backgroundColor: '#fffbe6' };
+        return { backgroundColor: bgColorJunior };
       case '女子スノーボード':
-        return { backgroundColor: '#fff0f6' };
+        return { backgroundColor: bgColorSnowboardFemale };
       case '男子スノーボード':
-        return { backgroundColor: '#f6ffed' };
+        return { backgroundColor: bgColorSnowboardMale };
       case '女子スキー':
-        return { backgroundColor: '#fff1f0' };
+        return { backgroundColor: bgColorSkiFemale };
       case 'シニア':
-        return { backgroundColor: '#fff7e6' };
+        return { backgroundColor: bgColorSenior };
       case '男子スキー':
-        return { backgroundColor: '#e6f4ff' };
+        return { backgroundColor: bgColorSkiMale };
     }
-    return { backgroundColor: '#ffffff' };
+    return { backgroundColor: bgColorDefault };
   };
 
   const handleUpdateBibs: PopconfirmProps['onConfirm'] = async () => {
@@ -410,7 +419,7 @@ export function BibTable(props: Props) {
         }}
         dataSource={dataSource}
         columns={columns as ColumnTypes}
-        pagination={{ disabled: true }}
+        pagination={false}
         onRow={(record: any) => {
           return {
             style: getRowStyle(record), // 背景色をスタイルで指定

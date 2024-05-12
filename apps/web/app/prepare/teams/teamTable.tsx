@@ -375,7 +375,7 @@ export function TeamTable(props: Props) {
           bordered
           dataSource={data}
           columns={mergedColumns}
-          pagination={{ disabled: true }}
+          pagination={false}
         />
       </Form>
     </div>
