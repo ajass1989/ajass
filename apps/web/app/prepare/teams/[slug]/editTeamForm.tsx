@@ -64,7 +64,8 @@ export function EditTeamForm(props: Props) {
     };
     const res = await updateTeam(team);
     if (res.success) {
-      localStorage.setItem('newTeam', JSON.stringify(res.result)); // ローカルストレージに保存
+      // eslint-disable-next-line no-undef
+      localStorage.setItem('newTeam', JSON.stringify(res.result));
       router.push(`/prepare/teams`);
     } else {
       showAlert(res.error);

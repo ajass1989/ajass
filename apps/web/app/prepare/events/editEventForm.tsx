@@ -4,6 +4,7 @@ import { Alert, Button, DatePicker, Form, FormProps, Input } from 'antd';
 import { EventType, updateEvent } from './actions';
 import moment from 'moment';
 import { useState } from 'react';
+import { AlertType } from '../../components/alertType';
 
 type Props = {
   dataSource: Event;
@@ -19,14 +20,17 @@ export type FieldType = {
   management: string;
 };
 
-export function ClientForm(props: Props) {
+export function EditEventForm(props: Props) {
+  const [alertType, setAlertType] = useState<AlertType>('error');
   const [alertVisible, setAlertVisible] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [alertMessage, setErrorMessage] = useState<string>('');
+  const [edited, setEdited] = useState<boolean>(false);
 
   // Alert を表示する関数
-  const showAlert = (error?: string) => {
+  const showAlert = (alertType: AlertType, error?: string) => {
     setErrorMessage(error ?? '');
     setAlertVisible(true);
+    setAlertType(alertType);
   };
 
   // Alert を非表示にする関数
@@ -38,7 +42,6 @@ export function ClientForm(props: Props) {
   const onFinish: FormProps<FieldType>['onFinish'] = async (
     values: FieldType,
   ) => {
-    console.log('Success:', values);
     const event: EventType = {
       id: values.key,
       name: values.name,
@@ -50,8 +53,10 @@ export function ClientForm(props: Props) {
     };
     const res = await updateEvent(event);
     if (res.success) {
+      setEdited(false);
+      showAlert('success', '保存しました。');
     } else {
-      showAlert(res.error);
+      showAlert('error', res.error);
     }
   };
 
@@ -62,13 +67,18 @@ export function ClientForm(props: Props) {
   };
 
   const data = props.dataSource;
+
+  const handleChange = () => {
+    setEdited(true);
+  };
+
   return (
     <div>
       <h1>大会</h1>
       {alertVisible && (
         <Alert
-          message={errorMessage}
-          type="error"
+          message={alertMessage}
+          type={alertType}
           closable
           onClose={closeAlert}
         />
@@ -93,7 +103,7 @@ export function ClientForm(props: Props) {
           rules={[{ required: true, message: '大会名は必須です。' }]}
           initialValue={data.name}
         >
-          <Input />
+          <Input onChange={handleChange} />
         </Form.Item>
 
         <Form.Item<FieldType>
@@ -102,7 +112,7 @@ export function ClientForm(props: Props) {
           rules={[{ required: true, message: '開催日は必須です。' }]}
           initialValue={moment(data.date)}
         >
-          <DatePicker />
+          <DatePicker onChange={handleChange} />
         </Form.Item>
 
         <Form.Item<FieldType>
@@ -110,11 +120,11 @@ export function ClientForm(props: Props) {
           name="location"
           initialValue={data.location}
         >
-          <Input />
+          <Input onChange={handleChange} />
         </Form.Item>
 
         <Form.Item<FieldType> label="競技" name="race" initialValue={data.race}>
-          <Input />
+          <Input onChange={handleChange} />
         </Form.Item>
 
         <Form.Item<FieldType>
@@ -122,7 +132,7 @@ export function ClientForm(props: Props) {
           name="setter"
           initialValue={data.setter}
         >
-          <Input />
+          <Input onChange={handleChange} />
         </Form.Item>
 
         <Form.Item<FieldType>
@@ -130,11 +140,11 @@ export function ClientForm(props: Props) {
           name="management"
           initialValue={data.management}
         >
-          <Input />
+          <Input onChange={handleChange} />
         </Form.Item>
 
         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-          <Button type="primary" htmlType="submit">
+          <Button type="primary" htmlType="submit" disabled={!edited}>
             保存
           </Button>
         </Form.Item>

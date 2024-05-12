@@ -1,18 +1,16 @@
 'use client';
-import {
-  Button,
-  Form,
-  InputNumber,
-  Popconfirm,
-  Table,
-  TableProps,
-  Typography,
-} from 'antd';
+import { Button, Form, InputNumber, Popconfirm, Table, TableProps } from 'antd';
 import Link from 'next/link';
 import { deleteTeam, updateTeamOrder } from './actions';
 import React, { useEffect, useState } from 'react';
 import { TeamDto } from './teamDto';
 import { TeamsWithRacers } from './page';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  RollbackOutlined,
+  SaveOutlined,
+} from '@ant-design/icons';
 
 type Props = {
   dataSource: TeamsWithRacers;
@@ -54,9 +52,6 @@ export function TeamTable(props: Props) {
     editing,
     dataIndex,
     title,
-    inputType,
-    record,
-    index,
     children,
     ...restProps
   }) => {
@@ -125,9 +120,11 @@ export function TeamTable(props: Props) {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line no-undef
     const teamData = localStorage.getItem('newTeam');
     if (teamData) {
       setNewTeam(JSON.parse(teamData));
+      // eslint-disable-next-line no-undef
       localStorage.removeItem('newTeam'); // 読み込み後は削除
     }
   }, []);
@@ -301,30 +298,44 @@ export function TeamTable(props: Props) {
         const editable = isEditing(record);
         return editable ? (
           <span>
-            <Typography.Link
+            <Button
+              icon={<SaveOutlined />}
               onClick={() => handleSave(record.key)}
+              size="small"
               style={{ marginRight: 8 }}
-            >
-              保存
-            </Typography.Link>
-            <Typography.Link onClick={handleCancel}>キャンセル</Typography.Link>
+              title="保存"
+              type="primary"
+            />
+            <Button
+              icon={<RollbackOutlined />}
+              onClick={handleCancel}
+              size="small"
+              title="キャンセル"
+            />
           </span>
         ) : (
           <span>
-            <Typography.Link
+            <Button
               disabled={editingKey !== ''}
+              icon={<EditOutlined />}
               onClick={() => edit(record)}
+              size="small"
               style={{ marginRight: 8 }}
-            >
-              編集
-            </Typography.Link>
+              title="編集"
+              type="default"
+            />
             <Popconfirm
-              title="削除します。よろしいですか？"
               onConfirm={() => handleDelete(record.key)}
+              title="削除します。よろしいですか？"
             >
-              <Typography.Link disabled={editingKey !== ''}>
-                削除
-              </Typography.Link>
+              <Button
+                danger
+                disabled={editingKey !== ''}
+                icon={<DeleteOutlined />}
+                size="small"
+                title="削除"
+                type="default"
+              />
             </Popconfirm>
           </span>
         );
@@ -364,7 +375,7 @@ export function TeamTable(props: Props) {
           bordered
           dataSource={data}
           columns={mergedColumns}
-          pagination={{ position: [] }}
+          pagination={{ disabled: true }}
         />
       </Form>
     </div>
