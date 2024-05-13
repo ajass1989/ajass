@@ -1,11 +1,11 @@
-import { prisma } from '@repo/database';
+import { Point, prisma } from '@repo/database';
 import { PointTable } from './pointTable';
 import { Tabs, TabsProps } from 'antd';
 import { LineChartOutlined, TableOutlined } from '@ant-design/icons';
 import { PointChart } from './pointChart';
 
-export default async function PreparePointsPage() {
-  const points = await prisma.point.findMany();
+export async function PreparePointsPage() {
+  const points = await getPoints();
 
   const items: TabsProps['items'] = [
     {
@@ -28,4 +28,8 @@ export default async function PreparePointsPage() {
       <Tabs defaultActiveKey="table" type="card" items={items} />
     </div>
   );
+}
+
+export async function getPoints(): Promise<Point[]> {
+  return await prisma.point.findMany();
 }

@@ -1,12 +1,16 @@
-import { prisma } from '@repo/database';
+import { Racer, Team, prisma } from '@repo/database';
 import { EditTeamForm } from './editTeamForm';
 
-export default async function Page({ params }: { params: { slug: string } }) {
-  const team = await prisma.team.findFirstOrThrow({
-    where: { id: params.slug },
+export async function Page({ params }: { params: { slug: string } }) {
+  const team = await getTeam(params.slug);
+  return <EditTeamForm team={team} />;
+}
+
+export async function getTeam(id: string): Promise<Team & { racers: Racer[] }> {
+  return await prisma.team.findFirstOrThrow({
+    where: { id: id },
     include: {
       racers: true,
     },
   });
-  return <EditTeamForm team={team} />;
 }
