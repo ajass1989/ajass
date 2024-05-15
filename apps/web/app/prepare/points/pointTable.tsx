@@ -39,7 +39,6 @@ interface EditableCellProps {
 }
 
 const EditableCell: React.FC<EditableCellProps> = ({
-  // title,
   editable,
   children,
   dataIndex,

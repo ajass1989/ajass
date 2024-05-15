@@ -7,13 +7,7 @@ export async function addTeam(
   values: TeamRequestDto,
 ): Promise<ActionResult<Team>> {
   try {
-    const data: Prisma.TeamUncheckedCreateInput = {
-      fullname: values.fullname,
-      shortname: values.shortname,
-      eventId: values.eventId,
-      orderMale: values.orderMale,
-      orderFemale: values.orderFemale,
-    };
+    const data: Prisma.TeamUncheckedCreateInput = { ...values };
     const newValues = await prisma.team.create({ data: data });
     return {
       success: true,

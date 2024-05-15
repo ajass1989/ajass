@@ -165,9 +165,7 @@ export function RacerTable(props: Props) {
   };
 
   const handleEdit = (record: Partial<Item> & { key: React.Key }) => {
-    form.setFieldsValue({
-      ...record,
-    });
+    form.setFieldsValue({ ...record });
     setEditingKey(record.key as string);
   };
 
@@ -199,7 +197,7 @@ export function RacerTable(props: Props) {
 
   const handleSave = async (key: React.Key) => {
     try {
-      const row = (await form.validateFields()) as Item; // TODO調査 個々で取得したrowでgenderの値がundefinedになっている。画面から取得しようとしているのが原因
+      const row = (await form.validateFields()) as Item;
       const newDataSource = [...dataSource];
       const index = dataSource.findIndex((item) => key === item.key);
       let result: ActionResult<Racer>;

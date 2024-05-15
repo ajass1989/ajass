@@ -27,23 +27,14 @@ export async function updateTeam(
   values: TeamRequestDto,
 ): Promise<ActionResult<Team>> {
   try {
-    const data: Prisma.TeamUncheckedUpdateInput = {
-      fullname: values.fullname,
-      shortname: values.shortname,
-      eventId: values.eventId,
-      orderMale: values.orderMale,
-      orderFemale: values.orderFemale,
-    };
-    console.log(data);
+    const data: Prisma.TeamUncheckedUpdateInput = { ...values };
     const newValues = await prisma.team.update({
       where: { id: id },
       data: data,
     });
     return {
       success: true,
-      result: {
-        ...newValues,
-      },
+      result: { ...newValues },
     };
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
@@ -70,22 +61,7 @@ export async function addRacer(
     });
     return {
       success: true,
-      result: {
-        ...newValues,
-        // id: newValues.id,
-        // name: newValues.name,
-        // kana: newValues.kana,
-        // category: newValues.category,
-        // bib: null,
-        // gender: newValues.gender,
-        // seed: newValues.seed,
-        // teamId: newValues.teamId,
-        // isFirstTime: newValues.isFirstTime,
-        // age: newValues.age,
-        // special: newValues.special,
-        // createdAt: newValues.createdAt,
-        // updatedAt: newValues.updatedAt,
-      },
+      result: { ...newValues },
     };
   } catch (e) {
     return {
@@ -100,40 +76,14 @@ export async function updateRacer(
   values: RacerRequestDto,
 ): Promise<ActionResult<Racer>> {
   try {
-    const data: Prisma.RacerUncheckedUpdateInput = {
-      ...values,
-      // name: values.name,
-      // kana: values.kana,
-      // category: values.category,
-      // gender: values.gender,
-      // seed: values.seed,
-      // teamId: values.teamId,
-      // isFirstTime: values.isFirstTime,
-      // age: values.age,
-      // special: values.special,
-    };
+    const data: Prisma.RacerUncheckedUpdateInput = { ...values };
     const newValues = await prisma.racer.update({
       where: { id: id },
       data: data,
     });
     return {
       success: true,
-      result: {
-        ...newValues,
-        // id: newValues.id,
-        // name: newValues.name,
-        // kana: newValues.kana,
-        // category: newValues.category,
-        // bib: null,
-        // gender: newValues.gender,
-        // seed: newValues.seed,
-        // teamId: newValues.teamId,
-        // isFirstTime: newValues.isFirstTime,
-        // age: newValues.age,
-        // special: newValues.special,
-        // createdAt: newValues.createdAt,
-        // updatedAt: newValues.updatedAt,
-      },
+      result: { ...newValues },
     };
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
