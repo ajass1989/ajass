@@ -1,12 +1,11 @@
 'use server';
-import { Prisma, prisma } from '@repo/database';
+import { Prisma, Team, prisma } from '@repo/database';
 import { ActionResult } from '../../../actionResult';
 import { TeamRequestDto } from '../teamRequestDto';
-import { TeamResponseDto } from '../teamResponseDto';
 
 export async function addTeam(
   values: TeamRequestDto,
-): Promise<ActionResult<TeamResponseDto>> {
+): Promise<ActionResult<Team>> {
   try {
     const data: Prisma.TeamUncheckedCreateInput = {
       fullname: values.fullname,
@@ -15,21 +14,10 @@ export async function addTeam(
       orderMale: values.orderMale,
       orderFemale: values.orderFemale,
     };
-    const newValues = await prisma.team.create({
-      data: data,
-    });
+    const newValues = await prisma.team.create({ data: data });
     return {
       success: true,
-      result: {
-        id: newValues.id,
-        fullname: newValues.fullname,
-        shortname: newValues.shortname,
-        eventId: newValues.eventId,
-        orderMale: newValues.orderMale,
-        orderFemale: newValues.orderFemale,
-        createdAt: newValues.createdAt.getTime() / 1000,
-        updatedAt: newValues.updatedAt.getTime() / 1000,
-      },
+      result: { ...newValues },
     };
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {

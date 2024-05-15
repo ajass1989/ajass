@@ -34,7 +34,6 @@ interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
   editing: boolean;
   dataIndex: string;
   title: any;
-  // inputType: 'number';
   index: number;
   record: RecordType;
   children: React.ReactNode;
@@ -46,14 +45,13 @@ export function TeamTable(props: Props) {
   const [dataSource, setDataSource] = useState<TeamsWithRacers>(
     props.dataSource,
   );
-  const [newTeam, setNewTeam] = useState<Team /*ResponseDto*/ | null>(null);
+  const [newTeam, setNewTeam] = useState<Team | null>(null);
 
   const EditableCell: React.FC<EditableCellProps> = ({
     editing,
     dataIndex,
     title,
     children,
-    // inputType,
     ...restProps
   }) => {
     return (
@@ -201,7 +199,6 @@ export function TeamTable(props: Props) {
       title: 'チーム名',
       dataIndex: 'fullname',
       key: 'fullname',
-      // inputType: 'text',
       render: (_: any, record: RecordType) => (
         <Link href={`/prepare/teams/${record.key}`}>{record.fullname}</Link>
       ),
@@ -212,7 +209,6 @@ export function TeamTable(props: Props) {
       title: '滑走順男子',
       dataIndex: 'orderMale',
       key: 'orderMale',
-      // inputType: 'number',
       editable: true,
       sorter: (a: RecordType, b: RecordType) => a.orderMale - b.orderMale,
     },
@@ -220,7 +216,6 @@ export function TeamTable(props: Props) {
       title: '滑走順女子',
       dataIndex: 'orderFemale',
       key: 'orderFemale',
-      // inputType: 'number',
       editable: true,
       sorter: (a: RecordType, b: RecordType) => a.orderFemale - b.orderFemale,
     },
@@ -352,7 +347,6 @@ export function TeamTable(props: Props) {
       ...col,
       onCell: (record: RecordType) => ({
         record,
-        // inputType: col.inputType,
         dataIndex: col.dataIndex,
         title: col.title,
         editing: isEditing(record),

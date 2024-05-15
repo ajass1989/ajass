@@ -21,7 +21,6 @@ import {
   SaveOutlined,
 } from '@ant-design/icons';
 import { Racer } from '@repo/database';
-// import { RacerResponseDto } from '../racerResponseDto';
 
 type Props = {
   title: string;
@@ -123,7 +122,7 @@ interface DataType {
   name: string;
   kana: string;
   category: string;
-  age: number;
+  age: number | null;
   isFirstTime: boolean;
   gender: string;
   seed: number;
@@ -132,14 +131,7 @@ interface DataType {
 export function RacerTable(props: Props) {
   const [form] = Form.useForm();
   const _data: DataType[] = props.dataSource.map((item: RacerType) => ({
-    key: item.key,
-    name: item.name,
-    kana: item.kana,
-    category: item.category,
-    age: item.age ?? 0,
-    isFirstTime: item.isFirstTime,
-    gender: item.gender,
-    seed: item.seed,
+    ...item,
   }));
   const [dataSource, setDataSource] = useState<DataType[]>(_data);
   const [count, setCount] = useState<number>(_data.length);
@@ -194,14 +186,12 @@ export function RacerTable(props: Props) {
       name: ``,
       kana: '',
       category: 'ski',
-      age: 0,
+      age: null,
       isFirstTime: false,
       gender: 'm', // TODO 上位からの引き回し
       seed: newCount,
     };
-    form.setFieldsValue({
-      ...newData,
-    });
+    form.setFieldsValue({ ...newData });
     setDataSource([...dataSource, newData]);
     setEditingKey(newData.key);
     setCount(count + 1);
@@ -212,7 +202,7 @@ export function RacerTable(props: Props) {
       const row = (await form.validateFields()) as Item; // TODO調査 個々で取得したrowでgenderの値がundefinedになっている。画面から取得しようとしているのが原因
       const newDataSource = [...dataSource];
       const index = dataSource.findIndex((item) => key === item.key);
-      let result: ActionResult<Racer /*ResponseDto*/>;
+      let result: ActionResult<Racer>;
       const gender = props.special == 'normal' ? props.gender! : row.gender;
       const category =
         props.special == 'normal' ? props.category! : row.category;

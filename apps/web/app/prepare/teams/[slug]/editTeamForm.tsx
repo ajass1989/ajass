@@ -4,13 +4,11 @@ import { updateTeam } from './actions';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { RacerTable } from './racerTable';
-// import { RacerResponseDto } from '../racerResponseDto';
-// import { TeamResponseDto } from '../teamResponseDto';
 import { Racer, Team } from '@repo/database';
 
 type Props = {
-  team: Team /*ResponseDto*/ & {
-    racers: Racer /*ResponseDto*/[];
+  team: Team & {
+    racers: Racer[];
   };
 };
 

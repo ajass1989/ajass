@@ -1,19 +1,13 @@
 'use server';
 import { Prisma, Racer, Team, prisma } from '@repo/database';
 import { ActionResult } from '../../actionResult';
-import {
-  // TeamResponseDto,
-  TeamWithRacers /*ResponseWithRacersDto*/,
-} from './teamResponseDto';
-// import { RacerResponseDto } from './racerResponseDto';
+import { TeamWithRacers } from './teamResponseDto';
 
 export type TeamsWithRacers = Prisma.PromiseReturnType<
   typeof listTeamsWithRacers
 >;
 
-export async function listTeamsWithRacers(): Promise<
-  TeamWithRacers /*TeamResponseWithRacersDto*/[]
-> {
+export async function listTeamsWithRacers(): Promise<TeamWithRacers[]> {
   const teams = await prisma.team.findMany({
     where: {
       eventId: '2023',
@@ -26,54 +20,21 @@ export async function listTeamsWithRacers(): Promise<
     },
   });
   const ts = teams.map((team) => {
-    const rs: Racer /*ResponseDto*/[] = team.racers.map((racer) => ({
-      id: racer.id,
-      name: racer.name,
-      kana: racer.kana,
-      category: racer.category,
-      bib: racer.bib,
-      gender: racer.gender,
-      seed: racer.seed,
-      teamId: racer.teamId,
-      isFirstTime: racer.isFirstTime,
-      age: racer.age,
-      special: racer.special,
-      createdAt: racer.createdAt,
-      updatedAt: racer.updatedAt,
-    }));
-    const t = {
-      id: team.id,
-      fullname: team.fullname,
-      shortname: team.shortname,
-      eventId: team.eventId,
-      orderMale: team.orderMale,
-      orderFemale: team.orderFemale,
-      createdAt: team.createdAt,
-      updatedAt: team.updatedAt,
-      racers: rs,
-    };
+    const rs: Racer[] = team.racers.map((racer) => ({ ...racer }));
+    const t = { ...team, racers: rs };
     return t;
   });
   return ts;
 }
 
-export async function listTeams(): Promise<Team /*ResponseDto*/[]> {
+export async function listTeams(): Promise<Team[]> {
   const teams = await prisma.team.findMany({
     orderBy: {
       fullname: 'asc',
     },
   });
   return teams.map((team) => {
-    return {
-      id: team.id,
-      fullname: team.fullname,
-      shortname: team.shortname,
-      eventId: team.eventId,
-      orderMale: team.orderMale,
-      orderFemale: team.orderFemale,
-      createdAt: team.createdAt,
-      updatedAt: team.updatedAt,
-    };
+    return { ...team };
   });
 }
 

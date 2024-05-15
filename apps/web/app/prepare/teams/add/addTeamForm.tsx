@@ -34,13 +34,7 @@ export function AddTeamForm() {
   const onFinish: FormProps<FieldType>['onFinish'] = async (
     values: FieldType,
   ) => {
-    const team: TeamRequestDto = {
-      fullname: values.fullname,
-      shortname: values.shortname,
-      eventId: values.eventId,
-      orderMale: values.orderMale,
-      orderFemale: values.orderFemale,
-    };
+    const team: TeamRequestDto = { ...values };
     const res = await addTeam(team);
     if (res.success) {
       // eslint-disable-next-line no-undef

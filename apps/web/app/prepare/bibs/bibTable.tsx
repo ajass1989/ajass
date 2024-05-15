@@ -23,13 +23,11 @@ import {
   bgColorSnowboardFemale,
   bgColorSnowboardMale,
 } from '../../colors';
-// import { RacerResponseDto } from '../teams/racerResponseDto';
-// import { TeamResponseDto } from '../teams/teamResponseDto';
 import { Racer, Team } from '@repo/database';
 
 type Props = {
-  racers: Racer /*ResponseDto*/[];
-  teams: Team /*ResponseDto*/[];
+  racers: Racer[];
+  teams: Team[];
 };
 
 type FormInstance<T> = GetRef<typeof Form<T>>;
@@ -201,7 +199,7 @@ export function BibTable(props: Props) {
   };
 
   const data: DataType[] = props.racers
-    .map((racer: Racer /*ResponseDto*/) => {
+    .map((racer: Racer) => {
       return {
         key: racer.id,
         name: racer.name,
@@ -231,12 +229,8 @@ export function BibTable(props: Props) {
         return 1;
       }
       // 会社でソート
-      const aTeam = props.teams.find(
-        (item: Team /*ResponseDto*/) => item.id == a.teamId,
-      );
-      const bTeam = props.teams.find(
-        (item: Team /*ResponseDto*/) => item.id == b.teamId,
-      );
+      const aTeam = props.teams.find((item: Team) => item.id == a.teamId);
+      const bTeam = props.teams.find((item: Team) => item.id == b.teamId);
       if (!aTeam || !bTeam) {
         return -1;
       }
@@ -304,9 +298,8 @@ export function BibTable(props: Props) {
       dataIndex: 'team',
       render: (_: any, record) => (
         <span>
-          {props.teams.find(
-            (item: Team /*ResponseDto*/) => item.id == record.teamId,
-          )?.fullname ?? ''}
+          {props.teams.find((item: Team) => item.id == record.teamId)
+            ?.fullname ?? ''}
         </span>
       ),
     },
