@@ -1,15 +1,15 @@
-export type RacerResponseDto = {
-  id: string;
-  name: string;
-  kana: string;
-  category: string;
-  bib?: number;
-  gender: string;
-  seed: number;
-  teamId?: string;
-  isFirstTime: boolean;
-  age?: number;
-  special: string;
-  createdAt: number;
-  updatedAt: number;
-};
+// export type RacerResponseDto = {
+//   id: string;
+//   name: string;
+//   kana: string;
+//   category: string;
+//   bib: number | null;
+//   gender: string;
+//   seed: number;
+//   teamId: string | null;
+//   isFirstTime: boolean;
+//   age: number | null;
+//   special: string;
+//   createdAt: Date;
+//   updatedAt: Date;
+// };

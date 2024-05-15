@@ -1,7 +1,7 @@
 import { TeamTable } from './teamTable';
-import { TeamsWithRacers, getTeamsWithRacers } from './actions';
+import { TeamsWithRacers, listTeamsWithRacers } from './actions';
 
 export default async function PrepareTeamsPage() {
-  const dataSource: TeamsWithRacers = await getTeamsWithRacers();
+  const dataSource: TeamsWithRacers = await listTeamsWithRacers();
   return <TeamTable dataSource={dataSource} />;
 }

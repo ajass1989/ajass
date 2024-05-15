@@ -4,12 +4,13 @@ import { updateTeam } from './actions';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { RacerTable } from './racerTable';
-import { RacerResponseDto } from '../racerResponseDto';
-import { TeamResponseDto } from '../teamResponseDto';
+// import { RacerResponseDto } from '../racerResponseDto';
+// import { TeamResponseDto } from '../teamResponseDto';
+import { Racer, Team } from '@repo/database';
 
 type Props = {
-  team: TeamResponseDto & {
-    racers: RacerResponseDto[];
+  team: Team /*ResponseDto*/ & {
+    racers: Racer /*ResponseDto*/[];
   };
 };
 
@@ -28,9 +29,9 @@ export interface RacerType {
   kana: string;
   category: string; // ski, snowboard
   seed: number;
-  age?: number;
+  age: number | null;
   isFirstTime: boolean;
-  bib?: number;
+  bib: number | null;
   gender: string; // f, m
 }
 

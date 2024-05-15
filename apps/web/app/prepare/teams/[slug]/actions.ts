@@ -1,44 +1,45 @@
 'use server';
-import { Prisma, prisma } from '@repo/database';
+import { Prisma, Racer, Team, prisma } from '@repo/database';
 import { ActionResult } from '../../../actionResult';
 import { TeamRequestDto } from '../teamRequestDto';
-import { TeamResponseDto } from '../teamResponseDto';
+// import { TeamResponseDto } from '../teamResponseDto';
 import { RacerRequestDto } from '../racerRequestDto';
-import { RacerResponseDto } from '../racerResponseDto';
+// import { RacerResponseDto } from '../racerResponseDto';
 import { PrismaClient } from '@prisma/client/extension';
 
 export async function getTeam(
   id: string,
-): Promise<TeamResponseDto & { racers: RacerResponseDto[] }> {
+): Promise<Team /*ResponseDto*/ & { racers: Racer /*ResponseDto*/[] }> {
   const team = await prisma.team.findFirstOrThrow({
     where: { id: id },
     include: {
       racers: true,
     },
   });
-  const rs: RacerResponseDto[] = team.racers.map((racer) => ({
+  const rs: Racer /*ResponseDto*/[] = team.racers.map((racer) => ({
     id: racer.id,
     name: racer.name,
     kana: racer.kana,
     category: racer.category,
+    bib: null,
     gender: racer.gender,
     seed: racer.seed,
-    teamId: racer.teamId ?? undefined,
+    teamId: racer.teamId,
     isFirstTime: racer.isFirstTime,
-    age: racer.age ?? undefined,
+    age: racer.age,
     special: racer.special,
-    createdAt: racer.createdAt.getTime() / 1000,
-    updatedAt: racer.updatedAt.getTime() / 1000,
+    createdAt: racer.createdAt,
+    updatedAt: racer.updatedAt,
   }));
-  const t: TeamResponseDto & { racers: RacerResponseDto[] } = {
+  const t: Team /*ResponseDto*/ & { racers: Racer /*ResponseDto*/[] } = {
     id: team.id,
     fullname: team.fullname,
     shortname: team.shortname,
     eventId: team.eventId,
     orderMale: team.orderMale,
     orderFemale: team.orderFemale,
-    createdAt: team.createdAt.getTime() / 1000,
-    updatedAt: team.updatedAt.getTime() / 1000,
+    createdAt: team.createdAt,
+    updatedAt: team.updatedAt,
     racers: rs,
   };
   return t;
@@ -47,7 +48,7 @@ export async function getTeam(
 export async function updateTeam(
   id: string,
   values: TeamRequestDto,
-): Promise<ActionResult<TeamResponseDto>> {
+): Promise<ActionResult<Team /*ResponseDto*/>> {
   try {
     const data: Prisma.TeamUncheckedUpdateInput = {
       fullname: values.fullname,
@@ -69,8 +70,8 @@ export async function updateTeam(
         eventId: newValues.eventId,
         orderMale: newValues.orderMale,
         orderFemale: newValues.orderFemale,
-        createdAt: newValues.createdAt.getTime() / 1000,
-        updatedAt: newValues.updatedAt.getTime() / 1000,
+        createdAt: newValues.createdAt,
+        updatedAt: newValues.updatedAt,
       },
     };
   } catch (e) {
@@ -88,7 +89,7 @@ export async function updateTeam(
 
 export async function addRacer(
   values: RacerRequestDto,
-): Promise<ActionResult<RacerResponseDto>> {
+): Promise<ActionResult<Racer /*ResponseDto*/>> {
   try {
     const data: Prisma.RacerUncheckedCreateInput = {
       name: values.name,
@@ -111,14 +112,15 @@ export async function addRacer(
         name: newValues.name,
         kana: newValues.kana,
         category: newValues.category,
+        bib: null,
         gender: newValues.gender,
         seed: newValues.seed,
-        teamId: newValues.teamId ?? undefined,
+        teamId: newValues.teamId,
         isFirstTime: newValues.isFirstTime,
-        age: newValues.age ?? undefined,
+        age: newValues.age,
         special: newValues.special,
-        createdAt: newValues.createdAt.getTime() / 1000,
-        updatedAt: newValues.updatedAt.getTime() / 1000,
+        createdAt: newValues.createdAt,
+        updatedAt: newValues.updatedAt,
       },
     };
   } catch (e) {
@@ -132,7 +134,7 @@ export async function addRacer(
 export async function updateRacer(
   id: string,
   values: RacerRequestDto,
-): Promise<ActionResult<RacerResponseDto>> {
+): Promise<ActionResult<Racer /*ResponseDto*/>> {
   try {
     const data: Prisma.RacerUncheckedUpdateInput = {
       name: values.name,
@@ -156,14 +158,15 @@ export async function updateRacer(
         name: newValues.name,
         kana: newValues.kana,
         category: newValues.category,
+        bib: null,
         gender: newValues.gender,
         seed: newValues.seed,
-        teamId: newValues.teamId ?? undefined,
+        teamId: newValues.teamId,
         isFirstTime: newValues.isFirstTime,
-        age: newValues.age ?? undefined,
+        age: newValues.age,
         special: newValues.special,
-        createdAt: newValues.createdAt.getTime() / 1000,
-        updatedAt: newValues.updatedAt.getTime() / 1000,
+        createdAt: newValues.createdAt,
+        updatedAt: newValues.updatedAt,
       },
     };
   } catch (e) {
@@ -185,9 +188,9 @@ export async function deleteRacer(
   special: string,
   category?: string,
   gender?: string,
-): Promise<ActionResult<RacerResponseDto[]>> {
+): Promise<ActionResult<Racer /*ResponseDto*/[]>> {
   try {
-    let results: RacerResponseDto[] = [];
+    let results: Racer /*ResponseDto*/[] = [];
     await prisma.$transaction(async (prisma: PrismaClient) => {
       const deleteResult = await prisma.racer.delete({
         where: { id: id },
@@ -216,7 +219,6 @@ export async function deleteRacer(
         results.push(newValue);
       }
     });
-
     return {
       success: true,
       result: results,

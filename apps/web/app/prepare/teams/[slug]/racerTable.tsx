@@ -20,7 +20,8 @@ import {
   RollbackOutlined,
   SaveOutlined,
 } from '@ant-design/icons';
-import { RacerResponseDto } from '../racerResponseDto';
+import { Racer } from '@repo/database';
+// import { RacerResponseDto } from '../racerResponseDto';
 
 type Props = {
   title: string;
@@ -211,7 +212,7 @@ export function RacerTable(props: Props) {
       const row = (await form.validateFields()) as Item; // TODO調査 個々で取得したrowでgenderの値がundefinedになっている。画面から取得しようとしているのが原因
       const newDataSource = [...dataSource];
       const index = dataSource.findIndex((item) => key === item.key);
-      let result: ActionResult<RacerResponseDto>;
+      let result: ActionResult<Racer /*ResponseDto*/>;
       const gender = props.special == 'normal' ? props.gender! : row.gender;
       const category =
         props.special == 'normal' ? props.category! : row.category;

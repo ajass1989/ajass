@@ -1,16 +1,18 @@
 'use server';
-import { Prisma, prisma } from '@repo/database';
+import { Prisma, Racer, Team, prisma } from '@repo/database';
 import { ActionResult } from '../../actionResult';
-import { TeamRequestDto } from './teamRequestDto';
-import { TeamResponseWithRacersDto } from './teamResponseDto';
-import { RacerResponseDto } from './racerResponseDto';
+import {
+  // TeamResponseDto,
+  TeamWithRacers /*ResponseWithRacersDto*/,
+} from './teamResponseDto';
+// import { RacerResponseDto } from './racerResponseDto';
 
 export type TeamsWithRacers = Prisma.PromiseReturnType<
-  typeof getTeamsWithRacers
+  typeof listTeamsWithRacers
 >;
 
-export async function getTeamsWithRacers(): Promise<
-  TeamResponseWithRacersDto[]
+export async function listTeamsWithRacers(): Promise<
+  TeamWithRacers /*TeamResponseWithRacersDto*/[]
 > {
   const teams = await prisma.team.findMany({
     where: {
@@ -23,23 +25,21 @@ export async function getTeamsWithRacers(): Promise<
       racers: true,
     },
   });
-  // teamsをmapして、racersをmapして、RacerResponseDtoに変換して、TeamResponseDtoに変換して返す
-  // ここにコードを追加してください
   const ts = teams.map((team) => {
-    const rs: RacerResponseDto[] = team.racers.map((racer) => ({
+    const rs: Racer /*ResponseDto*/[] = team.racers.map((racer) => ({
       id: racer.id,
       name: racer.name,
       kana: racer.kana,
       category: racer.category,
-      bib: racer.bib ?? undefined,
+      bib: racer.bib,
       gender: racer.gender,
       seed: racer.seed,
-      teamId: racer.teamId ?? undefined,
+      teamId: racer.teamId,
       isFirstTime: racer.isFirstTime,
-      age: racer.age ?? undefined,
+      age: racer.age,
       special: racer.special,
-      createdAt: racer.createdAt.getTime() / 1000,
-      updatedAt: racer.updatedAt.getTime() / 1000,
+      createdAt: racer.createdAt,
+      updatedAt: racer.updatedAt,
     }));
     const t = {
       id: team.id,
@@ -48,17 +48,16 @@ export async function getTeamsWithRacers(): Promise<
       eventId: team.eventId,
       orderMale: team.orderMale,
       orderFemale: team.orderFemale,
-      createdAt: team.createdAt.getTime() / 1000,
-      updatedAt: team.updatedAt.getTime() / 1000,
+      createdAt: team.createdAt,
+      updatedAt: team.updatedAt,
       racers: rs,
     };
-
     return t;
   });
   return ts;
 }
 
-export async function listTeams(): Promise<TeamRequestDto[]> {
+export async function listTeams(): Promise<Team /*ResponseDto*/[]> {
   const teams = await prisma.team.findMany({
     orderBy: {
       fullname: 'asc',
@@ -66,14 +65,14 @@ export async function listTeams(): Promise<TeamRequestDto[]> {
   });
   return teams.map((team) => {
     return {
-      key: team.id,
+      id: team.id,
       fullname: team.fullname,
       shortname: team.shortname,
       eventId: team.eventId,
       orderMale: team.orderMale,
       orderFemale: team.orderFemale,
-      createdAt: team.createdAt.getTime() / 1000,
-      updatedAt: team.updatedAt.getTime() / 1000,
+      createdAt: team.createdAt,
+      updatedAt: team.updatedAt,
     };
   });
 }

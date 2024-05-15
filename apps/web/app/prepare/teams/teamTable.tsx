@@ -9,7 +9,8 @@ import {
   RollbackOutlined,
   SaveOutlined,
 } from '@ant-design/icons';
-import { TeamResponseDto } from './teamResponseDto';
+import { Team } from '@repo/database';
+// import { TeamResponseDto } from './teamResponseDto';
 
 type Props = {
   dataSource: TeamsWithRacers;
@@ -33,7 +34,7 @@ interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
   editing: boolean;
   dataIndex: string;
   title: any;
-  inputType: 'number';
+  // inputType: 'number';
   index: number;
   record: RecordType;
   children: React.ReactNode;
@@ -45,13 +46,14 @@ export function TeamTable(props: Props) {
   const [dataSource, setDataSource] = useState<TeamsWithRacers>(
     props.dataSource,
   );
-  const [newTeam, setNewTeam] = useState<TeamResponseDto | null>(null);
+  const [newTeam, setNewTeam] = useState<Team /*ResponseDto*/ | null>(null);
 
   const EditableCell: React.FC<EditableCellProps> = ({
     editing,
     dataIndex,
     title,
     children,
+    // inputType,
     ...restProps
   }) => {
     return (
@@ -199,7 +201,7 @@ export function TeamTable(props: Props) {
       title: 'チーム名',
       dataIndex: 'fullname',
       key: 'fullname',
-      inputType: 'text',
+      // inputType: 'text',
       render: (_: any, record: RecordType) => (
         <Link href={`/prepare/teams/${record.key}`}>{record.fullname}</Link>
       ),
@@ -210,7 +212,7 @@ export function TeamTable(props: Props) {
       title: '滑走順男子',
       dataIndex: 'orderMale',
       key: 'orderMale',
-      inputType: 'number',
+      // inputType: 'number',
       editable: true,
       sorter: (a: RecordType, b: RecordType) => a.orderMale - b.orderMale,
     },
@@ -218,7 +220,7 @@ export function TeamTable(props: Props) {
       title: '滑走順女子',
       dataIndex: 'orderFemale',
       key: 'orderFemale',
-      inputType: 'number',
+      // inputType: 'number',
       editable: true,
       sorter: (a: RecordType, b: RecordType) => a.orderFemale - b.orderFemale,
     },
@@ -350,7 +352,7 @@ export function TeamTable(props: Props) {
       ...col,
       onCell: (record: RecordType) => ({
         record,
-        inputType: col.inputType,
+        // inputType: col.inputType,
         dataIndex: col.dataIndex,
         title: col.title,
         editing: isEditing(record),
