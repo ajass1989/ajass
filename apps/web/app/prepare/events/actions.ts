@@ -1,23 +1,34 @@
 'use server';
 import { Prisma, prisma } from '@repo/database';
 import { ActionResult } from '../../actionResult';
+import { EventResponseDto } from './eventResponseDto';
+import { EventRequestDto } from './eventRequestDto';
 
-export type EventType = {
-  id: string;
-  name: string;
-  date: string;
-  location: string;
-  race: string;
-  setter: string;
-  management: string;
-};
+export async function getEvent(): Promise<EventResponseDto> {
+  const event = await prisma.event.findFirstOrThrow({
+    where: {},
+  });
+  const dto: EventResponseDto = {
+    id: event.id,
+    name: event.name,
+    date: event.date.toISOString(),
+    location: event.location,
+    race: event.race,
+    setter: event.setter,
+    management: event.management,
+    createdAt: event.createdAt.getTime() / 1000,
+    updatedAt: event.updatedAt.getTime() / 1000,
+  };
+  return dto;
+}
 
 export async function updateEvent(
-  values: EventType,
-): Promise<ActionResult<EventType>> {
+  id: string,
+  values: EventRequestDto,
+): Promise<ActionResult<EventResponseDto>> {
   try {
     const data: Prisma.EventUpdateInput = {
-      id: values.id,
+      id: id,
       name: values.name,
       date: values.date,
       location: values.location,
@@ -26,7 +37,7 @@ export async function updateEvent(
       management: values.management,
     };
     const newValues = await prisma.event.update({
-      where: { id: values.id },
+      where: { id: id },
       data: data,
     });
     return {
@@ -39,6 +50,8 @@ export async function updateEvent(
         race: newValues.race,
         setter: newValues.setter,
         management: newValues.management,
+        createdAt: newValues.createdAt.getTime() / 1000,
+        updatedAt: newValues.updatedAt.getTime() / 1000,
       },
     };
   } catch (e) {

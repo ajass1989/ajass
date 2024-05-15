@@ -1,5 +1,4 @@
 'use client';
-import { Point } from '@repo/database';
 import React from 'react';
 import { Line } from 'react-chartjs-2';
 import {
@@ -21,9 +20,10 @@ import {
   fgColorSnowboardFemale,
   fgColorSnowboardMale,
 } from '../../colors';
+import { PointDto } from './pointDto';
 
 type Props = {
-  points: Point[];
+  points: PointDto[];
 };
 
 ChartJS.register(

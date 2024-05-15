@@ -1,13 +1,13 @@
 'use client';
 import { EditOutlined, SaveOutlined } from '@ant-design/icons';
-import { Point } from '@repo/database';
 import { Alert, Button, Form, FormInstance, InputNumber, Table } from 'antd';
 import React from 'react';
 import { useContext, useState } from 'react';
 import { updatePoint } from './actions';
+import { PointDto } from './pointDto';
 
 type Props = {
-  points: Point[];
+  points: PointDto[];
 };
 
 const EditableContext = React.createContext<FormInstance<any> | null>(null);
@@ -108,8 +108,8 @@ type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
 export function PointTable(props: Props) {
   const [alertVisible, setAlertVisible] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
-  const [dataSource, setDataSource] = useState<Point[]>(props.points);
-  const data: DataType[] = dataSource.map((point: Point) => {
+  const [dataSource, setDataSource] = useState<PointDto[]>(props.points);
+  const data: DataType[] = dataSource.map((point: PointDto) => {
     return {
       key: point.id,
       pointSkiMale: point.pointSkiMale,

@@ -1,5 +1,4 @@
 'use client';
-import { Racer, Team } from '@repo/database';
 import {
   Alert,
   Button,
@@ -24,10 +23,12 @@ import {
   bgColorSnowboardFemale,
   bgColorSnowboardMale,
 } from '../../colors';
+import { RacerResponseDto } from '../teams/racerResponseDto';
+import { TeamResponseDto } from '../teams/teamResponseDto';
 
 type Props = {
-  racers: Racer[];
-  teams: Team[];
+  racers: RacerResponseDto[];
+  teams: TeamResponseDto[];
 };
 
 type FormInstance<T> = GetRef<typeof Form<T>>;
@@ -154,10 +155,10 @@ interface DataType {
   name: string;
   kana: string;
   category: string; // ski, snowboard
-  bib: number | null;
+  bib?: number;
   gender: string; // f, m
   seed: number;
-  teamId: string | null;
+  teamId?: string;
   special: string;
   summary: string;
 }
@@ -170,7 +171,7 @@ export function BibTable(props: Props) {
   const [alertMessage, setAlertMessage] = useState<string>('');
 
   // 種目の値構築
-  const summary = (record: Racer) => {
+  const summary = (record: RacerResponseDto) => {
     let summary = '';
     switch (record.special) {
       case 'senior':
@@ -199,7 +200,7 @@ export function BibTable(props: Props) {
   };
 
   const data: DataType[] = props.racers
-    .map((racer: Racer) => {
+    .map((racer: RacerResponseDto) => {
       return {
         key: racer.id,
         name: racer.name,
@@ -229,8 +230,12 @@ export function BibTable(props: Props) {
         return 1;
       }
       // 会社でソート
-      const aTeam = props.teams.find((item: Team) => item.id == a.teamId);
-      const bTeam = props.teams.find((item: Team) => item.id == b.teamId);
+      const aTeam = props.teams.find(
+        (item: TeamResponseDto) => item.id == a.teamId,
+      );
+      const bTeam = props.teams.find(
+        (item: TeamResponseDto) => item.id == b.teamId,
+      );
       if (!aTeam || !bTeam) {
         return -1;
       }
@@ -298,7 +303,7 @@ export function BibTable(props: Props) {
       dataIndex: 'team',
       render: (_: any, record) => (
         <span>
-          {props.teams.find((item: Team) => item.id == record.teamId)
+          {props.teams.find((item: TeamResponseDto) => item.id == record.teamId)
             ?.fullname ?? ''}
         </span>
       ),
@@ -365,7 +370,9 @@ export function BibTable(props: Props) {
       const newDataSource: DataType[] = dataSource.map((data) => {
         return {
           ...data,
-          bib: result.result!.find((item) => item.id == data.key)?.bib ?? null,
+          bib:
+            result.result!.find((item) => item.id == data.key)?.bib ??
+            undefined,
         };
       });
       setDataSource(newDataSource);

@@ -1,10 +1,7 @@
-export type TeamDto = {
-  id?: string;
+export type TeamRequestDto = {
   fullname: string;
   shortname: string;
   eventId: string;
   orderMale: number;
   orderFemale: number;
-  createdAt?: number;
-  updatedAt?: number;
 };

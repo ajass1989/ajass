@@ -10,6 +10,7 @@ export type UpdatePointParams = {
   pointSnowboardMale?: number;
   pointSnowboardFemale?: number;
 };
+
 export async function updatePoint(
   params: UpdatePointParams,
 ): Promise<ActionResult<PointDto>> {
@@ -29,6 +30,8 @@ export async function updatePoint(
       pointSkiFemale: newValue.pointSkiFemale,
       pointSnowboardMale: newValue.pointSnowboardMale,
       pointSnowboardFemale: newValue.pointSnowboardFemale,
+      createAt: newValue.createdAt,
+      updateAt: newValue.updatedAt,
     };
     return {
       success: true,
@@ -45,4 +48,17 @@ export async function updatePoint(
     }
     throw e;
   }
+}
+
+export async function getPoints(): Promise<PointDto[]> {
+  const points = await prisma.point.findMany();
+  return points.map((point) => ({
+    id: point.id,
+    pointSkiMale: point.pointSkiMale,
+    pointSkiFemale: point.pointSkiFemale,
+    pointSnowboardMale: point.pointSnowboardMale,
+    pointSnowboardFemale: point.pointSnowboardFemale,
+    createAt: point.createdAt,
+    updateAt: point.updatedAt,
+  }));
 }

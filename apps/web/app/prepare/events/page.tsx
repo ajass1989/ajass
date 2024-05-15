@@ -1,13 +1,8 @@
-import { prisma, Event } from '@repo/database';
 import { EditEventForm } from './editEventForm';
+import { getEvent } from './actions';
+import { EventResponseDto } from './eventResponseDto';
 
-export async function Page() {
-  const dataSource: Event = await getEvent();
+export default async function Page() {
+  const dataSource: EventResponseDto = await getEvent();
   return <EditEventForm dataSource={dataSource} />;
-}
-
-async function getEvent(): Promise<Event> {
-  return await prisma.event.findFirstOrThrow({
-    where: {},
-  });
 }

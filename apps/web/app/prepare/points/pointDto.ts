@@ -4,4 +4,6 @@ export type PointDto = {
   pointSkiFemale: number;
   pointSnowboardMale: number;
   pointSnowboardFemale: number;
+  createAt: Date;
+  updateAt: Date;
 };

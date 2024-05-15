@@ -2,13 +2,14 @@
 import { Alert, Button, Form, FormProps, Input, InputNumber } from 'antd';
 import { updateTeam } from './actions';
 import { useRouter } from 'next/navigation';
-import { Racer, Team } from '@repo/database';
 import React, { useState } from 'react';
 import { RacerTable } from './racerTable';
+import { RacerResponseDto } from '../racerResponseDto';
+import { TeamResponseDto } from '../teamResponseDto';
 
 type Props = {
-  team: Team & {
-    racers: Racer[];
+  team: TeamResponseDto & {
+    racers: RacerResponseDto[];
   };
 };
 
@@ -27,9 +28,9 @@ export interface RacerType {
   kana: string;
   category: string; // ski, snowboard
   seed: number;
-  age: number | null;
+  age?: number;
   isFirstTime: boolean;
-  bib: number | null;
+  bib?: number;
   gender: string; // f, m
 }
 
@@ -55,14 +56,13 @@ export function EditTeamForm(props: Props) {
     values: FieldType,
   ) => {
     const team = {
-      id: values.key,
       fullname: values.fullname,
       shortname: values.shortname,
       eventId: values.eventId,
       orderMale: values.orderMale,
       orderFemale: values.orderFemale,
     };
-    const res = await updateTeam(team);
+    const res = await updateTeam(values.key, team);
     if (res.success) {
       // eslint-disable-next-line no-undef
       localStorage.setItem('newTeam', JSON.stringify(res.result));

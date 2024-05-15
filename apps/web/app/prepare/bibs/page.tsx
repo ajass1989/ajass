@@ -1,28 +1,8 @@
-import { Racer, Team, prisma } from '@repo/database';
 import { BibTable } from './bibTable';
+import { listRacers, listTeams } from './actions';
 
-export async function PrepareRacersPage() {
-  const racers = await getRacers();
-  const teams = await getTeams();
+export default async function PrepareRacersPage() {
+  const racers = await listRacers();
+  const teams = await listTeams();
   return <BibTable racers={racers} teams={teams} />;
-}
-
-async function getRacers(): Promise<Racer[]> {
-  return await prisma.racer.findMany({
-    where: {
-      // eventId: '2023',
-    },
-    orderBy: {
-      bib: 'asc',
-    },
-  });
-}
-
-async function getTeams(): Promise<Team[]> {
-  return await prisma.team.findMany({
-    where: {},
-    orderBy: {
-      fullname: 'asc',
-    },
-  });
 }

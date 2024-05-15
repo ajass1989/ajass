@@ -3,7 +3,7 @@ import { Alert, Button, Form, FormProps, Input, InputNumber } from 'antd';
 import { addTeam } from './actions';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { TeamDto } from '../teamDto';
+import { TeamRequestDto } from '../teamRequestDto';
 
 type FieldType = {
   key: string;
@@ -34,7 +34,7 @@ export function AddTeamForm() {
   const onFinish: FormProps<FieldType>['onFinish'] = async (
     values: FieldType,
   ) => {
-    const team: TeamDto = {
+    const team: TeamRequestDto = {
       fullname: values.fullname,
       shortname: values.shortname,
       eventId: values.eventId,

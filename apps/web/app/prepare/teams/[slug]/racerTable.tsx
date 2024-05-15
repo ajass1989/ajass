@@ -13,13 +13,14 @@ import {
 import { addRacer, deleteRacer, updateRacer } from './actions';
 import { RacerType } from './editTeamForm';
 import { ActionResult } from '../../../actionResult';
-import { RacerDto } from '../racerDto';
+import { RacerRequestDto } from '../racerRequestDto';
 import {
   DeleteOutlined,
   EditOutlined,
   RollbackOutlined,
   SaveOutlined,
 } from '@ant-design/icons';
+import { RacerResponseDto } from '../racerResponseDto';
 
 type Props = {
   title: string;
@@ -210,7 +211,7 @@ export function RacerTable(props: Props) {
       const row = (await form.validateFields()) as Item; // TODO調査 個々で取得したrowでgenderの値がundefinedになっている。画面から取得しようとしているのが原因
       const newDataSource = [...dataSource];
       const index = dataSource.findIndex((item) => key === item.key);
-      let result: ActionResult<RacerDto>;
+      let result: ActionResult<RacerResponseDto>;
       const gender = props.special == 'normal' ? props.gender! : row.gender;
       const category =
         props.special == 'normal' ? props.category! : row.category;
@@ -227,8 +228,7 @@ export function RacerTable(props: Props) {
           special: props.special,
         });
       } else {
-        result = await updateRacer({
-          id: dataSource[index].key,
+        const dto: RacerRequestDto = {
           name: row.name,
           kana: row.kana,
           category: category,
@@ -238,7 +238,8 @@ export function RacerTable(props: Props) {
           isFirstTime: row.isFirstTime,
           age: row.age,
           special: props.special,
-        });
+        };
+        result = await updateRacer(dataSource[index].key, dto);
       }
       const r: Item = {
         key: result.result!.id as string,

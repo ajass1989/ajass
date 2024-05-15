@@ -1,16 +1,15 @@
 'use client';
 import { Button, Form, InputNumber, Popconfirm, Table, TableProps } from 'antd';
 import Link from 'next/link';
-import { deleteTeam, updateTeamOrder } from './actions';
+import { TeamsWithRacers, deleteTeam, updateTeamOrder } from './actions';
 import React, { useEffect, useState } from 'react';
-import { TeamDto } from './teamDto';
-import { TeamsWithRacers } from './page';
 import {
   DeleteOutlined,
   EditOutlined,
   RollbackOutlined,
   SaveOutlined,
 } from '@ant-design/icons';
+import { TeamResponseDto } from './teamResponseDto';
 
 type Props = {
   dataSource: TeamsWithRacers;
@@ -46,7 +45,7 @@ export function TeamTable(props: Props) {
   const [dataSource, setDataSource] = useState<TeamsWithRacers>(
     props.dataSource,
   );
-  const [newTeam, setNewTeam] = useState<TeamDto | null>(null);
+  const [newTeam, setNewTeam] = useState<TeamResponseDto | null>(null);
 
   const EditableCell: React.FC<EditableCellProps> = ({
     editing,

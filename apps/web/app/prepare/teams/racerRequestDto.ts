@@ -1,5 +1,4 @@
-export type RacerDto = {
-  id?: string;
+export type RacerRequestDto = {
   name: string;
   kana: string;
   category: string;
@@ -10,6 +9,4 @@ export type RacerDto = {
   isFirstTime: boolean;
   age: number | null;
   special: string;
-  createdAt?: number;
-  updatedAt?: number;
 };

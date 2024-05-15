@@ -1,9 +1,12 @@
 'use server';
 import { Prisma, prisma } from '@repo/database';
 import { ActionResult } from '../../../actionResult';
-import { TeamDto } from '../teamDto';
+import { TeamRequestDto } from '../teamRequestDto';
+import { TeamResponseDto } from '../teamResponseDto';
 
-export async function addTeam(values: TeamDto): Promise<ActionResult<TeamDto>> {
+export async function addTeam(
+  values: TeamRequestDto,
+): Promise<ActionResult<TeamResponseDto>> {
   try {
     const data: Prisma.TeamUncheckedCreateInput = {
       fullname: values.fullname,
@@ -24,8 +27,8 @@ export async function addTeam(values: TeamDto): Promise<ActionResult<TeamDto>> {
         eventId: newValues.eventId,
         orderMale: newValues.orderMale,
         orderFemale: newValues.orderFemale,
-        createdAt: newValues.createdAt.getTime(),
-        updatedAt: newValues.updatedAt.getTime(),
+        createdAt: newValues.createdAt.getTime() / 1000,
+        updatedAt: newValues.updatedAt.getTime() / 1000,
       },
     };
   } catch (e) {

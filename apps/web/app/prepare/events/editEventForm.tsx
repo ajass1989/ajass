@@ -1,13 +1,14 @@
 'use client';
-import { Event } from '@repo/database';
 import { Alert, Button, DatePicker, Form, FormProps, Input } from 'antd';
-import { EventType, updateEvent } from './actions';
+import { updateEvent } from './actions';
 import moment from 'moment';
 import { useState } from 'react';
 import { AlertType } from '../../components/alertType';
+import { EventResponseDto } from './eventResponseDto';
+import { EventRequestDto } from './eventRequestDto';
 
 type Props = {
-  dataSource: Event;
+  dataSource: EventResponseDto;
 };
 
 export type FieldType = {
@@ -42,8 +43,7 @@ export function EditEventForm(props: Props) {
   const onFinish: FormProps<FieldType>['onFinish'] = async (
     values: FieldType,
   ) => {
-    const event: EventType = {
-      id: values.key,
+    const event: EventRequestDto = {
       name: values.name,
       date: values.date.toISOString(),
       location: values.location,
@@ -51,7 +51,7 @@ export function EditEventForm(props: Props) {
       setter: values.setter,
       management: values.management,
     };
-    const res = await updateEvent(event);
+    const res = await updateEvent(values.key, event);
     if (res.success) {
       setEdited(false);
       showAlert('success', '保存しました。');
