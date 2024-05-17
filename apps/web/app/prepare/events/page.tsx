@@ -1,8 +1,8 @@
 import { EditEventForm } from './editEventForm';
 import { getEvent } from './actions';
-import { EventResponseDto } from './eventResponseDto';
+import { Event } from '@repo/database';
 
 export default async function Page() {
-  const dataSource: EventResponseDto = await getEvent();
+  const dataSource: Event = await getEvent();
   return <EditEventForm dataSource={dataSource} />;
 }

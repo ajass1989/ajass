@@ -1,7 +1,6 @@
 'use server';
-import { Prisma, prisma } from '@repo/database';
+import { Point, Prisma, prisma } from '@repo/database';
 import { ActionResult } from '../../actionResult';
-import { PointDto } from './pointDto';
 
 export type UpdatePointParams = {
   id: number;
@@ -13,7 +12,7 @@ export type UpdatePointParams = {
 
 export async function updatePoint(
   params: UpdatePointParams,
-): Promise<ActionResult<PointDto>> {
+): Promise<ActionResult<Point>> {
   try {
     const newValue = await prisma.point.update({
       where: { id: params.id },
@@ -24,14 +23,14 @@ export async function updatePoint(
         pointSnowboardFemale: params.pointSnowboardFemale,
       },
     });
-    const dto: PointDto = {
+    const dto: Point = {
       id: newValue.id,
       pointSkiMale: newValue.pointSkiMale,
       pointSkiFemale: newValue.pointSkiFemale,
       pointSnowboardMale: newValue.pointSnowboardMale,
       pointSnowboardFemale: newValue.pointSnowboardFemale,
-      createAt: newValue.createdAt,
-      updateAt: newValue.updatedAt,
+      createdAt: newValue.createdAt,
+      updatedAt: newValue.updatedAt,
     };
     return {
       success: true,
@@ -50,15 +49,6 @@ export async function updatePoint(
   }
 }
 
-export async function getPoints(): Promise<PointDto[]> {
-  const points = await prisma.point.findMany();
-  return points.map((point) => ({
-    id: point.id,
-    pointSkiMale: point.pointSkiMale,
-    pointSkiFemale: point.pointSkiFemale,
-    pointSnowboardMale: point.pointSnowboardMale,
-    pointSnowboardFemale: point.pointSnowboardFemale,
-    createAt: point.createdAt,
-    updateAt: point.updatedAt,
-  }));
+export async function getPoints(): Promise<Point[]> {
+  return await prisma.point.findMany();
 }

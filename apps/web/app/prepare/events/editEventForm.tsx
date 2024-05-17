@@ -4,11 +4,11 @@ import { updateEvent } from './actions';
 import moment from 'moment';
 import { useState } from 'react';
 import { AlertType } from '../../components/alertType';
-import { EventResponseDto } from './eventResponseDto';
 import { EventRequestDto } from './eventRequestDto';
+import { Event } from '@repo/database';
 
 type Props = {
-  dataSource: EventResponseDto;
+  dataSource: Event;
 };
 
 export type FieldType = {

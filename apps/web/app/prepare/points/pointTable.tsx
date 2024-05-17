@@ -1,16 +1,26 @@
 'use client';
-import { EditOutlined, SaveOutlined } from '@ant-design/icons';
+import { EditOutlined } from '@ant-design/icons';
 import { Alert, Button, Form, FormInstance, InputNumber, Table } from 'antd';
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useContext, useState } from 'react';
 import { updatePoint } from './actions';
-import { PointDto } from './pointDto';
+import { Point } from '@repo/database';
+import { AlertType } from '../../components/alertType';
 
 type Props = {
-  points: PointDto[];
+  points: Point[];
 };
 
 const EditableContext = React.createContext<FormInstance<any> | null>(null);
+
+interface Item {
+  key: number;
+  id: number;
+  pointSkiMale: number;
+  pointSkiFemale: number;
+  pointSnowboardMale: number;
+  pointSnowboardFemale: number;
+}
 
 interface EditableRowProps {
   index: number;
@@ -32,10 +42,10 @@ interface EditableCellProps {
   title: string;
   editable: boolean;
   children: React.ReactNode;
-  dataIndex: keyof DataType;
-  record: DataType;
+  dataIndex: keyof Item;
+  record: Item;
   // eslint-disable-next-line no-unused-vars
-  handleSave: (record: DataType) => void;
+  handleSave: (record: Item) => void;
 }
 
 const EditableCell: React.FC<EditableCellProps> = ({
@@ -47,17 +57,34 @@ const EditableCell: React.FC<EditableCellProps> = ({
   ...restProps
 }) => {
   const [editing, setEditing] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
   const form = useContext(EditableContext)!;
+  const [editButtonVisible, setEditButtonVisible] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (editing) {
+      inputRef.current!.focus();
+    }
+  }, [editing]);
 
   const toggleEdit = () => {
     setEditing(!editing);
     form.setFieldsValue({ [dataIndex]: record[dataIndex] });
   };
 
+  const showEditButton = () => {
+    setEditButtonVisible(true);
+  };
+
+  const hideEditButton = () => {
+    setEditButtonVisible(false);
+  };
+
   const save = async () => {
     try {
       const values = await form.validateFields();
       toggleEdit();
+      setEditButtonVisible(false);
       handleSave({ ...record, ...values });
     } catch (errInfo) {
       console.log('Save failed:', errInfo);
@@ -68,25 +95,25 @@ const EditableCell: React.FC<EditableCellProps> = ({
 
   if (editable) {
     childNode = editing ? (
-      <div style={{ display: 'flex' }}>
-        <Button
-          icon={<SaveOutlined />}
-          size="small"
-          style={{ marginRight: 8 }}
-          onClick={save}
-        />
-        <Form.Item style={{ margin: 0 }} name={dataIndex}>
-          <InputNumber />
-        </Form.Item>
-      </div>
+      <Form.Item style={{ margin: 0 }} name={dataIndex}>
+        <InputNumber ref={inputRef} onPressEnter={save} onBlur={save} />
+      </Form.Item>
     ) : (
-      <div className="editable-cell-value-wrap" style={{ paddingRight: 8 }}>
-        <Button
-          icon={<EditOutlined />}
-          size="small"
-          style={{ marginRight: 8 }}
-          onClick={toggleEdit}
-        />
+      // </div>
+      <div
+        className="editable-cell-value-wrap"
+        style={{ paddingRight: 8 }}
+        onClick={toggleEdit}
+        onMouseOver={showEditButton}
+        onMouseOut={hideEditButton}
+      >
+        {editButtonVisible && (
+          <Button
+            icon={<EditOutlined />}
+            size="small"
+            style={{ marginRight: 8 }}
+          />
+        )}
         {children}
       </div>
     );
@@ -95,8 +122,10 @@ const EditableCell: React.FC<EditableCellProps> = ({
 };
 
 type EditableTableProps = Parameters<typeof Table>[0];
+
 interface DataType {
   key: number;
+  id: number;
   pointSkiMale: number;
   pointSkiFemale: number;
   pointSnowboardMale: number;
@@ -105,12 +134,14 @@ interface DataType {
 type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
 
 export function PointTable(props: Props) {
+  const [alertType, setAlertType] = useState<AlertType>('error');
   const [alertVisible, setAlertVisible] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string>('');
-  const [dataSource, setDataSource] = useState<PointDto[]>(props.points);
-  const data: DataType[] = dataSource.map((point: PointDto) => {
+  const [alertMessage, setErrorMessage] = useState<string>('');
+  const [dataSource, setDataSource] = useState<Point[]>(props.points);
+  const data: DataType[] = dataSource.map((point: Point) => {
     return {
       key: point.id,
+      id: point.id,
       pointSkiMale: point.pointSkiMale,
       pointSkiFemale: point.pointSkiFemale,
       pointSnowboardMale: point.pointSnowboardMale,
@@ -149,13 +180,7 @@ export function PointTable(props: Props) {
   ];
 
   const handleSave = async (row: DataType) => {
-    const result = await updatePoint({
-      id: row.key,
-      pointSkiMale: row.pointSkiMale,
-      pointSkiFemale: row.pointSkiFemale,
-      pointSnowboardMale: row.pointSnowboardMale,
-      pointSnowboardFemale: row.pointSnowboardFemale,
-    });
+    const result = await updatePoint({ ...row });
     if (result.success) {
       const newData = [...dataSource];
       const index = newData.findIndex((item) => row.key === item.id);
@@ -166,7 +191,7 @@ export function PointTable(props: Props) {
       });
       setDataSource(newData);
     } else {
-      showAlert(result.error);
+      showAlert('error', result.error);
     }
   };
 
@@ -186,9 +211,10 @@ export function PointTable(props: Props) {
     };
   });
 
-  const showAlert = (error?: string) => {
+  const showAlert = (alertType: AlertType, error?: string) => {
     setErrorMessage(error ?? '');
     setAlertVisible(true);
+    setAlertType(alertType);
   };
 
   const closeAlert = () => {
@@ -200,16 +226,22 @@ export function PointTable(props: Props) {
     <>
       {alertVisible && (
         <Alert
-          message={errorMessage}
-          type="error"
+          message={alertMessage}
+          type={alertType}
           closable
           onClose={closeAlert}
+          style={{ marginBottom: 16 }}
         />
       )}
       <Table
-        columns={columns as ColumnTypes}
-        components={{ body: { row: EditableRow, cell: EditableCell } }}
+        components={{
+          body: {
+            row: EditableRow,
+            cell: EditableCell,
+          },
+        }}
         dataSource={data}
+        columns={columns as ColumnTypes}
         pagination={false}
       />
     </>

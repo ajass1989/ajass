@@ -3,29 +3,29 @@ import { Prisma, Racer, Team, prisma } from '@repo/database';
 import { PrismaClient } from '@prisma/client/extension';
 import { ActionResult } from '../../actionResult';
 
-export type UpdateBibParams = {
+export type UpdateBibRequestDto = {
   id: string;
   bib: number | null;
 };
 
 export async function updateBibs(
-  params: UpdateBibParams[],
+  dto: UpdateBibRequestDto[],
 ): Promise<ActionResult<Racer[]>> {
   try {
-    let results: Racer[] = [];
+    let newValues: Racer[] = [];
     await prisma.$transaction(async (prisma: PrismaClient) => {
-      const promises = params.map(async (param: UpdateBibParams) => {
+      const promises = dto.map(async (param: UpdateBibRequestDto) => {
         const newValue = await prisma.racer.update({
           where: { id: param.id },
           data: { bib: param.bib },
         });
         return newValue;
       });
-      results = await Promise.all(promises);
+      newValues = await Promise.all(promises);
     });
     return {
       success: true,
-      result: results,
+      result: newValues,
     };
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {

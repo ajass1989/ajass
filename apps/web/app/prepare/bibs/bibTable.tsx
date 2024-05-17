@@ -11,7 +11,7 @@ import {
 } from 'antd';
 import React, { useContext, useEffect, useRef } from 'react';
 import { useState } from 'react';
-import { UpdateBibParams, updateBibs } from './actions';
+import { UpdateBibRequestDto, updateBibs } from './actions';
 import { EditOutlined } from '@ant-design/icons';
 import { AlertType } from '../../components/alertType';
 import {
@@ -36,6 +36,7 @@ const EditableContext = React.createContext<FormInstance<any> | null>(null);
 
 interface Item {
   key: string;
+  id: string;
   name: string;
   kana: string;
   category: string; // ski, snowboard
@@ -120,7 +121,6 @@ const EditableCell: React.FC<EditableCellProps> = ({
   let childNode = children;
 
   if (editable) {
-    // console.log(`editable ${record['bib']} ${dataIndex}`);
     childNode = editing ? (
       <Form.Item
         style={{ margin: 0 }}
@@ -151,6 +151,7 @@ type EditableTableProps = Parameters<typeof Table>[0];
 
 interface DataType {
   key: string;
+  id: string;
   name: string;
   kana: string;
   category: string; // ski, snowboard
@@ -170,7 +171,7 @@ export function BibTable(props: Props) {
   const [alertMessage, setAlertMessage] = useState<string>('');
 
   // 種目の値構築
-  const summary = (record: Racer /*ResponseDto*/) => {
+  const summary = (record: Racer) => {
     let summary = '';
     switch (record.special) {
       case 'senior':
@@ -198,10 +199,13 @@ export function BibTable(props: Props) {
     男子スキー: 5,
   };
 
-  const data: DataType[] = props.racers
+  const [dataSource, setDataSource] = useState<Racer[]>(props.racers);
+
+  const data: DataType[] = dataSource
     .map((racer: Racer) => {
       return {
         key: racer.id,
+        id: racer.id,
         name: racer.name,
         kana: racer.kana,
         category: racer.category,
@@ -266,8 +270,6 @@ export function BibTable(props: Props) {
       return 0;
     });
 
-  const [dataSource, setDataSource] = useState<DataType[]>(data);
-
   const defaultColumns: (ColumnTypes[number] & {
     editable?: boolean;
     dataIndex: string;
@@ -306,10 +308,10 @@ export function BibTable(props: Props) {
   ];
 
   const handleSave = async (row: DataType) => {
-    const result = await updateBibs([{ id: row.key, bib: row.bib }]);
+    const result = await updateBibs([{ id: row.id, bib: row.bib }]);
     if (result.success) {
       const newData = [...dataSource];
-      const index = newData.findIndex((item) => row.key === item.key);
+      const index = newData.findIndex((item) => row.key === item.id);
       const item = newData[index];
       newData.splice(index, 1, {
         ...item,
@@ -338,7 +340,6 @@ export function BibTable(props: Props) {
   });
 
   const getRowStyle = (record: DataType) => {
-    // インデックスに基づいて交互に色を変更する例
     switch (record.summary) {
       case 'ジュニア':
         return { backgroundColor: bgColorJunior };
@@ -356,13 +357,16 @@ export function BibTable(props: Props) {
     return { backgroundColor: bgColorDefault };
   };
 
+  /**
+   * ビブ一括付与処理
+   */
   const handleUpdateBibs: PopconfirmProps['onConfirm'] = async () => {
-    const params = dataSource.map((data, index): UpdateBibParams => {
-      return { id: data.key, bib: index + 1 };
+    const params = data.map((data, index): UpdateBibRequestDto => {
+      return { id: data.id, bib: index + 1 };
     });
     const result = await updateBibs(params);
     if (result.success) {
-      const newDataSource: DataType[] = dataSource.map((data) => {
+      const newDataSource: Racer[] = result.result!.map((data) => {
         return {
           ...data,
         };
@@ -407,6 +411,7 @@ export function BibTable(props: Props) {
           type={alertType}
           closable
           onClose={closeAlert}
+          style={{ marginBottom: 16 }}
         />
       )}
       <Table
@@ -416,15 +421,18 @@ export function BibTable(props: Props) {
             cell: EditableCell,
           },
         }}
-        dataSource={dataSource}
+        dataSource={data}
         columns={columns as ColumnTypes}
         pagination={false}
+        // 背景色をスタイルで指定
         onRow={(record: any) => {
           return {
-            style: getRowStyle(record), // 背景色をスタイルで指定
+            style: getRowStyle(record),
           };
         }}
       />
     </div>
   );
 }
+
+// TODO ビブの重複ガード

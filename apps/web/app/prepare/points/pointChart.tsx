@@ -20,10 +20,10 @@ import {
   fgColorSnowboardFemale,
   fgColorSnowboardMale,
 } from '../../colors';
-import { PointDto } from './pointDto';
+import { Point } from '@repo/database';
 
 type Props = {
-  points: PointDto[];
+  points: Point[];
 };
 
 ChartJS.register(

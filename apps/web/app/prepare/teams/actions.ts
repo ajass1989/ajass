@@ -8,6 +8,7 @@ export type TeamsWithRacers = Prisma.PromiseReturnType<
 >;
 
 export async function listTeamsWithRacers(): Promise<TeamWithRacers[]> {
+  'use server';
   const teams = await prisma.team.findMany({
     where: {
       eventId: '2023',
