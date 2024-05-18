@@ -22,7 +22,7 @@ import { AlertType } from '../../components/alertType';
 import { useRouter } from 'next/navigation';
 
 type Props = {
-  dataSource: TeamsWithRacers;
+  teams: TeamsWithRacers;
 };
 
 interface DataType {
@@ -49,12 +49,14 @@ interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode;
 }
 
+type EditableTableProps = Parameters<typeof Table>[0];
+
+type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
+
 export function TeamTable(props: Props) {
   const [form] = Form.useForm();
   const [editingKey, setEditingKey] = useState('');
-  const [dataSource, setDataSource] = useState<TeamsWithRacers>(
-    props.dataSource,
-  );
+  const [dataSource, setDataSource] = useState<TeamsWithRacers>(props.teams);
   // 追加または編集されたチーム情報
   const [newTeam, setNewTeam] = useState<Team | null>(null);
   const [alertType, setAlertType] = useState<AlertType>('error');
@@ -245,7 +247,7 @@ export function TeamTable(props: Props) {
     router.refresh();
   };
 
-  const columns = [
+  const defaultColumns = [
     {
       title: 'チーム名',
       dataIndex: 'fullname',
@@ -393,7 +395,7 @@ export function TeamTable(props: Props) {
     },
   ];
 
-  const mergedColumns: TableProps['columns'] = columns.map((col) => {
+  const columns: TableProps['columns'] = defaultColumns.map((col) => {
     if (!col.editable) {
       return col;
     }
@@ -409,7 +411,7 @@ export function TeamTable(props: Props) {
   });
 
   return (
-    <div>
+    <>
       <h1>チーム</h1>
       <Button type="primary" style={{ marginBottom: 16 }}>
         <Link href="/prepare/teams/add">追加</Link>
@@ -432,10 +434,10 @@ export function TeamTable(props: Props) {
           }}
           bordered
           dataSource={data}
-          columns={mergedColumns}
+          columns={columns as ColumnTypes}
           pagination={false}
         />
       </Form>
-    </div>
+    </>
   );
 }

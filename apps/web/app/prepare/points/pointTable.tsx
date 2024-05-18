@@ -59,7 +59,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
   const [editing, setEditing] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const form = useContext(EditableContext)!;
-  const [editButtonVisible, setEditButtonVisible] = useState<boolean>(false);
+  const [editButtonVisible, setEditButtonVisible] = useState(false);
 
   useEffect(() => {
     if (editing) {
@@ -81,14 +81,10 @@ const EditableCell: React.FC<EditableCellProps> = ({
   };
 
   const save = async () => {
-    try {
-      const values = await form.validateFields();
-      toggleEdit();
-      setEditButtonVisible(false);
-      handleSave({ ...record, ...values });
-    } catch (errInfo) {
-      console.log('Save failed:', errInfo);
-    }
+    const values = await form.validateFields();
+    toggleEdit();
+    setEditButtonVisible(false);
+    handleSave({ ...record, ...values });
   };
 
   let childNode = children;
@@ -99,7 +95,6 @@ const EditableCell: React.FC<EditableCellProps> = ({
         <InputNumber ref={inputRef} onPressEnter={save} onBlur={save} />
       </Form.Item>
     ) : (
-      // </div>
       <div
         className="editable-cell-value-wrap"
         style={{ paddingRight: 8 }}
@@ -107,14 +102,12 @@ const EditableCell: React.FC<EditableCellProps> = ({
         onMouseOver={showEditButton}
         onMouseOut={hideEditButton}
       >
-        {editButtonVisible && (
-          <Button
-            icon={<EditOutlined />}
-            size="small"
-            style={{ marginRight: 8 }}
-          />
-        )}
-        {children}
+        <span style={{ marginRight: '4px' }}>{children}</span>
+        <Button
+          icon={<EditOutlined />}
+          size="small"
+          style={{ visibility: editButtonVisible ? 'visible' : 'hidden' }}
+        />
       </div>
     );
   }
@@ -131,13 +124,15 @@ interface DataType {
   pointSnowboardMale: number;
   pointSnowboardFemale: number;
 }
+
 type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
 
 export function PointTable(props: Props) {
   const [alertType, setAlertType] = useState<AlertType>('error');
-  const [alertVisible, setAlertVisible] = useState<boolean>(false);
-  const [alertMessage, setErrorMessage] = useState<string>('');
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertMessage, setErrorMessage] = useState('');
   const [dataSource, setDataSource] = useState<Point[]>(props.points);
+
   const data: DataType[] = dataSource.map((point: Point) => {
     return {
       key: point.id,
@@ -179,22 +174,6 @@ export function PointTable(props: Props) {
     },
   ];
 
-  const handleSave = async (row: DataType) => {
-    const result = await updatePoint({ ...row });
-    if (result.success) {
-      const newData = [...dataSource];
-      const index = newData.findIndex((item) => row.key === item.id);
-      const item = newData[index];
-      newData.splice(index, 1, {
-        ...item,
-        ...row,
-      });
-      setDataSource(newData);
-    } else {
-      showAlert('error', result.error);
-    }
-  };
-
   const columns = defaultColumns.map((col) => {
     if (!col.editable) {
       return col;
@@ -211,12 +190,30 @@ export function PointTable(props: Props) {
     };
   });
 
+  const handleSave = async (row: DataType) => {
+    const result = await updatePoint({ ...row });
+    if (result.success) {
+      const newData = [...dataSource];
+      const index = newData.findIndex((item) => row.id === item.id);
+      const item = newData[index];
+      newData.splice(index, 1, {
+        ...item,
+        ...row,
+      });
+      setDataSource(newData);
+    } else {
+      showAlert('error', result.error);
+    }
+  };
+
+  // Alert を表示する関数
   const showAlert = (alertType: AlertType, error?: string) => {
     setErrorMessage(error ?? '');
     setAlertVisible(true);
     setAlertType(alertType);
   };
 
+  // Alert を非表示にする関数
   const closeAlert = () => {
     setErrorMessage('');
     setAlertVisible(false);

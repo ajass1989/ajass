@@ -3,7 +3,7 @@ import {
   Alert,
   Button,
   Form,
-  GetRef,
+  FormInstance,
   InputNumber,
   Popconfirm,
   PopconfirmProps,
@@ -29,8 +29,6 @@ type Props = {
   racers: Racer[];
   teams: Team[];
 };
-
-type FormInstance<T> = GetRef<typeof Form<T>>;
 
 const EditableContext = React.createContext<FormInstance<any> | null>(null);
 
@@ -117,22 +115,18 @@ const EditableCell: React.FC<EditableCellProps> = ({
 
   if (editable) {
     childNode = editing ? (
-      <Form.Item
-        style={{ margin: 0 }}
-        name={dataIndex}
-        initialValue={record['bib']}
-      >
+      <Form.Item style={{ margin: 0 }} name={dataIndex}>
         <InputNumber ref={inputRef} onPressEnter={save} onBlur={save} />
       </Form.Item>
     ) : (
       <div
         className="editable-cell-value-wrap"
-        style={{ paddingRight: 24 }}
+        style={{ paddingRight: 8 }}
         onClick={toggleEdit}
         onMouseOver={showEditButton}
         onMouseOut={hideEditButton}
       >
-        {children}
+        <span style={{ marginRight: '4px' }}>{children}</span>
         <Button
           icon={<EditOutlined />}
           size="small"
@@ -164,10 +158,11 @@ type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
 
 export function BibTable(props: Props) {
   const [alertType, setAlertType] = useState<AlertType>('error');
-  const [alertVisible, setAlertVisible] = useState<boolean>(false);
-  const [alertMessage, setAlertMessage] = useState<string>('');
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [dataSource, setDataSource] = useState<Racer[]>(props.racers);
 
-  // 種目の値構築
+  // 種目のフォーマット
   const summary = (record: Racer) => {
     let summary = '';
     switch (record.special) {
@@ -195,8 +190,6 @@ export function BibTable(props: Props) {
     シニア: 4,
     男子スキー: 5,
   };
-
-  const [dataSource, setDataSource] = useState<Racer[]>(props.racers);
 
   const data: DataType[] = dataSource
     .map((racer: Racer) => {
@@ -279,9 +272,6 @@ export function BibTable(props: Props) {
       title: 'ビブ',
       dataIndex: 'bib',
       editable: true,
-      render: (_: any, record) => (
-        <span style={{ marginRight: '4px' }}>{record.bib}</span>
-      ),
     },
     {
       title: 'シード',
@@ -307,22 +297,6 @@ export function BibTable(props: Props) {
     },
   ];
 
-  const handleSave = async (row: DataType) => {
-    const result = await updateBibs([{ id: row.id, bib: row.bib }]);
-    if (result.success) {
-      const newData = [...dataSource];
-      const index = newData.findIndex((item) => row.key === item.id);
-      const item = newData[index];
-      newData.splice(index, 1, {
-        ...item,
-        ...row,
-      });
-      setDataSource(newData);
-    } else {
-      showAlert('error', result.error);
-    }
-  };
-
   const columns = defaultColumns.map((col) => {
     if (!col.editable) {
       return col;
@@ -338,6 +312,22 @@ export function BibTable(props: Props) {
       }),
     };
   });
+
+  const handleSave = async (row: DataType) => {
+    const result = await updateBibs([{ ...row }]);
+    if (result.success) {
+      const newData = [...dataSource];
+      const index = newData.findIndex((item) => row.id === item.id);
+      const item = newData[index];
+      newData.splice(index, 1, {
+        ...item,
+        ...row,
+      });
+      setDataSource(newData);
+    } else {
+      showAlert('error', result.error);
+    }
+  };
 
   const getRowStyle = (record: DataType) => {
     switch (record.summary) {
@@ -392,7 +382,7 @@ export function BibTable(props: Props) {
   };
 
   return (
-    <div>
+    <>
       <h1>ビブ管理</h1>
       <Popconfirm
         title="ビブを一括付与します。"
@@ -431,6 +421,6 @@ export function BibTable(props: Props) {
           };
         }}
       />
-    </div>
+    </>
   );
 }
