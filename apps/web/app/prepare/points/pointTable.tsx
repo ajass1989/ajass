@@ -9,6 +9,8 @@ import { AlertType } from '../../components/alertType';
 
 type Props = {
   points: Point[];
+  // eslint-disable-next-line no-unused-vars
+  updatePoint: (point: Point) => void;
 };
 
 const EditableContext = React.createContext<FormInstance<any> | null>(null);
@@ -131,9 +133,8 @@ export function PointTable(props: Props) {
   const [alertType, setAlertType] = useState<AlertType>('error');
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertMessage, setErrorMessage] = useState('');
-  const [dataSource, setDataSource] = useState<Point[]>(props.points);
 
-  const data: DataType[] = dataSource.map((point: Point) => {
+  const data: DataType[] = props.points.map((point: Point) => {
     return {
       key: point.id,
       id: point.id,
@@ -193,14 +194,7 @@ export function PointTable(props: Props) {
   const handleSave = async (row: DataType) => {
     const result = await updatePoint({ ...row });
     if (result.success) {
-      const newData = [...dataSource];
-      const index = newData.findIndex((item) => row.id === item.id);
-      const item = newData[index];
-      newData.splice(index, 1, {
-        ...item,
-        ...row,
-      });
-      setDataSource(newData);
+      props.updatePoint(result.result!);
     } else {
       showAlert('error', result.error);
     }
