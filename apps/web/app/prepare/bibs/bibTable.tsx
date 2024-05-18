@@ -137,12 +137,14 @@ const EditableCell: React.FC<EditableCellProps> = ({
         onMouseOver={showEditButton}
         onMouseOut={hideEditButton}
       >
-        {editButtonVisible && <Button icon={<EditOutlined />} size="small" />}
         {children}
+        <Button
+          icon={<EditOutlined />}
+          size="small"
+          style={{ visibility: editButtonVisible ? 'visible' : 'hidden' }}
+        />
       </div>
     );
-  } else {
-    // console.log(`not editable`);
   }
   return <td {...restProps}>{childNode}</td>;
 };
@@ -282,6 +284,9 @@ export function BibTable(props: Props) {
       title: 'ビブ',
       dataIndex: 'bib',
       editable: true,
+      render: (_: any, record) => (
+        <span style={{ marginRight: '4px' }}>{record.bib}</span>
+      ),
     },
     {
       title: 'シード',
