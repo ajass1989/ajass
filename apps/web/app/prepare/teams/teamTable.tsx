@@ -3,27 +3,136 @@ import {
   Alert,
   Button,
   Form,
+  FormInstance,
   InputNumber,
   Popconfirm,
   Table,
   TableProps,
 } from 'antd';
 import Link from 'next/link';
-import { TeamsWithRacers, deleteTeam, updateTeamOrder } from './actions';
-import React, { useEffect, useState } from 'react';
-import {
-  DeleteOutlined,
-  EditOutlined,
-  RollbackOutlined,
-  SaveOutlined,
-} from '@ant-design/icons';
+import { TeamWithRacers, deleteTeam, updateTeamOrder } from './actions';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { Team } from '@repo/database';
 import { AlertType } from '../../components/alertType';
 import { useRouter } from 'next/navigation';
 
 type Props = {
-  teams: TeamsWithRacers;
+  teams: TeamWithRacers[];
 };
+
+const EditableContext = React.createContext<FormInstance<any> | null>(null);
+
+interface Item {
+  key: string;
+  id: string;
+  fullname: string; // チーム名
+  orderMale: number;
+  orderFemale: number;
+  racerCount: number;
+  snowboardMaleCount: number;
+  snowboardFemaleCount: number;
+  skiMaleCount: number;
+  skiFemaleCount: number;
+  seniorCount: number;
+  juniorCount: number;
+}
+
+interface EditableRowProps {
+  index: number;
+}
+
+// eslint-disable-next-line no-unused-vars
+const EditableRow: React.FC<EditableRowProps> = ({ index, ...props }) => {
+  const [form] = Form.useForm();
+  return (
+    <Form form={form} component={false}>
+      <EditableContext.Provider value={form}>
+        <tr {...props} />
+      </EditableContext.Provider>
+    </Form>
+  );
+};
+
+interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
+  title: any;
+  editable: boolean;
+  children: React.ReactNode;
+  dataIndex: keyof Item;
+  record: Item;
+  editing: boolean;
+  index: number;
+  // eslint-disable-next-line no-unused-vars
+  handleSave: (record: Item) => void;
+}
+
+const EditableCell: React.FC<EditableCellProps> = ({
+  editable,
+  children,
+  dataIndex,
+  record,
+  handleSave,
+  ...restProps
+}) => {
+  const [editing, setEditing] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const form = useContext(EditableContext)!;
+  const [editButtonVisible, setEditButtonVisible] = useState(false);
+
+  useEffect(() => {
+    if (editing) {
+      inputRef.current?.focus();
+    }
+  }, [editing]);
+
+  const toggleEdit = () => {
+    setEditing(!editing);
+    form.setFieldsValue({ [dataIndex]: record[dataIndex] });
+  };
+
+  const showEditButton = () => {
+    setEditButtonVisible(true);
+  };
+
+  const hideEditButton = () => {
+    setEditButtonVisible(false);
+  };
+
+  const save = async () => {
+    const values = await form.validateFields();
+    toggleEdit();
+    setEditButtonVisible(false);
+    handleSave({ ...record, ...values });
+  };
+
+  let childNode = children;
+
+  if (editable) {
+    childNode = editing ? (
+      <Form.Item style={{ margin: 0 }} name={dataIndex}>
+        <InputNumber ref={inputRef} onPressEnter={save} onBlur={save} />
+      </Form.Item>
+    ) : (
+      <div
+        className="editable-cell-value-wrap"
+        style={{ paddingRight: 8 }}
+        onClick={toggleEdit}
+        onMouseOver={showEditButton}
+        onMouseOut={hideEditButton}
+      >
+        <span style={{ marginRight: '4px' }}>{children}</span>
+        <Button
+          icon={<EditOutlined />}
+          size="small"
+          style={{ visibility: editButtonVisible ? 'visible' : 'hidden' }}
+        />
+      </div>
+    );
+  }
+  return <td {...restProps}>{childNode}</td>;
+};
+
+type EditableTableProps = Parameters<typeof Table>[0];
 
 interface DataType {
   key: string;
@@ -40,137 +149,15 @@ interface DataType {
   juniorCount: number;
 }
 
-interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
-  editing: boolean;
-  dataIndex: string;
-  title: any;
-  index: number;
-  record: DataType;
-  children: React.ReactNode;
-}
-
-type EditableTableProps = Parameters<typeof Table>[0];
-
 type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
 
 export function TeamTable(props: Props) {
-  const [form] = Form.useForm();
-  const [editingKey, setEditingKey] = useState('');
-  const [dataSource, setDataSource] = useState<TeamsWithRacers>(props.teams);
-  // 追加または編集されたチーム情報
-  const [newTeam, setNewTeam] = useState<Team | null>(null);
   const [alertType, setAlertType] = useState<AlertType>('error');
   const [alertVisible, setAlertVisible] = useState<boolean>(false);
   const [alertMessage, setAlertMessage] = useState<string>('');
-
-  const EditableCell: React.FC<EditableCellProps> = ({
-    editing,
-    dataIndex,
-    title,
-    children,
-    ...restProps
-  }) => {
-    return (
-      <td {...restProps}>
-        {editing ? (
-          <Form.Item
-            name={dataIndex}
-            style={{ margin: 0 }}
-            rules={[
-              {
-                required: true,
-                message: `${title}を入力してください。`,
-              },
-            ]}
-          >
-            <InputNumber />
-          </Form.Item>
-        ) : (
-          children
-        )}
-      </td>
-    );
-  };
-
-  const isEditing = (record: DataType) => record.key === editingKey;
-
-  const edit = (record: Partial<DataType> & { key: React.Key }) => {
-    form.setFieldsValue({
-      ...record,
-    });
-    setEditingKey(record.key as string);
-  };
-
-  const handleCancel = () => {
-    setEditingKey('');
-  };
-
-  // Alert を表示する関数
-  const showAlert = (alertType: AlertType, error?: string) => {
-    setAlertMessage(error ?? '');
-    setAlertVisible(true);
-    setAlertType(alertType);
-  };
-
-  // Alert を非表示にする関数
-  const closeAlert = () => {
-    setAlertMessage('');
-    setAlertVisible(false);
-  };
-
-  /**
-   * 行内保存ボタンを押したときの処理
-   * 滑走順を保存する
-   * @param key
-   * @returns
-   */
-  const handleSave = async (key: React.Key) => {
-    try {
-      const row = (await form.validateFields()) as DataType;
-      const updData = [...dataSource];
-      const index = updData.findIndex((item) => key === item.id);
-      if (index > -1) {
-        const result = await updateTeamOrder(
-          key as string,
-          row.orderFemale,
-          row.orderMale,
-        );
-        if (!result.success) {
-          showAlert(
-            'warning',
-            '滑走順の保存に失敗しました。重複している可能性があります。',
-          );
-          return;
-        }
-        const item = updData[index];
-        item.orderFemale = row.orderFemale;
-        item.orderMale = row.orderMale;
-        updData.splice(index, 1, {
-          ...item,
-          ...row,
-        });
-        setDataSource(updData);
-        setEditingKey('');
-      }
-    } catch (errInfo) {
-      showAlert('error', '滑走順の保存に失敗しました。');
-    }
-  };
-
-  /**
-   * 画面表示時に追加または編集されたチーム情報があれば取得して表示用データを更新する
-   */
-  useEffect(() => {
-    console.log('useEffect() newTeam:', newTeam);
-    // eslint-disable-next-line no-undef
-    const teamData = localStorage.getItem('newTeam');
-    if (teamData) {
-      setNewTeam(JSON.parse(teamData));
-      showAlert('success', '保存しました。');
-      // eslint-disable-next-line no-undef
-      localStorage.removeItem('newTeam'); // 読み込み後は削除
-    }
-  }, []);
+  const [dataSource, setDataSource] = useState<TeamWithRacers[]>(props.teams);
+  const [newTeam, setNewTeam] = useState<Team | null>(null);
+  const router = useRouter();
 
   // 表示用データに一旦変換
   const data: DataType[] = dataSource.map((d) => {
@@ -230,22 +217,6 @@ export function TeamTable(props: Props) {
       });
     }
   }
-
-  const handleDelete = async (key: React.Key) => {
-    const result = await deleteTeam(key as string);
-    if (!result.success) {
-      showAlert('error', '削除に失敗しました。');
-      return;
-    }
-    const newDataSource = dataSource.filter((item) => item.id != key);
-    setDataSource(newDataSource);
-  };
-
-  const router = useRouter();
-  const handleClick = (key: React.Key) => {
-    router.push(`/prepare/teams/${key}`, { scroll: true });
-    router.refresh();
-  };
 
   const defaultColumns = [
     {
@@ -347,49 +318,19 @@ export function TeamTable(props: Props) {
       title: '操作',
       key: 'action',
       render: (_: any, record: DataType) => {
-        const editable = isEditing(record);
-        return editable ? (
-          <span>
+        return (
+          <Popconfirm
+            onConfirm={() => handleDelete(record.key)}
+            title="削除します。よろしいですか？"
+          >
             <Button
-              icon={<SaveOutlined />}
-              onClick={() => handleSave(record.key)}
+              danger
+              icon={<DeleteOutlined />}
               size="small"
-              style={{ marginRight: 8 }}
-              title="保存"
-              type="primary"
-            />
-            <Button
-              icon={<RollbackOutlined />}
-              onClick={handleCancel}
-              size="small"
-              title="キャンセル"
-            />
-          </span>
-        ) : (
-          <span>
-            <Button
-              disabled={editingKey !== ''}
-              icon={<EditOutlined />}
-              onClick={() => edit(record)}
-              size="small"
-              style={{ marginRight: 8 }}
-              title="編集"
+              title="削除"
               type="default"
             />
-            <Popconfirm
-              onConfirm={() => handleDelete(record.key)}
-              title="削除します。よろしいですか？"
-            >
-              <Button
-                danger
-                disabled={editingKey !== ''}
-                icon={<DeleteOutlined />}
-                size="small"
-                title="削除"
-                type="default"
-              />
-            </Popconfirm>
-          </span>
+          </Popconfirm>
         );
       },
     },
@@ -403,12 +344,76 @@ export function TeamTable(props: Props) {
       ...col,
       onCell: (record: DataType) => ({
         record,
+        editable: col.editable,
         dataIndex: col.dataIndex,
         title: col.title,
-        editing: isEditing(record),
+        handleSave,
       }),
     };
   });
+
+  /**
+   * 追加または編集されたチーム情報があれば取得して表示用データを更新する
+   */
+  useEffect(() => {
+    console.log('useEffect() newTeam:', newTeam);
+    // eslint-disable-next-line no-undef
+    const teamData = localStorage.getItem('newTeam');
+    if (teamData) {
+      setNewTeam(JSON.parse(teamData));
+      showAlert('success', '保存しました。');
+      // eslint-disable-next-line no-undef
+      localStorage.removeItem('newTeam'); // 読み込み後は削除
+    }
+  }, []);
+
+  const handleSave = async (row: DataType) => {
+    const result = await updateTeamOrder(
+      row.id,
+      row.orderFemale,
+      row.orderMale,
+    );
+    if (result.success) {
+      const newData = [...dataSource];
+      const index = newData.findIndex((item) => row.id === item.id);
+      const item = newData[index];
+      newData.splice(index, 1, {
+        ...item,
+        ...row,
+      });
+      setDataSource(newData);
+    } else {
+      showAlert('error', result.error);
+    }
+  };
+
+  const handleDelete = async (key: React.Key) => {
+    const result = await deleteTeam(key as string);
+    if (!result.success) {
+      showAlert('error', '削除に失敗しました。');
+      return;
+    }
+    const newDataSource = dataSource.filter((item) => item.id != key);
+    setDataSource(newDataSource);
+  };
+
+  const handleClick = (key: React.Key) => {
+    router.push(`/prepare/teams/${key}`, { scroll: true });
+    router.refresh();
+  };
+
+  // Alert を表示する関数
+  const showAlert = (alertType: AlertType, error?: string) => {
+    setAlertMessage(error ?? '');
+    setAlertVisible(true);
+    setAlertType(alertType);
+  };
+
+  // Alert を非表示にする関数
+  const closeAlert = () => {
+    setAlertMessage('');
+    setAlertVisible(false);
+  };
 
   return (
     <>
@@ -416,28 +421,27 @@ export function TeamTable(props: Props) {
       <Button type="primary" style={{ marginBottom: 16 }}>
         <Link href="/prepare/teams/add">追加</Link>
       </Button>
-      <Form form={form} component={false}>
-        {alertVisible && (
-          <Alert
-            message={alertMessage}
-            type={alertType}
-            closable
-            onClose={closeAlert}
-            style={{ marginBottom: 16 }}
-          />
-        )}
-        <Table
-          components={{
-            body: {
-              cell: EditableCell,
-            },
-          }}
-          bordered
-          dataSource={data}
-          columns={columns as ColumnTypes}
-          pagination={false}
+      {alertVisible && (
+        <Alert
+          message={alertMessage}
+          type={alertType}
+          closable
+          onClose={closeAlert}
+          style={{ marginBottom: 16 }}
         />
-      </Form>
+      )}
+      <Table
+        components={{
+          body: {
+            row: EditableRow,
+            cell: EditableCell,
+          },
+        }}
+        bordered
+        dataSource={data}
+        columns={columns as ColumnTypes}
+        pagination={false}
+      />
     </>
   );
 }

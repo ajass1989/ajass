@@ -1,11 +1,10 @@
 'use server';
 import { Prisma, Racer, Team, prisma } from '@repo/database';
 import { ActionResult } from '../../actionResult';
-import { TeamWithRacers } from './teamResponseDto';
 
-export type TeamsWithRacers = Prisma.PromiseReturnType<
-  typeof listTeamsWithRacers
->;
+export type TeamWithRacers = Team & {
+  racers: Racer[];
+};
 
 export async function listTeamsWithRacers(): Promise<TeamWithRacers[]> {
   'use server';
@@ -83,6 +82,13 @@ export async function updateTeamOrder(
         return {
           success: false,
           error: '保存に失敗しました。指定したキーが見つかりません。',
+        };
+      }
+      if (e.code === 'P2002') {
+        console.error(e);
+        return {
+          success: false,
+          error: '保存に失敗しました。滑走順が重複しています。',
         };
       }
     }
