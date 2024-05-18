@@ -83,4 +83,7 @@ CREATE UNIQUE INDEX "Team_orderMale_key" ON "Team"("orderMale");
 CREATE UNIQUE INDEX "Team_orderFemale_key" ON "Team"("orderFemale");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Racer_bib_key" ON "Racer"("bib");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Result_set_racerId_key" ON "Result"("set", "racerId");

@@ -35,6 +35,13 @@ export async function updateBibs(
           error: '保存に失敗しました。指定したキーが見つかりません。',
         };
       }
+      if (e.code === 'P2002') {
+        console.error(e);
+        return {
+          success: false,
+          error: '保存に失敗しました。ビブが重複しています。',
+        };
+      }
     }
     throw e;
   }

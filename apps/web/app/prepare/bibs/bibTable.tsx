@@ -107,15 +107,10 @@ const EditableCell: React.FC<EditableCellProps> = ({
   };
 
   const save = async () => {
-    try {
-      const values = await form.validateFields();
-      toggleEdit();
-      setEditButtonVisible(false);
-      handleSave({ ...record, ...values });
-    } catch (errInfo) {
-      // showAlert('error', '保存に失敗しました。');
-      console.error('Save failed:', errInfo);
-    }
+    const values = await form.validateFields();
+    toggleEdit();
+    setEditButtonVisible(false);
+    handleSave({ ...record, ...values });
   };
 
   let childNode = children;
@@ -439,5 +434,3 @@ export function BibTable(props: Props) {
     </div>
   );
 }
-
-// TODO ビブの重複ガード
