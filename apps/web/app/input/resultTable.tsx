@@ -315,6 +315,7 @@ interface DataType {
   formatTime2: string;
   special: string;
   summary: string;
+  bestTime: number | null;
 }
 
 type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
@@ -380,6 +381,14 @@ export function ResultTable(props: Props) {
 
   const data: DataType[] = dataSource
     .map((racer: RacerWithResults) => {
+      const time1 =
+        racer.results.find((result) => result.set == 1)?.time ?? null;
+      const time2 =
+        racer.results.find((result) => result.set == 2)?.time ?? null;
+      let bestTime = null;
+      if (time1 && time2) {
+        bestTime = Math.min(time1, time2);
+      }
       return {
         key: racer.id,
         id: racer.id,
@@ -391,15 +400,12 @@ export function ResultTable(props: Props) {
         seed: racer.seed,
         teamId: racer.teamId,
         status1: racer.results.find((result) => result.set == 1)?.status ?? '',
-        formatTime1: renderTime(
-          racer.results.find((result) => result.set == 1)?.time ?? null,
-        ),
+        formatTime1: renderTime(time1),
         status2: racer.results.find((result) => result.set == 2)?.status ?? '',
-        formatTime2: renderTime(
-          racer.results.find((result) => result.set == 2)?.time ?? null,
-        ),
+        formatTime2: renderTime(time2),
         special: racer.special,
         summary: summary(racer),
+        bestTime: bestTime,
       };
     })
     .sort((a, b) => {
@@ -518,6 +524,9 @@ export function ResultTable(props: Props) {
     {
       title: 'ベスト',
       dataIndex: 'bestTime',
+      render: (_: any, record) => {
+        return renderTime(record.bestTime);
+      },
     },
   ];
 
