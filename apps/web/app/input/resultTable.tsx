@@ -14,7 +14,7 @@ import {
 } from 'antd';
 import React, { useContext, useEffect, useRef } from 'react';
 import { useState } from 'react';
-import { EditOutlined } from '@ant-design/icons';
+import { EditOutlined, WarningFilled } from '@ant-design/icons';
 import { Team } from '@repo/database';
 import {
   RacerWithResults,
@@ -32,6 +32,7 @@ import {
   bgColorSkiMale,
   bgColorSnowboardFemale,
   bgColorSnowboardMale,
+  fgColorWarn,
 } from '../colors';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
@@ -58,6 +59,10 @@ interface Item {
   teamId: string | null;
   special: string;
   summary: string;
+  formatTime1: string;
+  status1: string;
+  formatTime2: string;
+  status2: string;
 }
 
 interface EditableRowProps {
@@ -132,7 +137,6 @@ const EditableCell: React.FC<EditableCellProps> = ({
   };
 
   const changeValue = async () => {
-    console.log(dataIndex);
     const values = await form.validateFields();
     toggleEdit();
     setEditButtonVisible(false);
@@ -159,53 +163,57 @@ const EditableCell: React.FC<EditableCellProps> = ({
 
   const statusData = ['', 'df', 'ds', 'dq'];
 
-  const childNodeView = (dataIndex: string) => {
-    let c;
+  const childNodeEditing = (dataIndex: string) => {
+    let child;
     let rules: Rule[] = [{}];
     switch (dataIndex) {
       case 'bib':
-        c = (
+        child = (
           <InputNumber
             ref={inputNumberRef}
             onPressEnter={changeValue}
             onBlur={changeValue}
+            style={{ width: '72px' }}
           />
         );
+        rules = [];
         break;
       case 'formatTime1':
-        c = (
+        child = (
           <Input
             ref={inputRef}
             onPressEnter={changeValue}
             onBlur={changeValue}
             placeholder={'00:00.00'}
+            style={{ width: '84px' }}
           />
         );
         rules = [
           {
-            pattern: /^\d{2}:\d{2}\.\d{2}$/, // TODO 00:00.00のフォーマット指定
+            pattern: /^\d{2}:\d{2}\.\d{2}$/,
             message: '[00:00.00]の形式で入力してください。',
           },
         ];
         break;
       case 'formatTime2':
-        c = (
+        child = (
           <Input
             ref={inputRef}
             onPressEnter={changeValue}
             onBlur={changeValue}
             placeholder={'00:00.00'}
+            style={{ width: '84px' }}
           />
         );
         rules = [
           {
-            pattern: /^\d{2}:\d{2}\.\d{2}$/, // TODO 00:00.00のフォーマット指定
+            pattern: /^\d{2}:\d{2}\.\d{2}$/,
             message: '[00:00.00]の形式で入力してください。',
           },
         ];
         break;
       case 'status1':
-        c = (
+        child = (
           <Select
             onBlur={changeValue}
             onChange={changeValue}
@@ -213,11 +221,12 @@ const EditableCell: React.FC<EditableCellProps> = ({
               label: status,
               value: status,
             }))}
+            style={{ width: '64px' }}
           />
         );
         break;
       case 'status2':
-        c = (
+        child = (
           <Select
             onBlur={changeValue}
             onChange={changeValue}
@@ -231,15 +240,29 @@ const EditableCell: React.FC<EditableCellProps> = ({
     }
     return (
       <Form.Item style={{ margin: 0 }} name={dataIndex} rules={rules}>
-        {c}
+        {child}
       </Form.Item>
     );
   };
 
-  if (editable) {
-    childNode = editing ? (
-      childNodeView(dataIndex as string)
-    ) : (
+  const childNodeView = (children: React.ReactNode) => {
+    let warnIconVisible = false;
+    switch (dataIndex) {
+      case 'bib':
+        warnIconVisible = (record[dataIndex] ?? '').toString().length == 0;
+        break;
+      case 'formatTime1':
+        warnIconVisible =
+          (record[dataIndex] ?? '').length == 0 &&
+          (record['status1'] ?? '').length == 0;
+        break;
+      case 'formatTime2':
+        warnIconVisible =
+          (record[dataIndex] ?? '').length == 0 &&
+          (record['status2'] ?? '').length == 0;
+        break;
+    }
+    return (
       <div
         className="editable-cell-value-wrap"
         style={{ paddingRight: 8 }}
@@ -248,6 +271,13 @@ const EditableCell: React.FC<EditableCellProps> = ({
         onMouseOut={hideEditButton}
       >
         <span style={{ marginRight: '4px' }}>{children}</span>
+        <WarningFilled
+          style={{
+            visibility: warnIconVisible ? 'visible' : 'hidden',
+            fontSize: '16px',
+            color: fgColorWarn,
+          }}
+        />
         <Button
           icon={<EditOutlined />}
           size="small"
@@ -257,6 +287,12 @@ const EditableCell: React.FC<EditableCellProps> = ({
         />
       </div>
     );
+  };
+
+  if (editable) {
+    childNode = editing
+      ? childNodeEditing(dataIndex as string)
+      : childNodeView(children);
   }
   return <td {...restProps}>{childNode}</td>;
 };
@@ -334,6 +370,7 @@ export function ResultTable(props: Props) {
   };
 
   const parseTime = (formatTime: string) => {
+    if (formatTime === '') return null;
     const time = formatTime.split(':');
     const minutes = parseInt(time[0]);
     const seconds = parseInt(time[1].split('.')[0]);
@@ -423,6 +460,11 @@ export function ResultTable(props: Props) {
     dataIndex: string;
   })[] = [
     {
+      title: '滑走順',
+      dataIndex: 'order',
+      render: (_: any, record, index) => index + 1,
+    },
+    {
       title: '種目',
       dataIndex: 'summary',
     },
@@ -473,6 +515,10 @@ export function ResultTable(props: Props) {
       dataIndex: 'formatTime2',
       editable: true,
     },
+    {
+      title: 'ベスト',
+      dataIndex: 'bestTime',
+    },
   ];
 
   const columns = defaultColumns.map((col) => {
@@ -496,8 +542,6 @@ export function ResultTable(props: Props) {
   });
 
   const setNewData = (row: DataType) => {
-    console.log('setNewData: 1');
-    console.log(row);
     const newData = [...dataSource];
     const index = newData.findIndex((item) => row.id === item.id);
     const item = newData[index];
@@ -505,8 +549,6 @@ export function ResultTable(props: Props) {
       ...item,
       ...row,
     });
-    console.log('newData');
-    console.log(newData);
     setDataSource(newData);
   };
 
@@ -562,49 +604,51 @@ export function ResultTable(props: Props) {
   }
 
   const handleChangeTime1 = async (row: DataType) => {
-    const result = await updateResultTime({
-      racerId: row.id,
-      set: 1,
-      time: parseTime(row.formatTime1),
-    });
-    if (result.success) {
-      const newData = [...dataSource];
-      const index = newData.findIndex((item) => row.id === item.id);
-      const item = newData[index];
-      item.results.find((result) => result.set == 1)!.time =
-        result.result!.time;
-      item.results.find((result) => result.set == 1)!.status = null;
-      newData.splice(index, 1, {
-        ...item,
-      });
-      setDataSource(newData);
-    } else {
-      showAlert('error', result.error!);
+    try {
+      await _handleChangeTime(row.id, 1, row.formatTime1);
+    } catch (error: any) {
+      showAlert('error', error.message);
     }
   };
 
   const handleChangeTime2 = async (row: DataType) => {
-    const result = await updateResultTime({
-      racerId: row.id,
-      set: 2,
-      time: parseTime(row.formatTime2),
-    });
-    if (result.success) {
-      const newData = [...dataSource];
-      const index = newData.findIndex((item) => row.id === item.id);
-      const item = newData[index];
-      item.results.find((result) => result.set == 2)!.time =
-        result.result!.time;
-      item.results.find((result) => result.set == 2)!.status = null;
-      newData.splice(index, 1, {
-        ...item,
-      });
-      setDataSource(newData);
-    } else {
-      showAlert('error', result.error!);
+    try {
+      await _handleChangeTime(row.id, 2, row.formatTime2);
+    } catch (error: any) {
+      showAlert('error', error.message);
     }
   };
 
+  const _handleChangeTime = async (
+    racerId: string,
+    set: number,
+    formatTime: string,
+  ): Promise<void> => {
+    const result = await updateResultTime({
+      racerId: racerId,
+      set: set,
+      time: parseTime(formatTime),
+    });
+    if (!result.success) {
+      throw new Error(result.error!);
+    }
+    const newData = [...dataSource];
+    const index = newData.findIndex((item) => racerId === item.id);
+    const item = newData[index];
+    item.results.find((result) => result.set == set)!.time =
+      result.result!.time;
+    item.results.find((result) => result.set == set)!.status = null;
+    newData.splice(index, 1, {
+      ...item,
+    });
+    setDataSource(newData);
+  };
+
+  /**
+   * 行スタイルを取得
+   * @param record
+   * @returns
+   */
   const getRowStyle = (record: DataType) => {
     switch (record.summary) {
       case 'ジュニア':

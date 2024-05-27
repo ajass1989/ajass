@@ -21,3 +21,5 @@ export const fgColorJunior = gold[6];
 export const bgColorSenior = orange[1];
 export const fgColorSenior = orange[6];
 export const bgColorDefault = gray[1];
+
+export const fgColorWarn = gold[6];
