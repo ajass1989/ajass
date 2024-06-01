@@ -1,5 +1,5 @@
 'use server';
-import { Prisma, Racer, Result, Team, prisma } from '@repo/database';
+import { Prisma, Racer, Team, prisma } from '@repo/database';
 import { PrismaClient } from '@prisma/client/extension';
 import { ActionResult } from '../../actionResult';
 
@@ -9,15 +9,15 @@ export type UpdateBibRequestDto = {
 };
 
 export async function updateBibs(
-  dto: UpdateBibRequestDto[],
+  dtos: UpdateBibRequestDto[],
 ): Promise<ActionResult<Racer[]>> {
   try {
     let newValues: Racer[] = [];
     await prisma.$transaction(async (prisma: PrismaClient) => {
-      const promises = dto.map(async (param: UpdateBibRequestDto) => {
+      const promises = dtos.map(async (dto: UpdateBibRequestDto) => {
         const newValue = await prisma.racer.update({
-          where: { id: param.id },
-          data: { bib: param.bib },
+          where: { id: dto.id },
+          data: { bib: dto.bib },
         });
         return newValue;
       });
@@ -36,7 +36,6 @@ export async function updateBibs(
         };
       }
       if (e.code === 'P2002') {
-        console.error(e);
         return {
           success: false,
           error: '保存に失敗しました。ビブが重複しています。',
@@ -47,48 +46,40 @@ export async function updateBibs(
   }
 }
 
-export type UpdateResultStatusRequestDto = {
-  racerId: string;
-  set: number;
-  status: string;
+export type StatusType = 'dq' | 'ds' | 'df' | null;
+export type UpdateStatusRequestDto = {
+  status1?: StatusType;
+  status2?: StatusType;
 };
 
-export async function updateResultStatus(
-  dto: UpdateResultStatusRequestDto,
-): Promise<ActionResult<Result>> {
+export async function updateStatus(
+  id: string,
+  dto: UpdateStatusRequestDto,
+): Promise<ActionResult<Racer>> {
   try {
-    console.log(`updateResultStatus: dto: ${JSON.stringify(dto)}`);
-    const r = await prisma.$transaction(async (prisma: PrismaClient) => {
-      let r = await prisma.result.update({
-        where: {
-          set_racerId: {
-            racerId: dto.racerId,
-            set: dto.set,
-          },
-        },
+    // ステータスが文字列の場合、タイムをnullにする
+    // それ以外の場合、タイムは変更しない
+    const time1 = typeof dto.status1 === 'string' ? null : undefined;
+    const time2 = typeof dto.status2 === 'string' ? null : undefined;
+    const r = await prisma.$transaction(async (tx) => {
+      // タイムとステータスの更新
+      let update1 = await prisma.racer.update({
+        where: { id },
         data: {
-          status: dto.status,
+          ...dto,
+          time1,
+          time2,
         },
       });
-      console.log(`updateResultStatus: r1: ${JSON.stringify(r)}`);
-      if (dto.status !== '') {
-        // ステータスに応じてタイムをクリアする
-        r = await prisma.result.update({
-          where: {
-            set_racerId: {
-              racerId: dto.racerId,
-              set: dto.set,
-            },
-          },
-          data: {
-            time: null,
-          },
-        });
-        console.log(`updateResultStatus: r2: ${JSON.stringify(r)}`);
-      }
-      return r;
+      // ベストタイムの更新
+      let update2 = await prisma.racer.update({
+        where: { id },
+        data: {
+          bestTime: getBestTime(update1),
+        },
+      });
+      return update2;
     });
-    console.log(`updateResultStatus: r: ${JSON.stringify(r)}`);
     return {
       success: true,
       result: r,
@@ -106,46 +97,50 @@ export async function updateResultStatus(
   }
 }
 
-export type UpdateResultTimeRequestDto = {
-  racerId: string;
-  set: number;
-  time: number | null;
+export type UpdateTimeRequestDto = {
+  time1?: number | null;
+  time2?: number | null;
 };
 
-export async function updateResultTime(
-  dto: UpdateResultTimeRequestDto,
-): Promise<ActionResult<Result>> {
+function getBestTime(racer: Racer): number | null {
+  if (racer.time1 && racer.time2) {
+    return Math.min(racer.time1, racer.time2);
+  }
+  if (racer.time1 && !racer.time2) {
+    return racer.time1;
+  }
+  if (!racer.time1 && racer.time2) {
+    return racer.time2;
+  }
+  return null;
+}
+
+export async function updateTime(
+  id: string,
+  dto: UpdateTimeRequestDto,
+): Promise<ActionResult<Racer>> {
   try {
-    const r = await prisma.$transaction(async (prisma: PrismaClient) => {
-      let r = await prisma.result.update({
-        where: {
-          set_racerId: {
-            racerId: dto.racerId,
-            set: dto.set,
-          },
-        },
+    const status1 = typeof dto.time1 === 'number' ? null : undefined;
+    const status2 = typeof dto.time2 === 'number' ? null : undefined;
+    const r = await prisma.$transaction(async (tx) => {
+      // タイムとステータスの更新
+      let update1 = await tx.racer.update({
+        where: { id },
         data: {
-          time: dto.time,
+          ...dto,
+          status1,
+          status2,
         },
       });
-      if (!dto.time) {
-        // 有効なタイムの場合ステータスをクリアする
-        r = await prisma.result.update({
-          where: {
-            set_racerId: {
-              racerId: dto.racerId,
-              set: dto.set,
-            },
-          },
-          data: {
-            status: null,
-          },
-        });
-        console.log(`updateResultStatus: r2: ${JSON.stringify(r)}`);
-      }
-      return r;
+      // ベストタイムの更新
+      let update2 = await tx.racer.update({
+        where: { id },
+        data: {
+          bestTime: getBestTime(update1),
+        },
+      });
+      return update2;
     });
-
     return {
       success: true,
       result: r,
@@ -179,25 +174,6 @@ export async function listTeams(): Promise<Team[]> {
     where: {},
     orderBy: {
       fullname: 'asc',
-    },
-  });
-}
-
-export type RacerWithResults = Racer & {
-  results: Result[];
-  // } & {
-  //   team: Team;
-};
-
-export async function listRacersWithResults(): Promise<RacerWithResults[]> {
-  return await prisma.racer.findMany({
-    where: {},
-    orderBy: {
-      bib: 'asc',
-    },
-    include: {
-      results: true,
-      // team: true,
     },
   });
 }

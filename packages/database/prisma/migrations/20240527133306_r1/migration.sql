@@ -37,21 +37,14 @@ CREATE TABLE "Racer" (
     "special" TEXT NOT NULL,
     "isFirstTime" BOOLEAN NOT NULL,
     "age" INTEGER,
+    "status1" TEXT,
+    "time1" INTEGER,
+    "status2" TEXT,
+    "time2" INTEGER,
+    "bestTime" INTEGER,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
     CONSTRAINT "Racer_teamId_fkey" FOREIGN KEY ("teamId") REFERENCES "Team" ("id") ON DELETE SET NULL ON UPDATE CASCADE
-);
-
--- CreateTable
-CREATE TABLE "Result" (
-    "id" TEXT NOT NULL PRIMARY KEY,
-    "set" INTEGER NOT NULL,
-    "time" INTEGER,
-    "status" TEXT,
-    "racerId" TEXT NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
-    CONSTRAINT "Result_racerId_fkey" FOREIGN KEY ("racerId") REFERENCES "Racer" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -84,6 +77,3 @@ CREATE UNIQUE INDEX "Team_orderFemale_key" ON "Team"("orderFemale");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Racer_bib_key" ON "Racer"("bib");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Result_set_racerId_key" ON "Result"("set", "racerId");

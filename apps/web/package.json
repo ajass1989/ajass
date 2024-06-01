@@ -2,11 +2,13 @@
   "private": true,
   "name": "@repo/web",
   "version": "1.0.0",
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint . --max-warnings 0"
+    "lint": "eslint . --max-warnings 0",
+    "test": "vitest"
   },
   "dependencies": {
     "@ant-design/icons": "^5.3.6",
@@ -27,10 +29,14 @@
     "@repo/database": "*",
     "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",
+    "@testing-library/react": "^15.0.7",
     "@types/node": "^20.11.24",
     "@types/react": "^18.2.61",
     "@types/react-dom": "^18.2.19",
+    "@vitejs/plugin-react": "^4.3.0",
     "eslint": "^8.57.0",
-    "typescript": "^5.3.3"
+    "jsdom": "^24.1.0",
+    "typescript": "^5.3.3",
+    "vitest": "^1.6.0"
   }
 }

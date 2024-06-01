@@ -50,23 +50,14 @@ model Racer {
   special     String // normal, senior, junior
   isFirstTime Boolean
   age         Int?
+  status1     String? // ds, dq, df
+  time1       Int?
+  status2     String? // ds, dq, df
+  time2       Int?
+  bestTime    Int?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   team        Team?    @relation(fields: [teamId], references: [id])
-  results     Result[]
-}
-
-model Result {
-  id        String   @id @default(cuid())
-  set       Int // 1, 2
-  time      Int?
-  status    String? // ds, dq, df
-  racerId   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  racer     Racer    @relation(fields: [racerId], references: [id])
-
-  @@unique([set, racerId])
 }
 
 model Point {

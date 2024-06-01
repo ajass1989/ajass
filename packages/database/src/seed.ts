@@ -56,6 +56,8 @@ const TEST_RACERS = [
     special: 'junior',
     isFirstTime: true,
     age: 10,
+    time1: 125000,
+    time2: 99540,
   },
   {
     id: 'female-junior-2',
@@ -69,6 +71,7 @@ const TEST_RACERS = [
     special: 'junior',
     isFirstTime: false,
     age: 15,
+    time1: 53400,
   },
   {
     id: 'male-junior-3',
@@ -82,6 +85,8 @@ const TEST_RACERS = [
     special: 'junior',
     isFirstTime: true,
     age: 13,
+    status1: 'ds',
+    status2: 'dq',
   },
   {
     id: 'male-junior-4',
@@ -95,6 +100,7 @@ const TEST_RACERS = [
     special: 'junior',
     isFirstTime: true,
     age: 14,
+    status1: 'df',
   },
   {
     id: 'female-junior-5',
@@ -491,65 +497,6 @@ const TEST_RACERS = [
     special: 'normal',
     isFirstTime: false,
     age: 20,
-  },
-];
-
-const TEST_RESULTS = [
-  {
-    id: 'male-junior-1-1',
-    set: 1,
-    time: 125000,
-    status: null,
-    racerId: 'male-junior-1',
-  },
-  {
-    id: 'male-junior-1-2',
-    set: 2,
-    time: 99540,
-    status: null,
-    racerId: 'male-junior-1',
-  },
-  {
-    id: 'female-junior-2-1',
-    set: 1,
-    time: 53400,
-    status: null,
-    racerId: 'female-junior-2',
-  },
-  {
-    id: 'female-junior-2-2',
-    set: 2,
-    time: null,
-    status: null,
-    racerId: 'female-junior-2',
-  },
-  {
-    id: 'male-junior-3-1',
-    set: 1,
-    time: null,
-    status: 'ds',
-    racerId: 'male-junior-3',
-  },
-  {
-    id: 'male-junior-3-2',
-    set: 2,
-    time: null,
-    status: 'dq',
-    racerId: 'male-junior-3',
-  },
-  {
-    id: 'male-junior-4-1',
-    set: 1,
-    time: null,
-    status: 'df',
-    racerId: 'male-junior-4',
-  },
-  {
-    id: 'male-junior-4-2',
-    set: 2,
-    time: null,
-    status: null,
-    racerId: 'male-junior-4',
   },
 ];
 
@@ -1304,24 +1251,6 @@ const TEST_SPECIAL_POINTS = [
           },
           create: {
             ...racer,
-          },
-        }),
-      ),
-    );
-    await Promise.all(
-      TEST_RESULTS.map((result) =>
-        prisma.result.upsert({
-          where: {
-            set_racerId: {
-              set: result.set!,
-              racerId: result.racerId!,
-            },
-          },
-          update: {
-            ...result,
-          },
-          create: {
-            ...result,
           },
         }),
       ),

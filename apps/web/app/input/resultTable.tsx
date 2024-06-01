@@ -15,13 +15,13 @@ import {
 import React, { useContext, useEffect, useRef } from 'react';
 import { useState } from 'react';
 import { EditOutlined, WarningFilled } from '@ant-design/icons';
-import { Team } from '@repo/database';
+import { Racer, Team } from '@repo/database';
 import {
-  RacerWithResults,
+  StatusType,
   UpdateBibRequestDto,
   updateBibs,
-  updateResultStatus,
-  updateResultTime,
+  updateStatus,
+  updateTime,
 } from '../prepare/bibs/actions';
 import { AlertType } from '../components/alertType';
 import {
@@ -37,12 +37,20 @@ import {
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { Rule } from 'antd/es/form';
+import {
+  CategoryType,
+  GenderType,
+  SpecialType,
+  parseTime,
+  renderTime,
+  summary,
+} from './racerUtil';
 
 dayjs.extend(duration);
 
 type Props = {
   teams: Team[];
-  racers: RacerWithResults[];
+  racers: Racer[];
 };
 
 const EditableContext = React.createContext<FormInstance<any> | null>(null);
@@ -162,6 +170,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
   let childNode = children;
 
   const statusData = ['', 'df', 'ds', 'dq'];
+  const regTime = /^(?:[0-9]{1,2}:)?[0-5]?[0-9]\.[0-9]{1,3}$/;
 
   const childNodeEditing = (dataIndex: string) => {
     let child;
@@ -190,7 +199,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
         );
         rules = [
           {
-            pattern: /^\d{2}:\d{2}\.\d{2}$/,
+            pattern: regTime,
             message: '[00:00.00]の形式で入力してください。',
           },
         ];
@@ -207,7 +216,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
         );
         rules = [
           {
-            pattern: /^\d{2}:\d{2}\.\d{2}$/,
+            pattern: regTime,
             message: '[00:00.00]の形式で入力してください。',
           },
         ];
@@ -315,7 +324,7 @@ interface DataType {
   formatTime2: string;
   special: string;
   summary: string;
-  bestTime: number | null;
+  formatBestTime: string;
 }
 
 type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
@@ -324,27 +333,7 @@ export function ResultTable(props: Props) {
   const [alertType, setAlertType] = useState<AlertType>('error');
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
-  const [dataSource, setDataSource] = useState<RacerWithResults[]>(
-    props.racers,
-  );
-
-  // 種目のフォーマット
-  const summary = (record: RacerWithResults) => {
-    let summary = '';
-    switch (record.special) {
-      case 'senior':
-        summary += 'シニア';
-        break;
-      case 'junior':
-        summary += 'ジュニア';
-        break;
-      case 'normal':
-        summary += record.gender == 'f' ? '女子' : '男子';
-        summary += record.category == 'ski' ? 'スキー' : 'スノーボード';
-        break;
-    }
-    return summary;
-  };
+  const [dataSource, setDataSource] = useState<Racer[]>(props.racers);
 
   // ソート順を定義
   // eslint-disable-next-line no-unused-vars
@@ -357,38 +346,8 @@ export function ResultTable(props: Props) {
     男子スキー: 5,
   };
 
-  const renderTime = (time: number | null) => {
-    if (!time) {
-      return '';
-    }
-    const timeDuration = dayjs.duration(time, 'milliseconds');
-    const minutes = timeDuration.minutes().toString().padStart(2, '0');
-    const seconds = timeDuration.seconds().toString().padStart(2, '0');
-    const milliseconds = (timeDuration.milliseconds() / 10)
-      .toString()
-      .padStart(2, '0');
-    return `${minutes}:${seconds}.${milliseconds}`;
-  };
-
-  const parseTime = (formatTime: string) => {
-    if (formatTime === '') return null;
-    const time = formatTime.split(':');
-    const minutes = parseInt(time[0]);
-    const seconds = parseInt(time[1].split('.')[0]);
-    const milliseconds = parseInt(time[1].split('.')[1]);
-    return minutes * 60000 + seconds * 1000 + milliseconds * 10;
-  };
-
   const data: DataType[] = dataSource
-    .map((racer: RacerWithResults) => {
-      const time1 =
-        racer.results.find((result) => result.set == 1)?.time ?? null;
-      const time2 =
-        racer.results.find((result) => result.set == 2)?.time ?? null;
-      let bestTime = null;
-      if (time1 && time2) {
-        bestTime = Math.min(time1, time2);
-      }
+    .map((racer: Racer) => {
       return {
         key: racer.id,
         id: racer.id,
@@ -399,13 +358,19 @@ export function ResultTable(props: Props) {
         gender: racer.gender,
         seed: racer.seed,
         teamId: racer.teamId,
-        status1: racer.results.find((result) => result.set == 1)?.status ?? '',
-        formatTime1: renderTime(time1),
-        status2: racer.results.find((result) => result.set == 2)?.status ?? '',
-        formatTime2: renderTime(time2),
+        status1: racer.status1 ?? '',
+        time1: racer.time1 ?? '',
+        formatTime1: renderTime(racer.time1),
+        status2: racer.status2 ?? '',
+        formatTime2: renderTime(racer.time2),
+        time2: racer.time2 ?? '',
         special: racer.special,
-        summary: summary(racer),
-        bestTime: bestTime,
+        summary: summary(
+          racer.special as SpecialType,
+          racer.gender as GenderType,
+          racer.category as CategoryType,
+        ),
+        formatBestTime: renderTime(racer.bestTime),
       };
     })
     .sort((a, b) => {
@@ -523,10 +488,7 @@ export function ResultTable(props: Props) {
     },
     {
       title: 'ベスト',
-      dataIndex: 'bestTime',
-      render: (_: any, record) => {
-        return renderTime(record.bestTime);
-      },
+      dataIndex: 'formatBestTime',
     },
   ];
 
@@ -563,92 +525,67 @@ export function ResultTable(props: Props) {
 
   const handleChangeBib = async (row: DataType) => {
     const result = await updateBibs([{ ...row }]);
-    if (result.success) {
-      setNewData(row);
-    } else {
+    if (!result.success) {
       showAlert('error', result.error);
     }
+    setNewData(row);
   };
 
   const handleChangeStatus1 = async (row: DataType) => {
-    try {
-      await _handleChangeStatus(row.id, 1, row.status1);
-    } catch (error: any) {
-      showAlert('error', error.message);
+    const result = await updateStatus(row.id, {
+      status1: row.status1 as StatusType,
+      status2: undefined,
+    });
+    if (!result.success) {
+      showAlert('error', result.error);
     }
+    replaceRacer(result.result!);
   };
 
   const handleChangeStatus2 = async (row: DataType) => {
-    try {
-      await _handleChangeStatus(row.id, 2, row.status2);
-    } catch (error: any) {
-      showAlert('error', error.message);
-    }
-  };
-
-  async function _handleChangeStatus(
-    racerId: string,
-    set: number,
-    status: string,
-  ): Promise<void> {
-    const result = await updateResultStatus({
-      racerId: racerId,
-      set: set,
-      status: status,
+    const result = await updateStatus(row.id, {
+      status1: undefined,
+      status2: row.status2 as StatusType,
     });
     if (!result.success) {
-      throw new Error(result.error!);
+      showAlert('error', result.error);
     }
-    const newData = [...dataSource];
-    const index = newData.findIndex((item) => racerId === item.id);
-    const newItem = newData[index];
-    newItem.results.find((result) => result.set == set)!.time =
-      result.result!.time;
-    newItem.results.find((result) => result.set == set)!.status =
-      result.result!.status;
-    newData.splice(index, 1, {
-      ...newItem,
-    });
-    setDataSource(newData);
-  }
+    replaceRacer(result.result!);
+  };
 
   const handleChangeTime1 = async (row: DataType) => {
-    try {
-      await _handleChangeTime(row.id, 1, row.formatTime1);
-    } catch (error: any) {
-      showAlert('error', error.message);
+    const result = await updateTime(row.id, {
+      time1: parseTime(row.formatTime1),
+      time2: undefined,
+    });
+    if (!result.success) {
+      showAlert('error', result.error);
     }
+    replaceRacer(result.result!);
   };
 
   const handleChangeTime2 = async (row: DataType) => {
-    try {
-      await _handleChangeTime(row.id, 2, row.formatTime2);
-    } catch (error: any) {
-      showAlert('error', error.message);
-    }
-  };
-
-  const _handleChangeTime = async (
-    racerId: string,
-    set: number,
-    formatTime: string,
-  ): Promise<void> => {
-    const result = await updateResultTime({
-      racerId: racerId,
-      set: set,
-      time: parseTime(formatTime),
+    const result = await updateTime(row.id, {
+      time1: undefined,
+      time2: parseTime(row.formatTime2),
     });
     if (!result.success) {
-      throw new Error(result.error!);
+      showAlert('error', result.error);
     }
+    replaceRacer(result.result!);
+  };
+
+  const replaceRacer = (racer: Racer) => {
     const newData = [...dataSource];
-    const index = newData.findIndex((item) => racerId === item.id);
-    const item = newData[index];
-    item.results.find((result) => result.set == set)!.time =
-      result.result!.time;
-    item.results.find((result) => result.set == set)!.status = null;
+    const index = newData.findIndex((item) => racer.id === item.id);
+    const newItem = newData[index];
+    newItem.time1 = racer.time1;
+    newItem.time2 = racer.time2;
+    newItem.status1 = racer.status1;
+    newItem.status2 = racer.status2;
+    newItem.bestTime = racer.bestTime;
     newData.splice(index, 1, {
-      ...item,
+      ...newItem,
     });
     setDataSource(newData);
   };
@@ -662,9 +599,9 @@ export function ResultTable(props: Props) {
     switch (record.summary) {
       case 'ジュニア':
         return { backgroundColor: bgColorJunior };
-      case '女子スノーボード':
+      case '女子スノボ':
         return { backgroundColor: bgColorSnowboardFemale };
-      case '男子スノーボード':
+      case '男子スノボ':
         return { backgroundColor: bgColorSnowboardMale };
       case '女子スキー':
         return { backgroundColor: bgColorSkiFemale };
@@ -685,7 +622,7 @@ export function ResultTable(props: Props) {
     });
     const result = await updateBibs(params);
     if (result.success) {
-      const newDataSource: RacerWithResults[] = dataSource.map((data) => {
+      const newDataSource: Racer[] = dataSource.map((data) => {
         data.bib = result.result!.find((item) => item.id == data.id)!.bib;
         return data;
       });
