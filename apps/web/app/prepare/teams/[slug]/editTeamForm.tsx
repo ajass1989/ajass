@@ -233,7 +233,7 @@ export function EditTeamForm(props: Props) {
       <RacerTable
         dataSource={snowboardMaleRacers}
         teamId={props.team.id}
-        title="スノーボード男子"
+        title="スノボ男子"
         special="normal"
         gender="m"
         category="snowboard"
@@ -241,7 +241,7 @@ export function EditTeamForm(props: Props) {
       <RacerTable
         dataSource={snowboardFemaleRacers}
         teamId={props.team.id}
-        title="スノーボード女子"
+        title="スノボ女子"
         special="normal"
         gender="f"
         category="snowboard"

@@ -14,7 +14,7 @@ import { TeamWithRacers, deleteTeam, updateTeamOrder } from './actions';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { Team } from '@repo/database';
-import { AlertType } from '../../components/alertType';
+import { AlertType } from '../../common/types';
 import { useRouter } from 'next/navigation';
 
 type Props = {
@@ -256,7 +256,7 @@ export function TeamTable(props: Props) {
           sorter: (a: DataType, b: DataType) => a.racerCount - b.racerCount,
         },
         {
-          title: 'スノーボード',
+          title: 'スノボ',
           children: [
             {
               title: '男子',

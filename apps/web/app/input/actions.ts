@@ -1,7 +1,7 @@
 'use server';
 import { Prisma, Racer, Team, prisma } from '@repo/database';
-import { PrismaClient } from '@prisma/client/extension';
-import { ActionResult } from '../../actionResult';
+import { ActionResult } from '../actionResult';
+import { StatusType } from '../common/types';
 
 export type UpdateBibRequestDto = {
   id: string;
@@ -13,9 +13,9 @@ export async function updateBibs(
 ): Promise<ActionResult<Racer[]>> {
   try {
     let newValues: Racer[] = [];
-    await prisma.$transaction(async (prisma: PrismaClient) => {
+    await prisma.$transaction(async (tx) => {
       const promises = dtos.map(async (dto: UpdateBibRequestDto) => {
-        const newValue = await prisma.racer.update({
+        const newValue = await tx.racer.update({
           where: { id: dto.id },
           data: { bib: dto.bib },
         });
@@ -46,7 +46,6 @@ export async function updateBibs(
   }
 }
 
-export type StatusType = 'dq' | 'ds' | 'df' | null;
 export type UpdateStatusRequestDto = {
   status1?: StatusType;
   status2?: StatusType;
@@ -63,7 +62,7 @@ export async function updateStatus(
     const time2 = typeof dto.status2 === 'string' ? null : undefined;
     const r = await prisma.$transaction(async (tx) => {
       // タイムとステータスの更新
-      let update1 = await prisma.racer.update({
+      let update1 = await tx.racer.update({
         where: { id },
         data: {
           ...dto,
@@ -72,7 +71,7 @@ export async function updateStatus(
         },
       });
       // ベストタイムの更新
-      let update2 = await prisma.racer.update({
+      let update2 = await tx.racer.update({
         where: { id },
         data: {
           bestTime: getBestTime(update1),

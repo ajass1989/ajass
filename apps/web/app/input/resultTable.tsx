@@ -17,13 +17,18 @@ import { useState } from 'react';
 import { EditOutlined, WarningFilled } from '@ant-design/icons';
 import { Racer, Team } from '@repo/database';
 import {
-  StatusType,
   UpdateBibRequestDto,
   updateBibs,
   updateStatus,
   updateTime,
-} from '../prepare/bibs/actions';
-import { AlertType } from '../components/alertType';
+} from './actions';
+import {
+  AlertType,
+  CategoryType,
+  GenderType,
+  SpecialType,
+  StatusType,
+} from '../common/types';
 import {
   bgColorDefault,
   bgColorJunior,
@@ -37,14 +42,7 @@ import {
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { Rule } from 'antd/es/form';
-import {
-  CategoryType,
-  GenderType,
-  SpecialType,
-  parseTime,
-  renderTime,
-  summary,
-} from './racerUtil';
+import { parseTime, renderTime, summary } from '../common/racerUtil';
 
 dayjs.extend(duration);
 
@@ -339,8 +337,8 @@ export function ResultTable(props: Props) {
   // eslint-disable-next-line no-unused-vars
   const sortOrderSummary: { [key in DataType['summary']]: number } = {
     ジュニア: 0,
-    女子スノーボード: 1,
-    男子スノーボード: 2,
+    女子スノボ: 1,
+    男子スノボ: 2,
     女子スキー: 3,
     シニア: 4,
     男子スキー: 5,

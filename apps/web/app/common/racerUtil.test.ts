@@ -1,12 +1,6 @@
 import { describe, expect, test } from 'vitest';
-import {
-  CategoryType,
-  GenderType,
-  SpecialType,
-  parseTime,
-  renderTime,
-  summary,
-} from './racerUtil';
+import { parseTime, renderTime, summary } from './racerUtil';
+import { CategoryType, GenderType, SpecialType } from './types';
 
 describe('renderTime', () => {
   test('正常系:time=1秒', () => {

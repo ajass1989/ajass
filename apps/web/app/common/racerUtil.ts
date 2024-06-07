@@ -1,6 +1,6 @@
-import { Racer } from '@repo/database';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
+import { CategoryType, GenderType, SpecialType } from './types';
 
 dayjs.extend(duration);
 
@@ -33,10 +33,6 @@ export const parseTime = (formatTime?: string) => {
   }
   return ms;
 };
-
-export type SpecialType = 'senior' | 'junior' | 'normal';
-export type GenderType = 'm' | 'f';
-export type CategoryType = 'ski' | 'snowboard';
 
 // 種目のフォーマット
 export const summary = (

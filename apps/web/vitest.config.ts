@@ -5,5 +5,10 @@ export default defineConfig({
   plugins: [react()],
   test: {
     environment: 'jsdom',
+    poolOptions: {
+      threads: {
+        singleThread: true,
+      },
+    },
   },
 });

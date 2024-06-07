@@ -1,4 +1,4 @@
-import { listRacers } from '../prepare/bibs/actions';
+import { listRacers } from './actions';
 import { listTeams } from '../prepare/teams/actions';
 import { ResultTable } from './resultTable';
 

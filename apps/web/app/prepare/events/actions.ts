@@ -1,7 +1,6 @@
 'use server';
 import { Prisma, prisma } from '@repo/database';
 import { ActionResult } from '../../actionResult';
-import { EventRequestDto } from './eventRequestDto';
 import { Event } from '@repo/database';
 
 export async function getEvent(): Promise<Event> {
@@ -10,22 +9,27 @@ export async function getEvent(): Promise<Event> {
   });
 }
 
+export type UpdateEventRequestDto = {
+  name: string;
+  date: string;
+  location: string;
+  race: string;
+  setter: string;
+  management: string;
+};
+
 export async function updateEvent(
   id: string,
-  values: EventRequestDto,
+  dto: UpdateEventRequestDto,
 ): Promise<ActionResult<Event>> {
   try {
-    const data: Prisma.EventUpdateInput = {
-      id: id,
-      ...values,
-    };
-    const newValues = await prisma.event.update({
+    const newEvent = await prisma.event.update({
       where: { id: id },
-      data: data,
+      data: { ...dto },
     });
     return {
       success: true,
-      result: { ...newValues },
+      result: newEvent,
     };
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {

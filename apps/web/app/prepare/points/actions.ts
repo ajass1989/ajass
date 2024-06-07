@@ -2,8 +2,11 @@
 import { Point, Prisma, prisma } from '@repo/database';
 import { ActionResult } from '../../actionResult';
 
+export async function getPoints(): Promise<Point[]> {
+  return await prisma.point.findMany();
+}
+
 export type UpdatePointParams = {
-  id: number;
   pointSkiMale?: number;
   pointSkiFemale?: number;
   pointSnowboardMale?: number;
@@ -11,17 +14,13 @@ export type UpdatePointParams = {
 };
 
 export async function updatePoint(
+  id: number,
   params: UpdatePointParams,
 ): Promise<ActionResult<Point>> {
   try {
     const newValue = await prisma.point.update({
-      where: { id: params.id },
-      data: {
-        pointSkiMale: params.pointSkiMale,
-        pointSkiFemale: params.pointSkiFemale,
-        pointSnowboardMale: params.pointSnowboardMale,
-        pointSnowboardFemale: params.pointSnowboardFemale,
-      },
+      where: { id },
+      data: { ...params },
     });
     const dto: Point = {
       id: newValue.id,
@@ -47,8 +46,4 @@ export async function updatePoint(
     }
     throw e;
   }
-}
-
-export async function getPoints(): Promise<Point[]> {
-  return await prisma.point.findMany();
 }

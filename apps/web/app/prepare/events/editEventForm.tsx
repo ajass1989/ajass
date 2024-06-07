@@ -1,11 +1,10 @@
 'use client';
 import { Alert, Button, DatePicker, Form, FormProps, Input } from 'antd';
-import { updateEvent } from './actions';
-import moment from 'moment';
+import { UpdateEventRequestDto, updateEvent } from './actions';
 import { useState } from 'react';
-import { AlertType } from '../../components/alertType';
-import { EventRequestDto } from './eventRequestDto';
+import { AlertType } from '../../common/types';
 import { Event } from '@repo/database';
+import dayjs from 'dayjs';
 
 type Props = {
   dataSource: Event;
@@ -43,7 +42,7 @@ export function EditEventForm(props: Props) {
   const onFinish: FormProps<FieldType>['onFinish'] = async (
     values: FieldType,
   ) => {
-    const event: EventRequestDto = {
+    const event: UpdateEventRequestDto = {
       name: values.name,
       date: values.date.toISOString(),
       location: values.location,
@@ -110,7 +109,7 @@ export function EditEventForm(props: Props) {
           label="開催日"
           name="date"
           rules={[{ required: true, message: '開催日は必須です。' }]}
-          initialValue={moment(data.date)}
+          initialValue={dayjs(data.date)}
         >
           <DatePicker onChange={handleChange} />
         </Form.Item>

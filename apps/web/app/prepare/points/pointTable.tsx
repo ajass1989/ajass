@@ -5,7 +5,7 @@ import React, { useEffect, useRef } from 'react';
 import { useContext, useState } from 'react';
 import { updatePoint } from './actions';
 import { Point } from '@repo/database';
-import { AlertType } from '../../components/alertType';
+import { AlertType } from '../../common/types';
 
 type Props = {
   points: Point[];
@@ -164,12 +164,12 @@ export function PointTable(props: Props) {
       editable: true,
     },
     {
-      title: 'スノーボード男子',
+      title: 'スノボ男子',
       dataIndex: 'pointSnowboardMale',
       editable: true,
     },
     {
-      title: 'スノーボード女子',
+      title: 'スノボ女子',
       dataIndex: 'pointSnowboardFemale',
       editable: true,
     },
@@ -192,7 +192,7 @@ export function PointTable(props: Props) {
   });
 
   const handleSave = async (row: DataType) => {
-    const result = await updatePoint({ ...row });
+    const result = await updatePoint(row.id, { ...row });
     if (result.success) {
       props.updatePoint(result.result!);
     } else {

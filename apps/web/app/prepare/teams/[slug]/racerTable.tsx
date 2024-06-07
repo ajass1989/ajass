@@ -89,7 +89,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
         <Select
           options={[
             { value: 'ski', label: <span>スキー</span> },
-            { value: 'snowboard', label: <span>スノーボード</span> },
+            { value: 'snowboard', label: <span>スノボ</span> },
           ]}
         />
       );
@@ -137,15 +137,8 @@ export function RacerTable(props: Props) {
   const [count, setCount] = useState<number>(_data.length);
 
   const handleDelete = async (key: React.Key) => {
-    const result = await deleteRacer(
-      key as string,
-      props.teamId,
-      props.special,
-      props.category,
-      props.gender,
-    );
+    const result = await deleteRacer(key as string);
     if (!result.success) {
-      console.error(`deleteRacer failed`);
       return;
     }
     const newData = result.result!.map((racer) => {
@@ -281,11 +274,7 @@ export function RacerTable(props: Props) {
       visible: props.special != 'normal',
       inputType: 'category',
       render: (_: any, record: Item) =>
-        record.category == 'ski' ? (
-          <span>スキー</span>
-        ) : (
-          <span>スノーボード</span>
-        ),
+        record.category == 'ski' ? <span>スキー</span> : <span>スノボ</span>,
     },
     {
       title: '性別',

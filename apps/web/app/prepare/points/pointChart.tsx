@@ -52,13 +52,13 @@ export function PointChart(props: Props) {
         backgroundColor: bgColorSkiFemale,
       },
       {
-        label: 'スノーボード男子',
+        label: 'スノボ男子',
         data: props.points.map((point) => point.pointSnowboardMale),
         borderColor: fgColorSnowboardMale,
         backgroundColor: bgColorSnowboardMale,
       },
       {
-        label: 'スノーボード女子',
+        label: 'スノボ女子',
         data: props.points.map((point) => point.pointSnowboardFemale),
         borderColor: fgColorSnowboardFemale,
         backgroundColor: bgColorSnowboardFemale,

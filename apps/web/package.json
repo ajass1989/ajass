@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint . --max-warnings 0",
-    "test": "vitest"
+    "test": "vitest --max-concurrency=1"
   },
   "dependencies": {
     "@ant-design/icons": "^5.3.6",
@@ -18,7 +18,6 @@
     "antd": "^5.16.1",
     "chart.js": "^4.4.2",
     "dayjs": "^1.11.11",
-    "moment": "^2.30.1",
     "next": "^14.1.1",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",

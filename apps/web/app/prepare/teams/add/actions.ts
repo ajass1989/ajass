@@ -4,10 +4,10 @@ import { ActionResult } from '../../../actionResult';
 import { TeamRequestDto } from '../teamRequestDto';
 
 export async function addTeam(
-  values: TeamRequestDto,
+  dto: TeamRequestDto,
 ): Promise<ActionResult<Team>> {
   try {
-    const data: Prisma.TeamUncheckedCreateInput = { ...values };
+    const data: Prisma.TeamUncheckedCreateInput = { ...dto };
     const newValues = await prisma.team.create({ data: data });
     return {
       success: true,
