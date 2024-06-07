@@ -12,7 +12,7 @@ import {
 } from 'antd';
 import { addRacer, deleteRacer, updateRacer } from './actions';
 import { RacerType } from './editTeamForm';
-import { ActionResult } from '../../../actionResult';
+import { ActionResult } from '../../../common/actionResult';
 import { RacerRequestDto } from '../racerRequestDto';
 import {
   DeleteOutlined,

@@ -38,7 +38,7 @@ import {
   bgColorSnowboardFemale,
   bgColorSnowboardMale,
   fgColorWarn,
-} from '../colors';
+} from '../common/colors';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { Rule } from 'antd/es/form';

@@ -1,6 +1,6 @@
 'use server';
 import { Prisma, Racer, Team, prisma } from '@repo/database';
-import { ActionResult } from '../../../actionResult';
+import { ActionResult } from '../../../common/actionResult';
 import { TeamRequestDto } from '../teamRequestDto';
 import { RacerRequestDto } from '../racerRequestDto';
 import { PrismaClient } from '@prisma/client/extension';

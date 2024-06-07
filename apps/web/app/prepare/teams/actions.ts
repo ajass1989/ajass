@@ -1,6 +1,6 @@
 'use server';
 import { Prisma, Racer, Team, prisma } from '@repo/database';
-import { ActionResult } from '../../actionResult';
+import { ActionResult } from '../../common/actionResult';
 
 export type TeamWithRacers = Team & {
   racers: Racer[];
