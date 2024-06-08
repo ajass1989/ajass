@@ -120,685 +120,6 @@ describe('actions', () => {
         pointSnowboardMale: 56,
         pointSnowboardFemale: 42,
       },
-      {
-        id: 3,
-        pointSkiMale: 112,
-        pointSkiFemale: 90,
-        pointSnowboardMale: 48,
-        pointSnowboardFemale: 30,
-      },
-      {
-        id: 4,
-        pointSkiMale: 105,
-        pointSkiFemale: 78,
-        pointSnowboardMale: 41,
-        pointSnowboardFemale: 25,
-      },
-      {
-        id: 5,
-        pointSkiMale: 100,
-        pointSkiFemale: 68,
-        pointSnowboardMale: 35,
-        pointSnowboardFemale: 20,
-      },
-      {
-        id: 6,
-        pointSkiMale: 95,
-        pointSkiFemale: 60,
-        pointSnowboardMale: 32,
-        pointSnowboardFemale: 15,
-      },
-      {
-        id: 7,
-        pointSkiMale: 90,
-        pointSkiFemale: 52,
-        pointSnowboardMale: 29,
-        pointSnowboardFemale: 10,
-      },
-      {
-        id: 8,
-        pointSkiMale: 86,
-        pointSkiFemale: 46,
-        pointSnowboardMale: 26,
-        pointSnowboardFemale: 7,
-      },
-      {
-        id: 9,
-        pointSkiMale: 82,
-        pointSkiFemale: 40,
-        pointSnowboardMale: 23,
-        pointSnowboardFemale: 6,
-      },
-      {
-        id: 10,
-        pointSkiMale: 78,
-        pointSkiFemale: 35,
-        pointSnowboardMale: 20,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 11,
-        pointSkiMale: 74,
-        pointSkiFemale: 30,
-        pointSnowboardMale: 18,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 12,
-        pointSkiMale: 71,
-        pointSkiFemale: 26,
-        pointSnowboardMale: 16,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 13,
-        pointSkiMale: 68,
-        pointSkiFemale: 23,
-        pointSnowboardMale: 14,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 14,
-        pointSkiMale: 65,
-        pointSkiFemale: 20,
-        pointSnowboardMale: 12,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 15,
-        pointSkiMale: 62,
-        pointSkiFemale: 18,
-        pointSnowboardMale: 10,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 16,
-        pointSkiMale: 59,
-        pointSkiFemale: 16,
-        pointSnowboardMale: 9,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 17,
-        pointSkiMale: 56,
-        pointSkiFemale: 15,
-        pointSnowboardMale: 8,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 18,
-        pointSkiMale: 53,
-        pointSkiFemale: 14,
-        pointSnowboardMale: 7,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 19,
-        pointSkiMale: 50,
-        pointSkiFemale: 13,
-        pointSnowboardMale: 6,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 20,
-        pointSkiMale: 48,
-        pointSkiFemale: 12,
-        pointSnowboardMale: 5,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 21,
-        pointSkiMale: 46,
-        pointSkiFemale: 11,
-        pointSnowboardMale: 4,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 22,
-        pointSkiMale: 44,
-        pointSkiFemale: 10,
-        pointSnowboardMale: 3,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 23,
-        pointSkiMale: 42,
-        pointSkiFemale: 9,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 24,
-        pointSkiMale: 40,
-        pointSkiFemale: 8,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 25,
-        pointSkiMale: 39,
-        pointSkiFemale: 7,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 26,
-        pointSkiMale: 37,
-        pointSkiFemale: 6,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 27,
-        pointSkiMale: 36,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 28,
-        pointSkiMale: 34,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 29,
-        pointSkiMale: 33,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 30,
-        pointSkiMale: 31,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 31,
-        pointSkiMale: 30,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 32,
-        pointSkiMale: 28,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 33,
-        pointSkiMale: 27,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 34,
-        pointSkiMale: 26,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 35,
-        pointSkiMale: 25,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 36,
-        pointSkiMale: 24,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 37,
-        pointSkiMale: 23,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 38,
-        pointSkiMale: 22,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 39,
-        pointSkiMale: 21,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 40,
-        pointSkiMale: 20,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 41,
-        pointSkiMale: 19,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 42,
-        pointSkiMale: 19,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 43,
-        pointSkiMale: 18,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 44,
-        pointSkiMale: 18,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 45,
-        pointSkiMale: 17,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 46,
-        pointSkiMale: 17,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 47,
-        pointSkiMale: 16,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 48,
-        pointSkiMale: 16,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 49,
-        pointSkiMale: 15,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 50,
-        pointSkiMale: 15,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 51,
-        pointSkiMale: 14,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 52,
-        pointSkiMale: 14,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 53,
-        pointSkiMale: 14,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 54,
-        pointSkiMale: 13,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 55,
-        pointSkiMale: 13,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 56,
-        pointSkiMale: 13,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 57,
-        pointSkiMale: 12,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 58,
-        pointSkiMale: 12,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 59,
-        pointSkiMale: 12,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 60,
-        pointSkiMale: 11,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 61,
-        pointSkiMale: 11,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 62,
-        pointSkiMale: 11,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 63,
-        pointSkiMale: 10,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 64,
-        pointSkiMale: 10,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 65,
-        pointSkiMale: 10,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 66,
-        pointSkiMale: 9,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 67,
-        pointSkiMale: 9,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 68,
-        pointSkiMale: 9,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 69,
-        pointSkiMale: 8,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 70,
-        pointSkiMale: 8,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 71,
-        pointSkiMale: 8,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 72,
-        pointSkiMale: 7,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 73,
-        pointSkiMale: 7,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 74,
-        pointSkiMale: 7,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 75,
-        pointSkiMale: 7,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 76,
-        pointSkiMale: 6,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 77,
-        pointSkiMale: 6,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 78,
-        pointSkiMale: 6,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 79,
-        pointSkiMale: 6,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 80,
-        pointSkiMale: 5,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 81,
-        pointSkiMale: 5,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 82,
-        pointSkiMale: 5,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 83,
-        pointSkiMale: 5,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 84,
-        pointSkiMale: 5,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 85,
-        pointSkiMale: 4,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 86,
-        pointSkiMale: 4,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 87,
-        pointSkiMale: 4,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 88,
-        pointSkiMale: 4,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 89,
-        pointSkiMale: 4,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 90,
-        pointSkiMale: 3,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 91,
-        pointSkiMale: 3,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 92,
-        pointSkiMale: 3,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 93,
-        pointSkiMale: 3,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 94,
-        pointSkiMale: 3,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 95,
-        pointSkiMale: 2,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 96,
-        pointSkiMale: 2,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 97,
-        pointSkiMale: 2,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 98,
-        pointSkiMale: 2,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
-      {
-        id: 99,
-        pointSkiMale: 2,
-        pointSkiFemale: 5,
-        pointSnowboardMale: 2,
-        pointSnowboardFemale: 5,
-      },
     ];
 
     const TEST_SPECIAL_POINTS = [
@@ -812,6 +133,7 @@ describe('actions', () => {
       },
     ];
 
+    await prisma.point.deleteMany({});
     await Promise.all(
       TEST_POINTS.map((result) =>
         prisma.point.upsert({
@@ -1195,6 +517,113 @@ describe('actions', () => {
       expect(racer3!.time2).toBe(123456);
       expect(racer3!.bestTime).toBe(123456);
       expect(racer3!.point).toBe(130);
+    });
+
+    test('正常系:3レコード更新', async () => {
+      const dto1: UpdateTimeRequestDto = {
+        time1: undefined,
+        time2: 123456,
+      };
+      const result1 = await updateTime('1', dto1);
+      expect(result1.success).toBeTruthy();
+      expect(result1.result!.length).toBe(3);
+
+      const racer11 = result1.result!.find((r) => r.id === '1');
+      expect(racer11!.id).toBe('1');
+      expect(racer11!.status1).toBe('dq');
+      expect(racer11!.time1).toBe(null);
+      expect(racer11!.status2).toBe(null);
+      expect(racer11!.time2).toBe(123456);
+      expect(racer11!.bestTime).toBe(123456);
+      expect(racer11!.point).toBe(105);
+
+      const racer12 = result1.result!.find((r) => r.id === '2');
+      expect(racer12!.id).toBe('2');
+      expect(racer12!.status1).toBe(null);
+      expect(racer12!.time1).toBe(null);
+      expect(racer12!.status2).toBe(null);
+      expect(racer12!.time2).toBe(null);
+      expect(racer12!.bestTime).toBe(null);
+      expect(racer12!.point).toBe(0);
+
+      const racer13 = result1.result!.find((r) => r.id === '3');
+      expect(racer13!.id).toBe('3');
+      expect(racer13!.status1).toBe(null);
+      expect(racer13!.time1).toBe(123456);
+      expect(racer13!.status2).toBe(null);
+      expect(racer13!.time2).toBe(123456);
+      expect(racer13!.bestTime).toBe(123456);
+      expect(racer13!.point).toBe(130);
+
+      const dto2: UpdateTimeRequestDto = {
+        time1: undefined,
+        time2: 123450,
+      };
+      const result2 = await updateTime('2', dto2);
+      expect(result2.success).toBeTruthy();
+      expect(result2.result!.length).toBe(3);
+
+      const racer21 = result2.result!.find((r) => r.id === '1');
+      expect(racer21!.id).toBe('1');
+      expect(racer21!.status1).toBe('dq');
+      expect(racer21!.time1).toBe(null);
+      expect(racer21!.status2).toBe(null);
+      expect(racer21!.time2).toBe(123456);
+      expect(racer21!.bestTime).toBe(123456);
+      expect(racer21!.point).toBe(105);
+
+      const racer22 = result2.result!.find((r) => r.id === '2');
+      expect(racer22!.id).toBe('2');
+      expect(racer22!.status1).toBe(null);
+      expect(racer22!.time1).toBe(null);
+      expect(racer22!.status2).toBe(null);
+      expect(racer22!.time2).toBe(123450);
+      expect(racer22!.bestTime).toBe(123450);
+      expect(racer22!.point).toBe(130);
+
+      const racer23 = result2.result!.find((r) => r.id === '3');
+      expect(racer23!.id).toBe('3');
+      expect(racer23!.status1).toBe(null);
+      expect(racer23!.time1).toBe(123456);
+      expect(racer23!.status2).toBe(null);
+      expect(racer23!.time2).toBe(123456);
+      expect(racer23!.bestTime).toBe(123456);
+      expect(racer23!.point).toBe(105);
+
+      const dto3: UpdateTimeRequestDto = {
+        time1: undefined,
+        time2: 123440,
+      };
+      const result3 = await updateTime('3', dto3);
+      expect(result3.success).toBeTruthy();
+      expect(result3.result!.length).toBe(3);
+
+      const racer31 = result3.result!.find((r) => r.id === '1');
+      expect(racer31!.id).toBe('1');
+      expect(racer31!.status1).toBe('dq');
+      expect(racer31!.time1).toBe(null);
+      expect(racer31!.status2).toBe(null);
+      expect(racer31!.time2).toBe(123456);
+      expect(racer31!.bestTime).toBe(123456);
+      expect(racer31!.point).toBe(105);
+
+      const racer32 = result3.result!.find((r) => r.id === '2');
+      expect(racer32!.id).toBe('2');
+      expect(racer32!.status1).toBe(null);
+      expect(racer32!.time1).toBe(null);
+      expect(racer32!.status2).toBe(null);
+      expect(racer32!.time2).toBe(123450);
+      expect(racer32!.bestTime).toBe(123450);
+      expect(racer32!.point).toBe(105);
+
+      const racer33 = result3.result!.find((r) => r.id === '3');
+      expect(racer33!.id).toBe('3');
+      expect(racer33!.status1).toBe(null);
+      expect(racer33!.time1).toBe(123456);
+      expect(racer33!.status2).toBe(null);
+      expect(racer33!.time2).toBe(123440);
+      expect(racer33!.bestTime).toBe(123440);
+      expect(racer33!.point).toBe(130);
     });
 
     test('準正常系:存在しないid', async () => {

@@ -170,11 +170,11 @@ async function updateRacersPoint(id: string): Promise<Racer[]> {
   // ポイントを更新
   return await Promise.all(
     racers.map(async (racer, i) => {
-      // ポイントを取得
-      let point = points2[i].point;
+      // デフォルトは配列最後の値
+      let point = points2[points2.length - 1].point;
       // ポイントがない場合、最後のポイントを取得
-      if (i >= points2.length) {
-        point = points2[points2.length - 1].point;
+      if (i < points2.length) {
+        point = points2[i].point;
       }
       if (typeof racer.bestTime !== 'number') {
         point = 0;
