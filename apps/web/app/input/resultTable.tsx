@@ -693,6 +693,7 @@ export function ResultTable(props: Props) {
             style: getRowStyle(record),
           };
         }}
+        sticky={true}
       />
     </>
   );

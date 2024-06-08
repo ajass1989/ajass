@@ -234,6 +234,7 @@ export function PointTable(props: Props) {
         dataSource={data}
         columns={columns as ColumnTypes}
         pagination={false}
+        sticky={true}
       />
     </>
   );
