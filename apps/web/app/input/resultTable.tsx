@@ -323,6 +323,7 @@ interface DataType {
   special: string;
   summary: string;
   formatBestTime: string;
+  point: number;
 }
 
 type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
@@ -369,6 +370,7 @@ export function ResultTable(props: Props) {
           racer.category as CategoryType,
         ),
         formatBestTime: renderTime(racer.bestTime),
+        point: racer.point,
       };
     })
     .sort((a, b) => {
@@ -488,6 +490,10 @@ export function ResultTable(props: Props) {
       title: 'ベスト',
       dataIndex: 'formatBestTime',
     },
+    {
+      title: 'ポイント',
+      dataIndex: 'point',
+    },
   ];
 
   const columns = defaultColumns.map((col) => {
@@ -537,7 +543,7 @@ export function ResultTable(props: Props) {
     if (!result.success) {
       showAlert('error', result.error);
     }
-    replaceRacer(result.result!);
+    replaceRacers(result.result!);
   };
 
   const handleChangeStatus2 = async (row: DataType) => {
@@ -548,7 +554,7 @@ export function ResultTable(props: Props) {
     if (!result.success) {
       showAlert('error', result.error);
     }
-    replaceRacer(result.result!);
+    replaceRacers(result.result!);
   };
 
   const handleChangeTime1 = async (row: DataType) => {
@@ -559,7 +565,7 @@ export function ResultTable(props: Props) {
     if (!result.success) {
       showAlert('error', result.error);
     }
-    replaceRacer(result.result!);
+    replaceRacers(result.result!);
   };
 
   const handleChangeTime2 = async (row: DataType) => {
@@ -570,20 +576,23 @@ export function ResultTable(props: Props) {
     if (!result.success) {
       showAlert('error', result.error);
     }
-    replaceRacer(result.result!);
+    replaceRacers(result.result!);
   };
 
-  const replaceRacer = (racer: Racer) => {
+  const replaceRacers = (racers: Racer[]) => {
     const newData = [...dataSource];
-    const index = newData.findIndex((item) => racer.id === item.id);
-    const newItem = newData[index];
-    newItem.time1 = racer.time1;
-    newItem.time2 = racer.time2;
-    newItem.status1 = racer.status1;
-    newItem.status2 = racer.status2;
-    newItem.bestTime = racer.bestTime;
-    newData.splice(index, 1, {
-      ...newItem,
+    racers.forEach((racer) => {
+      const index = newData.findIndex((item) => racer.id === item.id);
+      const newItem = newData[index];
+      newItem.time1 = racer.time1;
+      newItem.time2 = racer.time2;
+      newItem.status1 = racer.status1;
+      newItem.status2 = racer.status2;
+      newItem.bestTime = racer.bestTime;
+      newItem.point = racer.point;
+      newData.splice(index, 1, {
+        ...newItem,
+      });
     });
     setDataSource(newData);
   };
