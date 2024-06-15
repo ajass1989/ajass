@@ -3,7 +3,7 @@ import './global.css';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
 import { Layout, Menu, MenuProps, theme } from 'antd';
 import Sider from 'antd/es/layout/Sider';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Content, Footer } from 'antd/es/layout/layout';
 import {
   EditOutlined,
@@ -11,6 +11,7 @@ import {
   UnorderedListOutlined,
 } from '@ant-design/icons';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -29,35 +30,61 @@ function getItem(
 }
 
 const items: MenuItem[] = [
-  getItem('準備', 'settings', <UnorderedListOutlined />, [
+  getItem('準備', 'prepare', <UnorderedListOutlined />, [
     getItem(
       <Link href="/prepare/events">大会</Link>,
-      '21',
+      '/prepare/events',
       <UnorderedListOutlined />,
     ),
-    getItem(<Link href="/prepare/teams">チーム</Link>, '22', <EditOutlined />),
+    getItem(
+      <Link href="/prepare/teams">チーム</Link>,
+      '/prepare/teams',
+      <EditOutlined />,
+    ),
     getItem(
       <Link href="/prepare/points">ポイント</Link>,
-      '24',
+      '/prepare/points',
       <UnorderedListOutlined />,
     ),
   ]),
-  getItem(<Link href="/input">結果入力</Link>, '01', <EditOutlined />),
+  getItem(<Link href="/input">結果入力</Link>, '/input', <EditOutlined />),
   getItem('集計', 'summary', <UnorderedListOutlined />, [
     getItem(
       <Link href="/summary/individual">個人</Link>,
-      '11',
+      '/summary/individual',
       <TeamOutlined />,
     ),
-    getItem(<Link href="/summary/team">団体</Link>, '12', <TeamOutlined />),
+    getItem(
+      <Link href="/summary/team">団体</Link>,
+      '/summary/team',
+      <TeamOutlined />,
+    ),
   ]),
 ];
 
 export default function RootLayout({ children }: React.PropsWithChildren) {
   const [collapsed, setCollapsed] = useState(false);
+  const [current, setCurrent] = useState('mail');
+  const [openKeys, setOpenKeys] = useState<string[]>(['prepare']);
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+
+  const onClick: MenuProps['onClick'] = (e) => {
+    setCurrent(e.key);
+  };
+
+  const onOpenChange: MenuProps['onOpenChange'] = (openKeys) => {
+    setOpenKeys(openKeys);
+  };
+
+  const pathname = usePathname();
+
+  useEffect(() => {
+    setCurrent(pathname);
+    const keyToOpen = pathname.split('/')[1];
+    setOpenKeys([keyToOpen]);
+  }, []);
 
   return (
     <html lang="ja">
@@ -73,8 +100,12 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
               <Menu
                 theme="dark"
                 defaultSelectedKeys={['1']}
+                selectedKeys={[current]}
+                openKeys={openKeys}
                 mode="inline"
                 items={items}
+                onClick={onClick}
+                onOpenChange={onOpenChange}
               />
             </Sider>
             <Layout>
