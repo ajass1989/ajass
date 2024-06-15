@@ -5,6 +5,7 @@ import {
   deleteRacer,
   getTeamWithRacers,
   updateRacer,
+  updateSeed,
   updateTeam,
 } from './actions';
 
@@ -39,7 +40,23 @@ describe('actions', () => {
     });
     await prisma.racer.upsert({
       where: { id: '1' },
-      update: {},
+      update: {
+        name: 'racer1',
+        kana: 'レーサー1',
+        category: 'ski',
+        bib: 1,
+        gender: 'f',
+        seed: 1,
+        teamId: '1',
+        special: 'normal',
+        isFirstTime: false,
+        age: 20,
+        status1: 'dq',
+        time1: null,
+        status2: 'dq',
+        time2: null,
+        bestTime: null,
+      },
       create: {
         id: '1',
         name: 'racer1',
@@ -61,7 +78,23 @@ describe('actions', () => {
     });
     await prisma.racer.upsert({
       where: { id: '2' },
-      update: {},
+      update: {
+        name: 'racer2',
+        kana: 'レーサー2',
+        category: 'ski',
+        bib: 2,
+        gender: 'f',
+        seed: 2,
+        teamId: '1',
+        special: 'normal',
+        isFirstTime: false,
+        age: 20,
+        status1: 'dq',
+        time1: null,
+        status2: 'dq',
+        time2: null,
+        bestTime: null,
+      },
       create: {
         id: '2',
         name: 'racer2',
@@ -83,7 +116,23 @@ describe('actions', () => {
     });
     await prisma.racer.upsert({
       where: { id: '3' },
-      update: {},
+      update: {
+        name: 'racer3',
+        kana: 'レーサー3',
+        category: 'ski',
+        bib: 3,
+        gender: 'f',
+        seed: 3,
+        teamId: '1',
+        special: 'normal',
+        isFirstTime: false,
+        age: 20,
+        status1: 'dq',
+        time1: null,
+        status2: 'dq',
+        time2: null,
+        bestTime: null,
+      },
       create: {
         id: '3',
         name: 'racer3',
@@ -227,6 +276,64 @@ describe('actions', () => {
       expect(result.error).toBe(
         '削除に失敗しました。指定したキーが見つかりません。',
       );
+    });
+  });
+
+  describe('updateSeed', () => {
+    test('正常系:下に移動1->2', async () => {
+      const result = await updateSeed('1', '2');
+      expect(result.success).toBeTruthy();
+      expect(result.result!.length).toBe(2);
+      expect(result.result![0].id).toBe('2');
+      expect(result.result![1].id).toBe('1');
+    });
+
+    test('正常系:下に移動2->3', async () => {
+      const result = await updateSeed('2', '3');
+      expect(result.success).toBeTruthy();
+      expect(result.result!.length).toBe(2);
+      expect(result.result![0].id).toBe('3');
+      expect(result.result![1].id).toBe('2');
+    });
+
+    test('正常系:下に移動1->3', async () => {
+      const result = await updateSeed('1', '3');
+      expect(result.success).toBeTruthy();
+      expect(result.result!.length).toBe(3);
+      expect(result.result![0].id).toBe('2');
+      expect(result.result![1].id).toBe('3');
+      expect(result.result![2].id).toBe('1');
+    });
+
+    test('正常系:上に移動3->2', async () => {
+      const result = await updateSeed('3', '2');
+      expect(result.success).toBeTruthy();
+      expect(result.result!.length).toBe(2);
+      expect(result.result![0].id).toBe('3');
+      expect(result.result![1].id).toBe('2');
+    });
+
+    test('正常系:上に移動2->1', async () => {
+      const result = await updateSeed('2', '1');
+      expect(result.success).toBeTruthy();
+      expect(result.result!.length).toBe(2);
+      expect(result.result![0].id).toBe('2');
+      expect(result.result![1].id).toBe('1');
+    });
+
+    test('正常系:上に移動3->1', async () => {
+      const result = await updateSeed('3', '1');
+      expect(result.success).toBeTruthy();
+      expect(result.result!.length).toBe(3);
+      expect(result.result![0].id).toBe('3');
+      expect(result.result![1].id).toBe('1');
+      expect(result.result![2].id).toBe('2');
+    });
+
+    test('正常系:移動なし', async () => {
+      const result = await updateSeed('2', '2');
+      expect(result.success).toBeTruthy();
+      expect(result.result!.length).toBe(0);
     });
   });
 });

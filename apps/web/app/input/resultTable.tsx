@@ -636,7 +636,7 @@ export function ResultTable(props: Props) {
       setDataSource(newDataSource);
       showAlert('success', 'ビブを一括付与しました。');
     } else {
-      showAlert('error', 'ビブの一括付与に失敗しました。');
+      showAlert('error', result.error);
     }
   };
 

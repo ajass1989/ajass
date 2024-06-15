@@ -192,7 +192,12 @@ export function PointTable(props: Props) {
   });
 
   const handleSave = async (row: DataType) => {
-    const result = await updatePoint(row.id, { ...row });
+    const result = await updatePoint(row.id, {
+      pointSkiMale: row.pointSkiMale,
+      pointSkiFemale: row.pointSkiFemale,
+      pointSnowboardMale: row.pointSnowboardMale,
+      pointSnowboardFemale: row.pointSnowboardFemale,
+    });
     if (result.success) {
       props.updatePoint(result.result!);
     } else {

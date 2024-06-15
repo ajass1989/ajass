@@ -390,7 +390,7 @@ export function TeamTable(props: Props) {
   const handleDelete = async (key: React.Key) => {
     const result = await deleteTeam(key as string);
     if (!result.success) {
-      showAlert('error', '削除に失敗しました。');
+      showAlert('error', result.error);
       return;
     }
     const newDataSource = dataSource.filter((item) => item.id != key);

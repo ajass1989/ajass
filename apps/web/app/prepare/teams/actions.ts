@@ -85,7 +85,6 @@ export async function updateTeamOrder(
         };
       }
       if (e.code === 'P2002') {
-        console.error(e);
         return {
           success: false,
           error: '保存に失敗しました。滑走順が重複しています。',

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useId, useMemo, useState } from 'react';
 import type { TableProps } from 'antd';
 import {
   Button,
@@ -10,17 +10,27 @@ import {
   Switch,
   Table,
 } from 'antd';
-import { addRacer, deleteRacer, updateRacer } from './actions';
+import { addRacer, deleteRacer, updateRacer, updateSeed } from './actions';
 import { RacerType } from './editTeamForm';
 import { ActionResult } from '../../../common/actionResult';
 import { RacerRequestDto } from '../racerRequestDto';
 import {
   DeleteOutlined,
   EditOutlined,
+  HolderOutlined,
   RollbackOutlined,
   SaveOutlined,
 } from '@ant-design/icons';
 import { Racer } from '@repo/database';
+import {
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { DndContext, DragEndEvent } from '@dnd-kit/core';
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
+import { SyntheticListenerMap } from '@dnd-kit/core/dist/hooks/utilities';
 
 type Props = {
   title: string;
@@ -127,6 +137,62 @@ interface DataType {
   gender: string;
   seed: number;
 }
+
+interface RowContextProps {
+  // eslint-disable-next-line no-unused-vars
+  setActivatorNodeRef?: (element: HTMLElement | null) => void;
+  listeners?: SyntheticListenerMap;
+}
+
+const RowContext = React.createContext<RowContextProps>({});
+
+const DragHandle: React.FC = () => {
+  const { setActivatorNodeRef, listeners } = useContext(RowContext);
+  return (
+    <Button
+      type="text"
+      size="small"
+      icon={<HolderOutlined />}
+      style={{ cursor: 'move' }}
+      ref={setActivatorNodeRef}
+      {...listeners}
+    />
+  );
+};
+
+interface RowProps extends React.HTMLAttributes<HTMLTableRowElement> {
+  'data-row-key': string;
+}
+
+const Row: React.FC<RowProps> = (props) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    setActivatorNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: props['data-row-key'] });
+
+  const style: React.CSSProperties = {
+    ...props.style,
+    transform: CSS.Translate.toString(transform),
+    transition,
+    ...(isDragging ? { position: 'relative', zIndex: 9999 } : {}),
+  };
+
+  const contextValue = useMemo<RowContextProps>(
+    () => ({ setActivatorNodeRef, listeners }),
+    [setActivatorNodeRef, listeners],
+  );
+
+  return (
+    <RowContext.Provider value={contextValue}>
+      <tr {...props} ref={setNodeRef} style={style} {...attributes} />
+    </RowContext.Provider>
+  );
+};
 
 export function RacerTable(props: Props) {
   const [form] = Form.useForm();
@@ -246,6 +312,14 @@ export function RacerTable(props: Props) {
   };
 
   const columns = [
+    {
+      dataIndex: 'sort',
+      visible: true,
+      key: 'sort',
+      // align: 'center',
+      width: 80,
+      render: () => <DragHandle />,
+    },
     {
       title: 'シード',
       dataIndex: 'seed',
@@ -376,6 +450,27 @@ export function RacerTable(props: Props) {
   const [editingKey, setEditingKey] = useState('');
   const isEditing = (record: DataType) => record.key === editingKey;
 
+  const onDragEnd = async ({ active, over }: DragEndEvent) => {
+    if (!over) {
+      return;
+    }
+    const result = await updateSeed(active.id as string, over!.id as string);
+    if (!result.success) {
+      // TODO エラー処理
+      return;
+    }
+    const newDataSource = [...dataSource];
+    result.result!.forEach((racer) => {
+      const newIndex = newDataSource.findIndex((r) => r.key === racer.id);
+      newDataSource.splice(newIndex, 1, { key: racer.id, ...racer });
+    });
+    newDataSource.sort((a, b) => a.seed - b.seed);
+    setDataSource(newDataSource);
+  };
+
+  // https://github.com/clauderic/dnd-kit/issues/926#issuecomment-1640115665
+  const id = useId();
+
   return (
     <div>
       <h2>{props.title}</h2>
@@ -388,18 +483,30 @@ export function RacerTable(props: Props) {
         追加
       </Button>
       <Form form={form} component={false}>
-        <Table
-          components={{
-            body: {
-              cell: EditableCell,
-            },
-          }}
-          rowClassName={() => 'editable-row'}
-          bordered
-          dataSource={dataSource}
-          columns={mergedColumns}
-          pagination={false}
-        />
+        <DndContext
+          modifiers={[restrictToVerticalAxis]}
+          onDragEnd={onDragEnd}
+          id={id}
+        >
+          <SortableContext
+            items={dataSource.map((i) => i.key)}
+            strategy={verticalListSortingStrategy}
+          >
+            <Table
+              components={{
+                body: {
+                  cell: EditableCell,
+                  row: Row,
+                },
+              }}
+              rowClassName={() => 'editable-row'}
+              bordered
+              dataSource={dataSource}
+              columns={mergedColumns}
+              pagination={false}
+            />
+          </SortableContext>
+        </DndContext>
       </Form>
     </div>
   );
