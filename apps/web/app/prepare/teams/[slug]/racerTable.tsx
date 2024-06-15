@@ -24,6 +24,7 @@ import {
 import { Racer } from '@repo/database';
 import {
   SortableContext,
+  arrayMove,
   useSortable,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
@@ -454,6 +455,16 @@ export function RacerTable(props: Props) {
     if (!over) {
       return;
     }
+    setDataSource((prevState) => {
+      const activeIndex = prevState.findIndex(
+        (record) => record.key === active.id,
+      );
+      const overIndex = prevState.findIndex(
+        (record) => record.key === over!.id,
+      );
+      return arrayMove(prevState, activeIndex, overIndex);
+    });
+
     const result = await updateSeed(active.id as string, over!.id as string);
     if (!result.success) {
       // TODO エラー処理
