@@ -30,7 +30,7 @@ function getItem(
 }
 
 const items: MenuItem[] = [
-  getItem('準備', 'prepare', <UnorderedListOutlined />, [
+  getItem('準備', '/prepare', <UnorderedListOutlined />, [
     getItem(
       <Link href="/prepare/events">大会</Link>,
       '/prepare/events',
@@ -48,7 +48,7 @@ const items: MenuItem[] = [
     ),
   ]),
   getItem(<Link href="/input">結果入力</Link>, '/input', <EditOutlined />),
-  getItem('集計', 'summary', <UnorderedListOutlined />, [
+  getItem('集計', '/summary', <UnorderedListOutlined />, [
     getItem(
       <Link href="/summary/individual">個人</Link>,
       '/summary/individual',
@@ -81,10 +81,18 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
   const pathname = usePathname();
 
   useEffect(() => {
-    setCurrent(pathname);
-    const keyToOpen = pathname.split('/')[1];
+    const parts = pathname.split('/');
+
+    // pathnameから最大２階層目までを取り出して選択中のメニューを設定
+    const current =
+      parts.length > 2 ? `/${parts[1]}/${parts[2]}` : `/${parts[1]}`;
+    console.log(`current: ${current}`);
+    setCurrent(current);
+
+    // pathname から最大１階層目までを取り出してオープン中のメニューを設定
+    const keyToOpen = parts.length > 1 ? `/${parts[1]}` : '';
     setOpenKeys([keyToOpen]);
-  }, []);
+  }, [pathname]);
 
   return (
     <html lang="ja">

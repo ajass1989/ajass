@@ -1,5 +1,13 @@
 'use client';
-import { Alert, Button, Form, FormProps, Input, InputNumber } from 'antd';
+import {
+  Alert,
+  Breadcrumb,
+  Button,
+  Form,
+  FormProps,
+  Input,
+  InputNumber,
+} from 'antd';
 import { addTeam } from './actions';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -52,7 +60,20 @@ export function AddTeamForm() {
   };
 
   return (
-    <div>
+    <>
+      <Breadcrumb
+        items={[
+          {
+            title: '準備',
+          },
+          {
+            title: <a href="/prepare/teams">チーム</a>,
+          },
+          {
+            title: '追加',
+          },
+        ]}
+      />
       <h1>チーム追加</h1>
       {alertVisible && (
         <Alert
@@ -118,6 +139,6 @@ export function AddTeamForm() {
           </Button>
         </Form.Item>
       </Form>
-    </div>
+    </>
   );
 }

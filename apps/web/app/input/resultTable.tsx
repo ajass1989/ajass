@@ -1,6 +1,7 @@
 'use client';
 import {
   Alert,
+  Breadcrumb,
   Button,
   Form,
   FormInstance,
@@ -655,6 +656,13 @@ export function ResultTable(props: Props) {
 
   return (
     <>
+      <Breadcrumb
+        items={[
+          {
+            title: '入力結果',
+          },
+        ]}
+      />
       <h1>ビブ管理</h1>
       <Popconfirm
         title="ビブを一括付与します。"

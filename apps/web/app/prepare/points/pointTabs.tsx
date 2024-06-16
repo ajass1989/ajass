@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { Point } from '@repo/database';
-import { Tabs, TabsProps } from 'antd';
+import { Breadcrumb, Tabs, TabsProps } from 'antd';
 import { LineChartOutlined, TableOutlined } from '@ant-design/icons';
 import { PointChart } from './pointChart';
 import { PointTable } from './pointTable';
@@ -41,6 +41,16 @@ export function PointTabs(props: Props) {
 
   return (
     <>
+      <Breadcrumb
+        items={[
+          {
+            title: '準備',
+          },
+          {
+            title: 'ポイント',
+          },
+        ]}
+      />
       <h1>ポイント</h1>
       <Tabs defaultActiveKey="table" type="card" items={items} />
     </>

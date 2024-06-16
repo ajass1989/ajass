@@ -1,6 +1,7 @@
 'use client';
 import {
   Alert,
+  Breadcrumb,
   Button,
   Form,
   FormInstance,
@@ -417,6 +418,16 @@ export function TeamTable(props: Props) {
 
   return (
     <>
+      <Breadcrumb
+        items={[
+          {
+            title: '準備',
+          },
+          {
+            title: 'チーム',
+          },
+        ]}
+      />
       <h1>チーム</h1>
       <Button type="primary" style={{ marginBottom: 16 }}>
         <Link href="/prepare/teams/add">追加</Link>

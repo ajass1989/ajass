@@ -1,5 +1,13 @@
 'use client';
-import { Alert, Button, DatePicker, Form, FormProps, Input } from 'antd';
+import {
+  Alert,
+  Breadcrumb,
+  Button,
+  DatePicker,
+  Form,
+  FormProps,
+  Input,
+} from 'antd';
 import { UpdateEventRequestDto, updateEvent } from './actions';
 import { useState } from 'react';
 import { AlertType } from '../../common/types';
@@ -73,6 +81,16 @@ export function EditEventForm(props: Props) {
 
   return (
     <div>
+      <Breadcrumb
+        items={[
+          {
+            title: '準備',
+          },
+          {
+            title: '大会',
+          },
+        ]}
+      />
       <h1>大会</h1>
       {alertVisible && (
         <Alert
