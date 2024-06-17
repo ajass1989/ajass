@@ -32,6 +32,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { DndContext, DragEndEvent } from '@dnd-kit/core';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { SyntheticListenerMap } from '@dnd-kit/core/dist/hooks/utilities';
+import { Rule } from 'antd/es/form';
 
 type Props = {
   title: string;
@@ -52,6 +53,7 @@ interface Item {
   gender: string; // f, m
   seed: number;
   teamId: string;
+  special: string;
 }
 
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
@@ -73,6 +75,26 @@ const EditableCell: React.FC<EditableCellProps> = ({
   children,
   ...restProps
 }) => {
+  let rules: Rule[] = [
+    {
+      required: true,
+      message: `${title}は入力必須です。`,
+    },
+  ];
+  if (record && record.special === 'senior' && inputType == 'number') {
+    rules.push({
+      type: 'number',
+      min: 60,
+      message: `シニアは60歳以上です。`,
+    });
+  }
+  if (record && record.special === 'junior' && inputType == 'number') {
+    rules.push({
+      type: 'number',
+      max: 15,
+      message: `ジュニアは15歳以下です。`,
+    });
+  }
   // 入力ノードの切り替え
   let inputNode;
   switch (inputType) {
@@ -106,19 +128,11 @@ const EditableCell: React.FC<EditableCellProps> = ({
       );
       break;
   }
+
   return (
     <td {...restProps}>
       {editing ? (
-        <Form.Item
-          style={{ margin: 0 }}
-          name={dataIndex}
-          rules={[
-            {
-              required: true,
-              message: `${title} is required.`,
-            },
-          ]}
-        >
+        <Form.Item style={{ margin: 0 }} name={dataIndex} rules={rules}>
           {inputNode}
         </Form.Item>
       ) : (
@@ -137,6 +151,7 @@ interface DataType {
   isFirstTime: boolean;
   gender: string;
   seed: number;
+  special?: string;
 }
 
 interface RowContextProps {
@@ -300,6 +315,7 @@ export function RacerTable(props: Props) {
         teamId: props.teamId,
         isFirstTime: result.result!.isFirstTime,
         age: result.result!.age!,
+        special: props.special,
       };
       newDataSource.splice(index, 1, {
         ...r,
