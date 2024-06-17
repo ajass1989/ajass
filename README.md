@@ -108,3 +108,20 @@ Learn more about the power of Turborepo:
 - [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
 - [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
 - [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
+
+# TODO
+
+- シニアとジュニアの年齢入力に制限を加える
+- チームや選手削除時のポイント再計算
+- bib編集時のポイント再計算
+  - つまり、ポイント計算は様々な影響を受けるため、都度更新をすべきか要検討
+- 業務フローの考慮
+  - チーム編集確定→bib付与→結果入力となるべき、
+- 結果閲覧機能の検討
+  - 競技ごと（総合、男子、女子、男子スキー、女子スキー、男子スノボ、女子スノボ、シニア、ジュニア）
+  - チームごと
+  - ビブ指定
+- チーム情報のCSVファイル読み込み
+- 帳票出力
+- 状態でds,df,dq入力時に記録は消さない（誤入力により結果が消える恐れがある）
+- 状態を空にした際に記録は消さない（誤入力により結果が消える恐れがある）

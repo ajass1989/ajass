@@ -659,7 +659,7 @@ export function ResultTable(props: Props) {
       <Breadcrumb
         items={[
           {
-            title: '入力結果',
+            title: '入力',
           },
         ]}
       />

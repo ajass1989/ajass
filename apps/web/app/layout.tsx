@@ -47,7 +47,7 @@ const items: MenuItem[] = [
       <UnorderedListOutlined />,
     ),
   ]),
-  getItem(<Link href="/input">結果入力</Link>, '/input', <EditOutlined />),
+  getItem(<Link href="/input">入力</Link>, '/input', <EditOutlined />),
   getItem('集計', '/summary', <UnorderedListOutlined />, [
     getItem(
       <Link href="/summary/individual">個人</Link>,
