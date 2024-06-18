@@ -90,18 +90,12 @@ export async function updateStatus(
   dto: UpdateStatusRequestDto,
 ): Promise<ActionResult<Racer[]>> {
   try {
-    // ステータスが文字列の場合、タイムをnullにする
-    // それ以外の場合、タイムは変更しない
-    const time1 = typeof dto.status1 === 'string' ? null : undefined;
-    const time2 = typeof dto.status2 === 'string' ? null : undefined;
     const racer = await prisma.$transaction(async (tx) => {
       // タイムとステータスの更新
       let update1 = await tx.racer.update({
         where: { id },
         data: {
           ...dto,
-          time1,
-          time2,
         },
       });
       // ベストタイムの更新
@@ -136,15 +130,34 @@ export type UpdateTimeRequestDto = {
 };
 
 function getBestTime(racer: Racer): number | null {
-  if (racer.time1 && racer.time2) {
-    return Math.min(racer.time1, racer.time2);
+  console.log(racer);
+  if (
+    racer.status1 == null &&
+    racer.time1 &&
+    racer.status2 == null &&
+    racer.time2
+  ) {
+    const bestTime = Math.min(racer.time1, racer.time2);
+    console.log('getBestTime(): ', bestTime);
+    return bestTime;
   }
-  if (racer.time1 && !racer.time2) {
+  if (
+    racer.status1 == null &&
+    racer.time1 &&
+    (racer.status2 != null || !racer.time2)
+  ) {
+    console.log('getBestTime(): ', racer.time1);
     return racer.time1;
   }
-  if (!racer.time1 && racer.time2) {
+  if (
+    (racer.status1 != null || !racer.time1) &&
+    racer.status2 == null &&
+    racer.time2
+  ) {
+    console.log('getBestTime(): ', racer.time2);
     return racer.time2;
   }
+  console.log('getBestTime(): ', null);
   return null;
 }
 
@@ -226,16 +239,12 @@ export async function updateTime(
   dto: UpdateTimeRequestDto,
 ): Promise<ActionResult<Racer[]>> {
   try {
-    const status1 = typeof dto.time1 === 'number' ? null : undefined;
-    const status2 = typeof dto.time2 === 'number' ? null : undefined;
     const racer = await prisma.$transaction(async (tx) => {
       // タイムとステータスの更新
       let update1 = await tx.racer.update({
         where: { id },
         data: {
           ...dto,
-          status1,
-          status2,
         },
       });
       // ベストタイムの更新

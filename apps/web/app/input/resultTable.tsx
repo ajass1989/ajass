@@ -532,7 +532,7 @@ export function ResultTable(props: Props) {
 
   const handleChangeStatus1 = async (row: DataType) => {
     const result = await updateStatus(row.id, {
-      status1: row.status1 as StatusType,
+      status1: row.status1 === '' ? null : (row.status1 as StatusType),
       status2: undefined,
     });
     if (!result.success) {
@@ -544,7 +544,7 @@ export function ResultTable(props: Props) {
   const handleChangeStatus2 = async (row: DataType) => {
     const result = await updateStatus(row.id, {
       status1: undefined,
-      status2: row.status2 as StatusType,
+      status2: row.status2 === '' ? null : (row.status2 as StatusType),
     });
     if (!result.success) {
       showAlert('error', result.error);

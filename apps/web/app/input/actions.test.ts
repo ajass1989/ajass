@@ -292,7 +292,7 @@ describe('actions', () => {
       const racer3 = result.result!.find((r) => r.id === '3');
       expect(racer3!.id).toBe('3');
       expect(racer3!.status1).toBe('dq');
-      expect(racer3!.time1).toBe(null);
+      expect(racer3!.time1).toBe(123456);
       expect(racer3!.status2).toBe(null);
       expect(racer3!.time2).toBe(123456);
       expect(racer3!.bestTime).toBe(123456);
@@ -332,7 +332,7 @@ describe('actions', () => {
       expect(racer3!.status1).toBe(null);
       expect(racer3!.time1).toBe(123456);
       expect(racer3!.status2).toBe('dq');
-      expect(racer3!.time2).toBe(null);
+      expect(racer3!.time2).toBe(123456);
       expect(racer3!.bestTime).toBe(123456);
       expect(racer3!.point).toBe(0);
     });
@@ -381,11 +381,11 @@ describe('actions', () => {
 
       const racer1 = result.result!.find((r) => r.id === '1');
       expect(racer1!.id).toBe('1');
-      expect(racer1!.status1).toBe(null);
+      expect(racer1!.status1).toBe('dq');
       expect(racer1!.time1).toBe(123456);
       expect(racer1!.status2).toBe('dq');
       expect(racer1!.time2).toBe(null);
-      expect(racer1!.bestTime).toBe(123456);
+      expect(racer1!.bestTime).toBe(null);
       expect(racer1!.point).toBe(0);
     });
 
@@ -420,9 +420,9 @@ describe('actions', () => {
       expect(racer1!.id).toBe('1');
       expect(racer1!.status1).toBe('dq');
       expect(racer1!.time1).toBe(null);
-      expect(racer1!.status2).toBe(null);
+      expect(racer1!.status2).toBe('dq');
       expect(racer1!.time2).toBe(123456);
-      expect(racer1!.bestTime).toBe(123456);
+      expect(racer1!.bestTime).toBe(null);
       expect(racer1!.point).toBe(0);
     });
 
@@ -439,9 +439,9 @@ describe('actions', () => {
       expect(racer11!.id).toBe('1');
       expect(racer11!.status1).toBe('dq');
       expect(racer11!.time1).toBe(null);
-      expect(racer11!.status2).toBe(null);
+      expect(racer11!.status2).toBe('dq');
       expect(racer11!.time2).toBe(123456);
-      expect(racer11!.bestTime).toBe(123456);
+      expect(racer11!.bestTime).toBe(null);
       expect(racer11!.point).toBe(0);
 
       const dto2: UpdateTimeRequestDto = {

@@ -18,6 +18,7 @@ export const renderTime = (time: number | null) => {
 };
 
 export const parseTime = (formatTime?: string) => {
+  if (formatTime === '') return null;
   if (!formatTime) return undefined;
   const parts = formatTime.split(':');
   let ms = 0;
