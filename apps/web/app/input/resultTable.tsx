@@ -324,7 +324,6 @@ interface DataType {
   special: string;
   summary: string;
   formatBestTime: string;
-  point: number;
 }
 
 type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
@@ -371,7 +370,6 @@ export function ResultTable(props: Props) {
           racer.category as CategoryType,
         ),
         formatBestTime: renderTime(racer.bestTime),
-        point: racer.point,
       };
     })
     .sort((a, b) => {
@@ -491,10 +489,6 @@ export function ResultTable(props: Props) {
       title: 'ベスト',
       dataIndex: 'formatBestTime',
     },
-    {
-      title: 'ポイント',
-      dataIndex: 'point',
-    },
   ];
 
   const columns = defaultColumns.map((col) => {
@@ -590,7 +584,6 @@ export function ResultTable(props: Props) {
       newItem.status1 = racer.status1;
       newItem.status2 = racer.status2;
       newItem.bestTime = racer.bestTime;
-      newItem.point = racer.point;
       newData.splice(index, 1, {
         ...newItem,
       });

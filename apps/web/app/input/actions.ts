@@ -94,7 +94,7 @@ export async function updateStatus(
     // それ以外の場合、タイムは変更しない
     const time1 = typeof dto.status1 === 'string' ? null : undefined;
     const time2 = typeof dto.status2 === 'string' ? null : undefined;
-    await prisma.$transaction(async (tx) => {
+    const racer = await prisma.$transaction(async (tx) => {
       // タイムとステータスの更新
       let update1 = await tx.racer.update({
         where: { id },
@@ -105,7 +105,7 @@ export async function updateStatus(
         },
       });
       // ベストタイムの更新
-      await tx.racer.update({
+      return await tx.racer.update({
         where: { id },
         data: {
           bestTime: getBestTime(update1),
@@ -115,7 +115,7 @@ export async function updateStatus(
     // 獲得ポイントの更新
     return {
       success: true,
-      result: await updateRacersPoint(id),
+      result: [racer],
     };
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
@@ -148,7 +148,7 @@ function getBestTime(racer: Racer): number | null {
   return null;
 }
 
-async function updateRacersPoint(id: string): Promise<Racer[]> {
+export async function updateRacersPoint(id: string): Promise<Racer[]> {
   // タイム更新対象のレーサーを取得
   const racer = await prisma.racer.findUniqueOrThrow({
     where: {
@@ -228,7 +228,7 @@ export async function updateTime(
   try {
     const status1 = typeof dto.time1 === 'number' ? null : undefined;
     const status2 = typeof dto.time2 === 'number' ? null : undefined;
-    await prisma.$transaction(async (tx) => {
+    const racer = await prisma.$transaction(async (tx) => {
       // タイムとステータスの更新
       let update1 = await tx.racer.update({
         where: { id },
@@ -240,7 +240,7 @@ export async function updateTime(
       });
       // ベストタイムの更新
       const bestTime = getBestTime(update1);
-      await tx.racer.update({
+      return await tx.racer.update({
         where: { id },
         data: {
           bestTime,
@@ -250,7 +250,7 @@ export async function updateTime(
     // 獲得ポイントの更新
     return {
       success: true,
-      result: await updateRacersPoint(id),
+      result: [racer],
     };
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {

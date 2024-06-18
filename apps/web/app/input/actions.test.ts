@@ -268,16 +268,7 @@ describe('actions', () => {
       };
       const result = await updateStatus('2', dto);
       expect(result.success).toBeTruthy();
-      expect(result.result!.length).toBe(3);
-
-      const racer1 = result.result!.find((r) => r.id === '1');
-      expect(racer1!.id).toBe('1');
-      expect(racer1!.status1).toBe('dq');
-      expect(racer1!.time1).toBe(null);
-      expect(racer1!.status2).toBe('dq');
-      expect(racer1!.time2).toBe(null);
-      expect(racer1!.bestTime).toBe(null);
-      expect(racer1!.point).toBe(0);
+      expect(result.result!.length).toBe(1);
 
       const racer2 = result.result!.find((r) => r.id === '2');
       expect(racer2!.id).toBe('2');
@@ -287,15 +278,6 @@ describe('actions', () => {
       expect(racer2!.time2).toBe(null);
       expect(racer2!.bestTime).toBe(null);
       expect(racer2!.point).toBe(0);
-
-      const racer3 = result.result!.find((r) => r.id === '3');
-      expect(racer3!.id).toBe('3');
-      expect(racer3!.status1).toBe(null);
-      expect(racer3!.time1).toBe(123456);
-      expect(racer3!.status2).toBe(null);
-      expect(racer3!.time2).toBe(123456);
-      expect(racer3!.bestTime).toBe(123456);
-      expect(racer3!.point).toBe(130);
     });
 
     test('正常系:status1=dqで更新', async () => {
@@ -305,25 +287,7 @@ describe('actions', () => {
       };
       const result = await updateStatus('3', dto);
       expect(result.success).toBeTruthy();
-      expect(result.result!.length).toBe(3);
-
-      const racer1 = result.result!.find((r) => r.id === '1');
-      expect(racer1!.id).toBe('1');
-      expect(racer1!.status1).toBe('dq');
-      expect(racer1!.time1).toBe(null);
-      expect(racer1!.status2).toBe('dq');
-      expect(racer1!.time2).toBe(null);
-      expect(racer1!.bestTime).toBe(null);
-      expect(racer1!.point).toBe(0);
-
-      const racer2 = result.result!.find((r) => r.id === '2');
-      expect(racer2!.id).toBe('2');
-      expect(racer2!.status1).toBe(null);
-      expect(racer2!.time1).toBe(null);
-      expect(racer2!.status2).toBe(null);
-      expect(racer2!.time2).toBe(null);
-      expect(racer2!.bestTime).toBe(null);
-      expect(racer2!.point).toBe(0);
+      expect(result.result!.length).toBe(1);
 
       const racer3 = result.result!.find((r) => r.id === '3');
       expect(racer3!.id).toBe('3');
@@ -332,7 +296,7 @@ describe('actions', () => {
       expect(racer3!.status2).toBe(null);
       expect(racer3!.time2).toBe(123456);
       expect(racer3!.bestTime).toBe(123456);
-      expect(racer3!.point).toBe(130);
+      expect(racer3!.point).toBe(0);
     });
 
     test('正常系:status2=nullで更新', async () => {
@@ -342,16 +306,7 @@ describe('actions', () => {
       };
       const result = await updateStatus('2', dto);
       expect(result.success).toBeTruthy();
-      expect(result.result!.length).toBe(3);
-
-      const racer1 = result.result!.find((r) => r.id === '1');
-      expect(racer1!.id).toBe('1');
-      expect(racer1!.status1).toBe('dq');
-      expect(racer1!.time1).toBe(null);
-      expect(racer1!.status2).toBe('dq');
-      expect(racer1!.time2).toBe(null);
-      expect(racer1!.bestTime).toBe(null);
-      expect(racer1!.point).toBe(0);
+      expect(result.result!.length).toBe(1);
 
       const racer2 = result.result!.find((r) => r.id === '2');
       expect(racer2!.id).toBe('2');
@@ -361,15 +316,6 @@ describe('actions', () => {
       expect(racer2!.time2).toBe(null);
       expect(racer2!.bestTime).toBe(null);
       expect(racer2!.point).toBe(0);
-
-      const racer3 = result.result!.find((r) => r.id === '3');
-      expect(racer3!.id).toBe('3');
-      expect(racer3!.status1).toBe(null);
-      expect(racer3!.time1).toBe(123456);
-      expect(racer3!.status2).toBe(null);
-      expect(racer3!.time2).toBe(123456);
-      expect(racer3!.bestTime).toBe(123456);
-      expect(racer3!.point).toBe(130);
     });
 
     test('正常系:status2=dqで更新', async () => {
@@ -379,25 +325,7 @@ describe('actions', () => {
       };
       const result = await updateStatus('3', dto);
       expect(result.success).toBeTruthy();
-      expect(result.result!.length).toBe(3);
-
-      const racer1 = result.result!.find((r) => r.id === '1');
-      expect(racer1!.id).toBe('1');
-      expect(racer1!.status1).toBe('dq');
-      expect(racer1!.time1).toBe(null);
-      expect(racer1!.status2).toBe('dq');
-      expect(racer1!.time2).toBe(null);
-      expect(racer1!.bestTime).toBe(null);
-      expect(racer1!.point).toBe(0);
-
-      const racer2 = result.result!.find((r) => r.id === '2');
-      expect(racer2!.id).toBe('2');
-      expect(racer2!.status1).toBe(null);
-      expect(racer2!.time1).toBe(null);
-      expect(racer2!.status2).toBe(null);
-      expect(racer2!.time2).toBe(null);
-      expect(racer2!.bestTime).toBe(null);
-      expect(racer2!.point).toBe(0);
+      expect(result.result!.length).toBe(1);
 
       const racer3 = result.result!.find((r) => r.id === '3');
       expect(racer3!.id).toBe('3');
@@ -406,7 +334,7 @@ describe('actions', () => {
       expect(racer3!.status2).toBe('dq');
       expect(racer3!.time2).toBe(null);
       expect(racer3!.bestTime).toBe(123456);
-      expect(racer3!.point).toBe(130);
+      expect(racer3!.point).toBe(0);
     });
 
     test('準正常系:存在しないid', async () => {
@@ -430,7 +358,7 @@ describe('actions', () => {
       };
       const result = await updateTime('1', dto);
       expect(result.success).toBeTruthy();
-      expect(result.result!.length).toBe(3);
+      expect(result.result!.length).toBe(1);
 
       const racer1 = result.result!.find((r) => r.id === '1');
       expect(racer1!.id).toBe('1');
@@ -440,24 +368,6 @@ describe('actions', () => {
       expect(racer1!.time2).toBe(null);
       expect(racer1!.bestTime).toBe(null);
       expect(racer1!.point).toBe(0);
-
-      const racer2 = result.result!.find((r) => r.id === '2');
-      expect(racer2!.id).toBe('2');
-      expect(racer2!.status1).toBe(null);
-      expect(racer2!.time1).toBe(null);
-      expect(racer2!.status2).toBe(null);
-      expect(racer2!.time2).toBe(null);
-      expect(racer2!.bestTime).toBe(null);
-      expect(racer2!.point).toBe(0);
-
-      const racer3 = result.result!.find((r) => r.id === '3');
-      expect(racer3!.id).toBe('3');
-      expect(racer3!.status1).toBe(null);
-      expect(racer3!.time1).toBe(123456);
-      expect(racer3!.status2).toBe(null);
-      expect(racer3!.time2).toBe(123456);
-      expect(racer3!.bestTime).toBe(123456);
-      expect(racer3!.point).toBe(130);
     });
 
     test('正常系:time1=123456で更新', async () => {
@@ -467,7 +377,7 @@ describe('actions', () => {
       };
       const result = await updateTime('1', dto);
       expect(result.success).toBeTruthy();
-      expect(result.result!.length).toBe(3);
+      expect(result.result!.length).toBe(1);
 
       const racer1 = result.result!.find((r) => r.id === '1');
       expect(racer1!.id).toBe('1');
@@ -476,25 +386,7 @@ describe('actions', () => {
       expect(racer1!.status2).toBe('dq');
       expect(racer1!.time2).toBe(null);
       expect(racer1!.bestTime).toBe(123456);
-      expect(racer1!.point).toBe(105);
-
-      const racer2 = result.result!.find((r) => r.id === '2');
-      expect(racer2!.id).toBe('2');
-      expect(racer2!.status1).toBe(null);
-      expect(racer2!.time1).toBe(null);
-      expect(racer2!.status2).toBe(null);
-      expect(racer2!.time2).toBe(null);
-      expect(racer2!.bestTime).toBe(null);
-      expect(racer2!.point).toBe(0);
-
-      const racer3 = result.result!.find((r) => r.id === '3');
-      expect(racer3!.id).toBe('3');
-      expect(racer3!.status1).toBe(null);
-      expect(racer3!.time1).toBe(123456);
-      expect(racer3!.status2).toBe(null);
-      expect(racer3!.time2).toBe(123456);
-      expect(racer3!.bestTime).toBe(123456);
-      expect(racer3!.point).toBe(130);
+      expect(racer1!.point).toBe(0);
     });
 
     test('正常系:time2=nullで更新', async () => {
@@ -513,24 +405,6 @@ describe('actions', () => {
       expect(racer1!.time2).toBe(null);
       expect(racer1!.bestTime).toBe(null);
       expect(racer1!.point).toBe(0);
-
-      const racer2 = result.result!.find((r) => r.id === '2');
-      expect(racer2!.id).toBe('2');
-      expect(racer2!.status1).toBe(null);
-      expect(racer2!.time1).toBe(null);
-      expect(racer2!.status2).toBe(null);
-      expect(racer2!.time2).toBe(null);
-      expect(racer2!.bestTime).toBe(null);
-      expect(racer2!.point).toBe(0);
-
-      const racer3 = result.result!.find((r) => r.id === '3');
-      expect(racer3!.id).toBe('3');
-      expect(racer3!.status1).toBe(null);
-      expect(racer3!.time1).toBe(123456);
-      expect(racer3!.status2).toBe(null);
-      expect(racer3!.time2).toBe(123456);
-      expect(racer3!.bestTime).toBe(123456);
-      expect(racer3!.point).toBe(130);
     });
 
     test('正常系:time2=123456で更新', async () => {
@@ -540,7 +414,7 @@ describe('actions', () => {
       };
       const result = await updateTime('1', dto);
       expect(result.success).toBeTruthy();
-      expect(result.result!.length).toBe(3);
+      expect(result.result!.length).toBe(1);
 
       const racer1 = result.result!.find((r) => r.id === '1');
       expect(racer1!.id).toBe('1');
@@ -549,25 +423,7 @@ describe('actions', () => {
       expect(racer1!.status2).toBe(null);
       expect(racer1!.time2).toBe(123456);
       expect(racer1!.bestTime).toBe(123456);
-      expect(racer1!.point).toBe(105);
-
-      const racer2 = result.result!.find((r) => r.id === '2');
-      expect(racer2!.id).toBe('2');
-      expect(racer2!.status1).toBe(null);
-      expect(racer2!.time1).toBe(null);
-      expect(racer2!.status2).toBe(null);
-      expect(racer2!.time2).toBe(null);
-      expect(racer2!.bestTime).toBe(null);
-      expect(racer2!.point).toBe(0);
-
-      const racer3 = result.result!.find((r) => r.id === '3');
-      expect(racer3!.id).toBe('3');
-      expect(racer3!.status1).toBe(null);
-      expect(racer3!.time1).toBe(123456);
-      expect(racer3!.status2).toBe(null);
-      expect(racer3!.time2).toBe(123456);
-      expect(racer3!.bestTime).toBe(123456);
-      expect(racer3!.point).toBe(130);
+      expect(racer1!.point).toBe(0);
     });
 
     test('正常系:3レコード更新', async () => {
@@ -577,7 +433,7 @@ describe('actions', () => {
       };
       const result1 = await updateTime('1', dto1);
       expect(result1.success).toBeTruthy();
-      expect(result1.result!.length).toBe(3);
+      expect(result1.result!.length).toBe(1);
 
       const racer11 = result1.result!.find((r) => r.id === '1');
       expect(racer11!.id).toBe('1');
@@ -586,25 +442,7 @@ describe('actions', () => {
       expect(racer11!.status2).toBe(null);
       expect(racer11!.time2).toBe(123456);
       expect(racer11!.bestTime).toBe(123456);
-      expect(racer11!.point).toBe(105);
-
-      const racer12 = result1.result!.find((r) => r.id === '2');
-      expect(racer12!.id).toBe('2');
-      expect(racer12!.status1).toBe(null);
-      expect(racer12!.time1).toBe(null);
-      expect(racer12!.status2).toBe(null);
-      expect(racer12!.time2).toBe(null);
-      expect(racer12!.bestTime).toBe(null);
-      expect(racer12!.point).toBe(0);
-
-      const racer13 = result1.result!.find((r) => r.id === '3');
-      expect(racer13!.id).toBe('3');
-      expect(racer13!.status1).toBe(null);
-      expect(racer13!.time1).toBe(123456);
-      expect(racer13!.status2).toBe(null);
-      expect(racer13!.time2).toBe(123456);
-      expect(racer13!.bestTime).toBe(123456);
-      expect(racer13!.point).toBe(130);
+      expect(racer11!.point).toBe(0);
 
       const dto2: UpdateTimeRequestDto = {
         time1: undefined,
@@ -612,16 +450,7 @@ describe('actions', () => {
       };
       const result2 = await updateTime('2', dto2);
       expect(result2.success).toBeTruthy();
-      expect(result2.result!.length).toBe(3);
-
-      const racer21 = result2.result!.find((r) => r.id === '1');
-      expect(racer21!.id).toBe('1');
-      expect(racer21!.status1).toBe('dq');
-      expect(racer21!.time1).toBe(null);
-      expect(racer21!.status2).toBe(null);
-      expect(racer21!.time2).toBe(123456);
-      expect(racer21!.bestTime).toBe(123456);
-      expect(racer21!.point).toBe(105);
+      expect(result2.result!.length).toBe(1);
 
       const racer22 = result2.result!.find((r) => r.id === '2');
       expect(racer22!.id).toBe('2');
@@ -630,16 +459,7 @@ describe('actions', () => {
       expect(racer22!.status2).toBe(null);
       expect(racer22!.time2).toBe(123450);
       expect(racer22!.bestTime).toBe(123450);
-      expect(racer22!.point).toBe(130);
-
-      const racer23 = result2.result!.find((r) => r.id === '3');
-      expect(racer23!.id).toBe('3');
-      expect(racer23!.status1).toBe(null);
-      expect(racer23!.time1).toBe(123456);
-      expect(racer23!.status2).toBe(null);
-      expect(racer23!.time2).toBe(123456);
-      expect(racer23!.bestTime).toBe(123456);
-      expect(racer23!.point).toBe(105);
+      expect(racer22!.point).toBe(0);
 
       const dto3: UpdateTimeRequestDto = {
         time1: undefined,
@@ -647,25 +467,7 @@ describe('actions', () => {
       };
       const result3 = await updateTime('3', dto3);
       expect(result3.success).toBeTruthy();
-      expect(result3.result!.length).toBe(3);
-
-      const racer31 = result3.result!.find((r) => r.id === '1');
-      expect(racer31!.id).toBe('1');
-      expect(racer31!.status1).toBe('dq');
-      expect(racer31!.time1).toBe(null);
-      expect(racer31!.status2).toBe(null);
-      expect(racer31!.time2).toBe(123456);
-      expect(racer31!.bestTime).toBe(123456);
-      expect(racer31!.point).toBe(105);
-
-      const racer32 = result3.result!.find((r) => r.id === '2');
-      expect(racer32!.id).toBe('2');
-      expect(racer32!.status1).toBe(null);
-      expect(racer32!.time1).toBe(null);
-      expect(racer32!.status2).toBe(null);
-      expect(racer32!.time2).toBe(123450);
-      expect(racer32!.bestTime).toBe(123450);
-      expect(racer32!.point).toBe(105);
+      expect(result3.result!.length).toBe(1);
 
       const racer33 = result3.result!.find((r) => r.id === '3');
       expect(racer33!.id).toBe('3');
@@ -674,7 +476,7 @@ describe('actions', () => {
       expect(racer33!.status2).toBe(null);
       expect(racer33!.time2).toBe(123440);
       expect(racer33!.bestTime).toBe(123440);
-      expect(racer33!.point).toBe(130);
+      expect(racer33!.point).toBe(0);
     });
 
     test('準正常系:存在しないid', async () => {
