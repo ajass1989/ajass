@@ -17,6 +17,10 @@ export const renderTime = (time: number | null) => {
   return `${minutes}:${seconds}.${milliseconds}`;
 };
 
+export const renderResult = (status: string | null, time: number | null) => {
+  return status || renderTime(time);
+};
+
 export const parseTime = (formatTime?: string) => {
   if (formatTime === '') return null;
   if (!formatTime) return undefined;

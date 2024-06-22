@@ -48,15 +48,40 @@ const items: MenuItem[] = [
     ),
   ]),
   getItem(<Link href="/input">入力</Link>, '/input', <EditOutlined />),
-  getItem('集計', '/summary', <UnorderedListOutlined />, [
+  getItem('結果', '/results', <UnorderedListOutlined />, [
     getItem(
-      <Link href="/summary/individual">個人</Link>,
-      '/summary/individual',
+      <Link href="/results/total">総合</Link>,
+      '/results/total',
       <TeamOutlined />,
     ),
     getItem(
-      <Link href="/summary/team">団体</Link>,
-      '/summary/team',
+      <Link href="/results/ski/male">スキー男子</Link>,
+      '/results/ski/male',
+      <TeamOutlined />,
+    ),
+    getItem(
+      <Link href="/results/ski/female">スキー女子</Link>,
+      '/results/ski/female',
+      <TeamOutlined />,
+    ),
+    getItem(
+      <Link href="/results/snowboard/male">スノボ男子</Link>,
+      '/results/snowboard/male',
+      <TeamOutlined />,
+    ),
+    getItem(
+      <Link href="/results/snowboard/female">スノボ女子</Link>,
+      '/results/snowboard/female',
+      <TeamOutlined />,
+    ),
+    getItem(
+      <Link href="/results/junior">ジュニア</Link>,
+      '/results/junior',
+      <TeamOutlined />,
+    ),
+    getItem(
+      <Link href="/results/senior">シニア</Link>,
+      '/results/senior',
       <TeamOutlined />,
     ),
   ]),

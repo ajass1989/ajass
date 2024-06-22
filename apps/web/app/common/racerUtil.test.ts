@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { parseTime, renderTime, summary } from './racerUtil';
+import { parseTime, renderResult, renderTime, summary } from './racerUtil';
 import { CategoryType, GenderType, SpecialType } from './types';
 
 describe('renderTime', () => {
@@ -29,6 +29,28 @@ describe('renderTime', () => {
   });
 });
 
+describe('renderResult', () => {
+  test('正常系:status=ds,time=1秒', () => {
+    const actual = renderResult('ds', 1000);
+    expect(actual).toBe('ds');
+  });
+
+  test('正常系:status=null,time=1秒', () => {
+    const actual = renderResult(null, 1000);
+    expect(actual).toBe('00:01.00');
+  });
+
+  test('正常系:status=ds,time=null', () => {
+    const actual = renderResult('ds', null);
+    expect(actual).toBe('ds');
+  });
+
+  test('正常系:status=null,time=null', () => {
+    const actual = renderResult(null, null);
+    expect(actual).toBe('');
+  });
+});
+
 describe('parseTime', () => {
   const testCases = [
     { time: '00:01.00', expected: 1000 },
@@ -48,7 +70,7 @@ describe('parseTime', () => {
     { time: '4.35', expected: 4350 },
     { time: '0.35', expected: 350 },
     { time: '0.1', expected: 100 },
-    { time: '', expected: undefined },
+    { time: '', expected: null },
     { time: undefined, expected: undefined },
   ];
 
