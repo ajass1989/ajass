@@ -1,6 +1,15 @@
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { CategoryType, GenderType, SpecialType } from './types';
+import {
+  bgColorDefault,
+  bgColorJunior,
+  bgColorSenior,
+  bgColorSkiFemale,
+  bgColorSkiMale,
+  bgColorSnowboardFemale,
+  bgColorSnowboardMale,
+} from './colors';
 
 dayjs.extend(duration);
 
@@ -59,4 +68,27 @@ export const summary = (
       break;
   }
   return summary;
+};
+
+/**
+ * 行スタイルを取得
+ * @param record
+ * @returns
+ */
+export const getRowStyle = (summary: string) => {
+  switch (summary) {
+    case 'ジュニア':
+      return { backgroundColor: bgColorJunior };
+    case '女子スノボ':
+      return { backgroundColor: bgColorSnowboardFemale };
+    case '男子スノボ':
+      return { backgroundColor: bgColorSnowboardMale };
+    case '女子スキー':
+      return { backgroundColor: bgColorSkiFemale };
+    case 'シニア':
+      return { backgroundColor: bgColorSenior };
+    case '男子スキー':
+      return { backgroundColor: bgColorSkiMale };
+  }
+  return { backgroundColor: bgColorDefault };
 };

@@ -1,8 +1,9 @@
 import { Racer, prisma } from '@repo/database';
 
 type ListRacersRequestDto = {
-  gender: 'f' | 'm';
-  category: 'ski' | 'snowboard';
+  gender?: 'f' | 'm';
+  category?: 'ski' | 'snowboard';
+  special?: 'normal' | 'junior' | 'senior';
 };
 export async function listRacers(dto: ListRacersRequestDto): Promise<Racer[]> {
   return await prisma.racer.findMany({

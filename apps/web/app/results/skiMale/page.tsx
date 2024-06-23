@@ -1,8 +1,10 @@
 import { Breadcrumb } from 'antd';
-import { ResultViewTable } from './resultViewTable';
-import { listRacers } from '../../actions/actions';
+import { ResultViewTable } from '../components/resultViewTable';
+import { listTeams } from '../../prepare/teams/actions';
+import { listRacers } from '../actions/actions';
 
 export default async function ResultsSkiMalePage() {
+  const teams = await listTeams();
   const racers = await listRacers({ gender: 'm', category: 'ski' });
   return (
     <>
@@ -17,7 +19,7 @@ export default async function ResultsSkiMalePage() {
         ]}
       />
       <h1>スキー男子</h1>
-      <ResultViewTable racers={racers} />
+      <ResultViewTable teams={teams} racers={racers} />
     </>
   );
 }

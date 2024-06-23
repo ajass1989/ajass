@@ -42,6 +42,7 @@ import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { Rule } from 'antd/es/form';
 import {
+  getRowStyle,
   parseTime,
   renderResult,
   renderTime,
@@ -569,29 +570,6 @@ export function ResultTable(props: Props) {
   };
 
   /**
-   * 行スタイルを取得
-   * @param record
-   * @returns
-   */
-  const getRowStyle = (record: DataType) => {
-    switch (record.summary) {
-      case 'ジュニア':
-        return { backgroundColor: bgColorJunior };
-      case '女子スノボ':
-        return { backgroundColor: bgColorSnowboardFemale };
-      case '男子スノボ':
-        return { backgroundColor: bgColorSnowboardMale };
-      case '女子スキー':
-        return { backgroundColor: bgColorSkiFemale };
-      case 'シニア':
-        return { backgroundColor: bgColorSenior };
-      case '男子スキー':
-        return { backgroundColor: bgColorSkiMale };
-    }
-    return { backgroundColor: bgColorDefault };
-  };
-
-  /**
    * ビブ一括付与処理
    */
   const handleUpdateBibs: PopconfirmProps['onConfirm'] = async () => {
@@ -668,7 +646,7 @@ export function ResultTable(props: Props) {
         // 背景色をスタイルで指定
         onRow={(record: any) => {
           return {
-            style: getRowStyle(record),
+            style: getRowStyle(record.summary),
           };
         }}
         sticky={true}

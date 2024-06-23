@@ -1,6 +1,19 @@
 import { describe, expect, test } from 'vitest';
-import { parseTime, renderResult, renderTime, summary } from './racerUtil';
+import {
+  getRowStyle,
+  parseTime,
+  renderResult,
+  renderTime,
+  summary,
+} from './racerUtil';
 import { CategoryType, GenderType, SpecialType } from './types';
+import {
+  bgColorJunior,
+  bgColorSkiFemale,
+  bgColorSkiMale,
+  bgColorSnowboardFemale,
+  bgColorSnowboardMale,
+} from './colors';
 
 describe('renderTime', () => {
   test('正常系:time=1秒', () => {
@@ -129,6 +142,32 @@ describe('summary', () => {
         testCase.category as CategoryType,
       );
       expect(actual).toBe(testCase.expected);
+    });
+  });
+});
+
+describe('getRowStyle', () => {
+  test('正常系', () => {
+    const testCases = [
+      { summary: 'ジュニア', expected: { backgroundColor: bgColorJunior } },
+      {
+        summary: '女子スノボ',
+        expected: { backgroundColor: bgColorSnowboardFemale },
+      },
+      {
+        summary: '男子スノボ',
+        expected: { backgroundColor: bgColorSnowboardMale },
+      },
+      {
+        summary: '女子スキー',
+        expected: { backgroundColor: bgColorSkiFemale },
+      },
+      { summary: '男子スキー', expected: { backgroundColor: bgColorSkiMale } },
+    ];
+
+    testCases.forEach((testCase) => {
+      const actual = getRowStyle(testCase.summary);
+      expect(actual).toEqual(testCase.expected);
     });
   });
 });
