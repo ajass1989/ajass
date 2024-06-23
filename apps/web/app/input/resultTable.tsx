@@ -181,7 +181,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
             ref={inputNumberRef}
             onPressEnter={changeValue}
             onBlur={changeValue}
-            style={{ width: '72px' }}
+            style={{ width: '60px' }}
           />
         );
         rules = [];
@@ -242,6 +242,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
               label: status,
               value: status,
             }))}
+            style={{ width: '64px' }}
           />
         );
         break;
@@ -433,27 +434,36 @@ export function ResultTable(props: Props) {
       title: '滑走順',
       dataIndex: 'order',
       render: (_: any, record, index) => index + 1,
+      width: 80,
+      responsive: ['lg'],
     },
     {
       title: '種目',
       dataIndex: 'summary',
+      width: 104,
+      responsive: ['lg'],
     },
     {
       title: 'ビブ',
       dataIndex: 'bib',
       editable: true,
+      width: 96,
     },
     {
       title: 'シード',
       dataIndex: 'seed',
+      width: 80,
+      responsive: ['lg'],
     },
     {
       title: '選手名',
       dataIndex: 'name',
+      width: 96,
     },
     {
       title: 'ふりがな',
       dataIndex: 'kana',
+      responsive: ['lg'],
     },
     {
       title: '所属',
@@ -464,30 +474,36 @@ export function ResultTable(props: Props) {
             ?.fullname ?? ''}
         </span>
       ),
+      responsive: ['lg'],
     },
     {
       title: '状態1',
       dataIndex: 'status1',
       editable: true,
+      width: 96,
     },
     {
       title: '記録1',
       dataIndex: 'formatTime1',
       editable: true,
+      width: 128,
     },
     {
       title: '状態2',
       dataIndex: 'status2',
       editable: true,
+      width: 96,
     },
     {
       title: '記録2',
       dataIndex: 'formatTime2',
       editable: true,
+      width: 128,
     },
     {
       title: 'ベスト',
       dataIndex: 'formatBestTime',
+      width: 128,
     },
   ];
 
