@@ -1,16 +1,14 @@
 'use client';
 import {
   Alert,
+  AutoComplete,
   Breadcrumb,
   Button,
   Form,
   FormInstance,
-  Input,
   InputNumber,
-  InputRef,
   Popconfirm,
   PopconfirmProps,
-  Select,
   Table,
 } from 'antd';
 import React, { useContext, useEffect, useRef } from 'react';
@@ -43,7 +41,13 @@ import {
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { Rule } from 'antd/es/form';
-import { parseTime, renderTime, summary } from '../common/racerUtil';
+import {
+  parseTime,
+  renderResult,
+  renderTime,
+  summary,
+} from '../common/racerUtil';
+import { ActionResult } from '../common/actionResult';
 
 dayjs.extend(duration);
 
@@ -66,10 +70,8 @@ interface Item {
   teamId: string | null;
   special: string;
   summary: string;
-  formatTime1: string;
-  status1: string;
-  formatTime2: string;
-  status2: string;
+  result1: string;
+  result2: string;
 }
 
 interface EditableRowProps {
@@ -97,13 +99,9 @@ interface EditableCellProps {
   // eslint-disable-next-line no-unused-vars
   handleChangeBib: (record: Item) => void;
   // eslint-disable-next-line no-unused-vars
-  handleChangeStatus1: (record: Item) => void;
+  handleChangeResult1: (record: Item) => void;
   // eslint-disable-next-line no-unused-vars
-  handleChangeStatus2: (record: Item) => void;
-  // eslint-disable-next-line no-unused-vars
-  handleChangeTime1: (record: Item) => void;
-  // eslint-disable-next-line no-unused-vars
-  handleChangeTime2: (record: Item) => void;
+  handleChangeResult2: (record: Item) => void;
 }
 
 const EditableCell: React.FC<EditableCellProps> = ({
@@ -112,15 +110,12 @@ const EditableCell: React.FC<EditableCellProps> = ({
   dataIndex,
   record,
   handleChangeBib,
-  handleChangeStatus1,
-  handleChangeStatus2,
-  handleChangeTime1,
-  handleChangeTime2,
+  handleChangeResult1,
+  handleChangeResult2,
   ...restProps
 }) => {
   const [editing, setEditing] = useState(false);
   const inputNumberRef = useRef<HTMLInputElement>(null);
-  const inputRef = useRef<InputRef>(null);
   const form = useContext(EditableContext)!;
   const [editButtonVisible, setEditButtonVisible] = useState(false);
 
@@ -143,6 +138,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
     setEditButtonVisible(false);
   };
 
+  // 各セルの保存ボタン選択時処理
   const changeValue = async () => {
     const values = await form.validateFields();
     toggleEdit();
@@ -151,26 +147,26 @@ const EditableCell: React.FC<EditableCellProps> = ({
       case 'bib':
         handleChangeBib({ ...record, ...values });
         break;
-      case 'formatTime1':
-        handleChangeTime1({ ...record, ...values });
+      case 'result1':
+        handleChangeResult1({ ...record, ...values });
         break;
-      case 'formatTime2':
-        handleChangeTime2({ ...record, ...values });
-        break;
-      case 'status1':
-        handleChangeStatus1({ ...record, ...values });
-        break;
-      case 'status2':
-        handleChangeStatus2({ ...record, ...values });
+      case 'result2':
+        handleChangeResult2({ ...record, ...values });
         break;
     }
   };
 
   let childNode = children;
 
-  const statusData = ['', 'df', 'ds', 'dq'];
-  const regTime = /^(?:[0-9]{1,2}:)?[0-5]?[0-9]\.[0-9]{1,3}$/;
+  const options = [
+    { value: '' },
+    { value: 'ds' },
+    { value: 'df' },
+    { value: 'dq' },
+  ];
+  const regTime = /^(?:(?:[0-9]{1,2}:)?[0-5]?[0-9]\.[0-9]{1,3}|ds|df|dq)$/;
 
+  // 編集状態のセルを返す
   const childNodeEditing = (dataIndex: string) => {
     let child;
     let rules: Rule[] = [{}];
@@ -186,65 +182,24 @@ const EditableCell: React.FC<EditableCellProps> = ({
         );
         rules = [];
         break;
-      case 'formatTime1':
+      case 'result1':
+      case 'result2':
         child = (
-          <Input
-            ref={inputRef}
-            onPressEnter={changeValue}
+          <AutoComplete
+            onSelect={changeValue}
             onBlur={changeValue}
-            placeholder={'00:00.00'}
+            options={options}
+            placeholder={'00:00.00|ds|dq|df'}
             style={{ width: '84px' }}
           />
         );
         rules = [
           {
             pattern: regTime,
-            message: '[00:00.00]の形式で入力してください。',
+            message:
+              '[00:00.00]の形式、または[ds|dq|df]いずれかで入力してください。',
           },
         ];
-        break;
-      case 'formatTime2':
-        child = (
-          <Input
-            ref={inputRef}
-            onPressEnter={changeValue}
-            onBlur={changeValue}
-            placeholder={'00:00.00'}
-            style={{ width: '84px' }}
-          />
-        );
-        rules = [
-          {
-            pattern: regTime,
-            message: '[00:00.00]の形式で入力してください。',
-          },
-        ];
-        break;
-      case 'status1':
-        child = (
-          <Select
-            onBlur={changeValue}
-            onChange={changeValue}
-            options={statusData.map((status) => ({
-              label: status,
-              value: status,
-            }))}
-            style={{ width: '64px' }}
-          />
-        );
-        break;
-      case 'status2':
-        child = (
-          <Select
-            onBlur={changeValue}
-            onChange={changeValue}
-            options={statusData.map((status) => ({
-              label: status,
-              value: status,
-            }))}
-            style={{ width: '64px' }}
-          />
-        );
         break;
     }
     return (
@@ -254,21 +209,18 @@ const EditableCell: React.FC<EditableCellProps> = ({
     );
   };
 
+  // 表示状態のセルを返す
   const childNodeView = (children: React.ReactNode) => {
     let warnIconVisible = false;
     switch (dataIndex) {
       case 'bib':
         warnIconVisible = (record[dataIndex] ?? '').toString().length == 0;
         break;
-      case 'formatTime1':
-        warnIconVisible =
-          (record[dataIndex] ?? '').length == 0 &&
-          (record['status1'] ?? '').length == 0;
+      case 'result1':
+        warnIconVisible = (record['result1'] ?? '').length == 0;
         break;
-      case 'formatTime2':
-        warnIconVisible =
-          (record[dataIndex] ?? '').length == 0 &&
-          (record['status2'] ?? '').length == 0;
+      case 'result2':
+        warnIconVisible = (record['result2'] ?? '').length == 0;
         break;
     }
     return (
@@ -308,6 +260,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
 
 type EditableTableProps = Parameters<typeof Table>[0];
 
+// テーブル表示用のデータ型
 interface DataType {
   key: string;
   id: string;
@@ -318,10 +271,8 @@ interface DataType {
   gender: string; // f, m
   seed: number;
   teamId: string | null;
-  status1: string;
-  formatTime1: string;
-  status2: string;
-  formatTime2: string;
+  result1: string;
+  result2: string;
   special: string;
   summary: string;
   formatBestTime: string;
@@ -358,12 +309,8 @@ export function ResultTable(props: Props) {
         gender: racer.gender,
         seed: racer.seed,
         teamId: racer.teamId,
-        status1: racer.status1 ?? '',
-        time1: racer.time1 ?? '',
-        formatTime1: renderTime(racer.time1),
-        status2: racer.status2 ?? '',
-        formatTime2: renderTime(racer.time2),
-        time2: racer.time2 ?? '',
+        result1: renderResult(racer.status1, racer.time1),
+        result2: renderResult(racer.status2, racer.time2),
         special: racer.special,
         summary: summary(
           racer.special as SpecialType,
@@ -464,6 +411,7 @@ export function ResultTable(props: Props) {
       title: 'ふりがな',
       dataIndex: 'kana',
       responsive: ['lg'],
+      width: 96,
     },
     {
       title: '所属',
@@ -475,28 +423,17 @@ export function ResultTable(props: Props) {
         </span>
       ),
       responsive: ['lg'],
+      width: 128,
     },
     {
-      title: '状態1',
-      dataIndex: 'status1',
-      editable: true,
-      width: 96,
-    },
-    {
-      title: '記録1',
-      dataIndex: 'formatTime1',
+      title: '結果1',
+      dataIndex: 'result1',
       editable: true,
       width: 128,
     },
     {
-      title: '状態2',
-      dataIndex: 'status2',
-      editable: true,
-      width: 96,
-    },
-    {
-      title: '記録2',
-      dataIndex: 'formatTime2',
+      title: '結果2',
+      dataIndex: 'result2',
       editable: true,
       width: 128,
     },
@@ -519,10 +456,8 @@ export function ResultTable(props: Props) {
         dataIndex: col.dataIndex,
         title: col.title,
         handleChangeBib,
-        handleChangeStatus1,
-        handleChangeStatus2,
-        handleChangeTime1,
-        handleChangeTime2,
+        handleChangeResult1,
+        handleChangeResult2,
       }),
     };
   });
@@ -546,44 +481,70 @@ export function ResultTable(props: Props) {
     setNewData(row);
   };
 
-  const handleChangeStatus1 = async (row: DataType) => {
-    const result = await updateStatus(row.id, {
-      status1: row.status1 === '' ? null : (row.status1 as StatusType),
-      status2: undefined,
-    });
+  // 結果1の保存処理
+  const handleChangeResult1 = async (row: DataType) => {
+    let result: ActionResult<Racer[]> = { success: false };
+    if (row.result1 === '') {
+      // 結果が空の場合は状態と記録をクリア
+      await updateStatus(row.id, {
+        status1: null,
+      });
+      result = await updateTime(row.id, {
+        time1: null,
+      });
+    } else if (
+      row.result1 === 'dq' ||
+      row.result1 === 'df' ||
+      row.result1 === 'ds'
+    ) {
+      // 結果が dq, df, ds の場合は状態を更新
+      result = await updateStatus(row.id, {
+        status1: row.result1 as StatusType,
+      });
+    } else {
+      // 結果が時間の場合は状態をnullにして時間を更新
+      await updateStatus(row.id, {
+        status1: null,
+      });
+      result = await updateTime(row.id, {
+        time1: parseTime(row.result1),
+      });
+    }
     if (!result.success) {
       showAlert('error', result.error);
     }
     replaceRacers(result.result!);
   };
 
-  const handleChangeStatus2 = async (row: DataType) => {
-    const result = await updateStatus(row.id, {
-      status1: undefined,
-      status2: row.status2 === '' ? null : (row.status2 as StatusType),
-    });
-    if (!result.success) {
-      showAlert('error', result.error);
+  // 結果2の保存処理
+  const handleChangeResult2 = async (row: DataType) => {
+    let result: ActionResult<Racer[]> = { success: false };
+    if (row.result2 === '') {
+      // 結果が空の場合は状態と記録をクリア
+      await updateStatus(row.id, {
+        status2: null,
+      });
+      result = await updateTime(row.id, {
+        time2: null,
+      });
+    } else if (
+      row.result2 === 'dq' ||
+      row.result2 === 'df' ||
+      row.result2 === 'ds'
+    ) {
+      // 結果が dq, df, ds の場合は状態を更新
+      result = await updateStatus(row.id, {
+        status2: row.result2 as StatusType,
+      });
+    } else {
+      // 結果が時間の場合は状態をnullにして時間を更新
+      await updateStatus(row.id, {
+        status2: null,
+      });
+      result = await updateTime(row.id, {
+        time2: parseTime(row.result2),
+      });
     }
-    replaceRacers(result.result!);
-  };
-
-  const handleChangeTime1 = async (row: DataType) => {
-    const result = await updateTime(row.id, {
-      time1: parseTime(row.formatTime1),
-      time2: undefined,
-    });
-    if (!result.success) {
-      showAlert('error', result.error);
-    }
-    replaceRacers(result.result!);
-  };
-
-  const handleChangeTime2 = async (row: DataType) => {
-    const result = await updateTime(row.id, {
-      time1: undefined,
-      time2: parseTime(row.formatTime2),
-    });
     if (!result.success) {
       showAlert('error', result.error);
     }
