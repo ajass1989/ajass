@@ -19,7 +19,7 @@ export default async function ResultsJuniorPage() {
         ]}
       />
       <h1>ジュニア</h1>
-      <ResultViewTable teams={teams} racers={racers} />
+      <ResultViewTable teams={teams} racers={racers} showPoint={false} />
     </>
   );
 }

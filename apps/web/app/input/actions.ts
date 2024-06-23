@@ -161,7 +161,9 @@ function getBestTime(racer: Racer): number | null {
   return null;
 }
 
-export async function updateRacersPoint(id: string): Promise<Racer[]> {
+export async function updateRacersPoint(
+  id: string,
+): Promise<ActionResult<Racer[]>> {
   // タイム更新対象のレーサーを取得
   const racer = await prisma.racer.findUniqueOrThrow({
     where: {
@@ -174,6 +176,7 @@ export async function updateRacersPoint(id: string): Promise<Racer[]> {
       gender: racer.gender,
       category: racer.category,
       bib: { not: null },
+      // TODO 個人参加を排除
     },
     orderBy: [
       {
@@ -215,23 +218,26 @@ export async function updateRacersPoint(id: string): Promise<Racer[]> {
   });
 
   // ポイントを更新
-  return await Promise.all(
-    racers.map(async (racer, i) => {
-      // デフォルトは配列最後の値
-      let point = points2[points2.length - 1].point;
-      // ポイントがない場合、最後のポイントを取得
-      if (i < points2.length) {
-        point = points2[i].point;
-      }
-      if (typeof racer.bestTime !== 'number') {
-        point = 0;
-      }
-      return await prisma.racer.update({
-        where: { id: racer.id },
-        data: { point },
-      });
-    }),
-  );
+  return {
+    success: true,
+    result: await Promise.all(
+      racers.map(async (racer, i) => {
+        // デフォルトは配列最後の値
+        let point = points2[points2.length - 1].point;
+        // ポイントがない場合、最後のポイントを取得
+        if (i < points2.length) {
+          point = points2[i].point;
+        }
+        if (typeof racer.bestTime !== 'number') {
+          point = 0;
+        }
+        return await prisma.racer.update({
+          where: { id: racer.id },
+          data: { point },
+        });
+      }),
+    ),
+  };
 }
 
 export async function updateTime(

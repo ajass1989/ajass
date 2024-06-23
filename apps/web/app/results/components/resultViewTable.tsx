@@ -14,6 +14,7 @@ import { CategoryType, GenderType, SpecialType } from '../../common/types';
 type Props = {
   teams: Team[];
   racers: Racer[];
+  showPoint?: boolean;
 };
 
 // テーブル表示用のデータ型
@@ -31,40 +32,36 @@ interface DataType {
   result2: string;
   special: string;
   summary: string;
-  formatBestTime: string;
+  bestTime: number | null;
   age: number | null;
   point: number | null;
 }
 
-export function ResultViewTable(props: Props) {
-  const [dataSource] = useState<Racer[]>(props.racers);
-  const data: DataType[] = dataSource
-    .map((racer) => ({
-      key: racer.id,
-      id: racer.id,
-      name: racer.name,
-      kana: racer.kana,
-      category: racer.category,
-      bib: racer.bib,
-      gender: racer.gender,
-      seed: racer.seed,
-      teamId: racer.teamId ?? '',
-      result1: renderResult(racer.status1, racer.time1),
-      result2: renderResult(racer.status2, racer.time2),
-      special: racer.special,
-      summary: summary(
-        racer.special as SpecialType,
-        racer.gender as GenderType,
-        racer.category as CategoryType,
-      ),
-      formatBestTime: renderTime(racer.bestTime),
-      age: racer.age,
-      point: racer.point,
-    }))
-    .sort((a, b) => {
-      // ポイントでソート
-      return a.point - b.point;
-    });
+export function ResultViewTable({ teams, racers, showPoint = true }: Props) {
+  const [dataSource] = useState<Racer[]>(racers);
+  const data: DataType[] = dataSource.map((racer, index) => ({
+    key: racer.id,
+    id: racer.id,
+    name: racer.name,
+    kana: racer.kana,
+    category: racer.category,
+    bib: racer.bib,
+    gender: racer.gender,
+    seed: racer.seed,
+    teamId: racer.teamId ?? '',
+    result1: renderResult(racer.status1, racer.time1),
+    result2: renderResult(racer.status2, racer.time2),
+    special: racer.special,
+    summary: summary(
+      racer.special as SpecialType,
+      racer.gender as GenderType,
+      racer.category as CategoryType,
+    ),
+    bestTime: racer.bestTime,
+    age: racer.age,
+    point: racer.point,
+    order: index + 1,
+  }));
 
   const columns: TableColumnsType<DataType> = [
     {
@@ -106,8 +103,8 @@ export function ResultViewTable(props: Props) {
       render: (_: any, record: DataType) => {
         return (
           <span>
-            {props.teams.find((item: Team) => item.id == record.teamId)
-              ?.fullname ?? ''}
+            {teams.find((item: Team) => item.id == record.teamId)?.fullname ??
+              ''}
           </span>
         );
       },
@@ -129,14 +126,24 @@ export function ResultViewTable(props: Props) {
     },
     {
       title: 'ベスト',
-      dataIndex: 'formatBestTime',
-      key: 'formatBestTime',
+      dataIndex: 'bestTime',
+      key: 'bestTime',
+      render: (_: any, record: DataType) => {
+        return <span>{renderTime(record.bestTime)}</span>;
+      },
       width: 128,
     },
     {
       title: 'ポイント',
       dataIndex: 'point',
       key: 'point',
+      width: 80,
+      hidden: !showPoint,
+    },
+    {
+      title: '順位',
+      dataIndex: 'order',
+      key: 'order',
       width: 80,
     },
   ];

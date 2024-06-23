@@ -11,8 +11,13 @@ export async function listRacers(dto: ListRacersRequestDto): Promise<Racer[]> {
       // eventId: '2023',
       ...dto,
     },
-    orderBy: {
-      bib: 'asc',
-    },
+    orderBy: [
+      {
+        bestTime: { sort: 'asc', nulls: 'last' },
+      },
+      {
+        bib: 'desc', // タイムが同じ場合、bibの昇順
+      },
+    ],
   });
 }

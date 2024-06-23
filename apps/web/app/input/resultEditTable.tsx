@@ -2,8 +2,8 @@
 import {
   Alert,
   AutoComplete,
-  Breadcrumb,
   Button,
+  Flex,
   Form,
   FormInstance,
   InputNumber,
@@ -18,6 +18,7 @@ import { Racer, Team } from '@repo/database';
 import {
   UpdateBibRequestDto,
   updateBibs,
+  updateRacersPoint,
   updateStatus,
   updateTime,
 } from './actions';
@@ -28,16 +29,7 @@ import {
   SpecialType,
   StatusType,
 } from '../common/types';
-import {
-  bgColorDefault,
-  bgColorJunior,
-  bgColorSenior,
-  bgColorSkiFemale,
-  bgColorSkiMale,
-  bgColorSnowboardFemale,
-  bgColorSnowboardMale,
-  fgColorWarn,
-} from '../common/colors';
+import { fgColorWarn } from '../common/colors';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { Rule } from 'antd/es/form';
@@ -277,11 +269,12 @@ interface DataType {
   special: string;
   summary: string;
   formatBestTime: string;
+  point: number;
 }
 
 type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
 
-export function ResultTable(props: Props) {
+export function ResultEditTable(props: Props) {
   const [alertType, setAlertType] = useState<AlertType>('error');
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
@@ -319,6 +312,7 @@ export function ResultTable(props: Props) {
           racer.category as CategoryType,
         ),
         formatBestTime: renderTime(racer.bestTime),
+        point: racer.point,
       };
     })
     .sort((a, b) => {
@@ -443,6 +437,11 @@ export function ResultTable(props: Props) {
       dataIndex: 'formatBestTime',
       width: 128,
     },
+    {
+      title: 'ポイント',
+      dataIndex: 'point',
+      width: 80,
+    },
   ];
 
   const columns = defaultColumns.map((col) => {
@@ -511,6 +510,7 @@ export function ResultTable(props: Props) {
         time1: parseTime(row.result1),
       });
     }
+    result = await updateRacersPoint(row.id);
     if (!result.success) {
       showAlert('error', result.error);
     }
@@ -546,9 +546,11 @@ export function ResultTable(props: Props) {
         time2: parseTime(row.result2),
       });
     }
+    result = await updateRacersPoint(row.id);
     if (!result.success) {
       showAlert('error', result.error);
     }
+    console.log(result.result!);
     replaceRacers(result.result!);
   };
 
@@ -562,6 +564,7 @@ export function ResultTable(props: Props) {
       newItem.status1 = racer.status1;
       newItem.status2 = racer.status2;
       newItem.bestTime = racer.bestTime;
+      newItem.point = racer.point;
       newData.splice(index, 1, {
         ...newItem,
       });
@@ -604,25 +607,20 @@ export function ResultTable(props: Props) {
 
   return (
     <>
-      <Breadcrumb
-        items={[
-          {
-            title: '入力',
-          },
-        ]}
-      />
-      <h1>ビブ管理</h1>
-      <Popconfirm
-        title="ビブを一括付与します。"
-        description="現在付与されているビブは消えてしまいますがよろしいですか？"
-        onConfirm={handleUpdateBibs}
-        okText="はい"
-        cancelText="キャンセル"
-      >
-        <Button style={{ marginBottom: 16, marginRight: 16 }} type="primary">
-          ビブ一括付与
-        </Button>
-      </Popconfirm>
+      <Flex>
+        <Popconfirm
+          title="ビブを一括付与します。"
+          description="現在付与されているビブは消えてしまいますがよろしいですか？"
+          onConfirm={handleUpdateBibs}
+          okText="はい"
+          cancelText="キャンセル"
+        >
+          <Button style={{ marginBottom: 16, marginRight: 16 }}>
+            ビブ一括付与
+          </Button>
+        </Popconfirm>
+        <Button type="primary">ポイント更新</Button>
+      </Flex>
       {alertVisible && (
         <Alert
           message={alertMessage}
