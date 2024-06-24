@@ -15,6 +15,7 @@ type Props = {
   teams: Team[];
   racers: Racer[];
   showPoint?: boolean;
+  showAge?: boolean;
 };
 
 // テーブル表示用のデータ型
@@ -37,7 +38,12 @@ interface DataType {
   point: number | null;
 }
 
-export function ResultViewTable({ teams, racers, showPoint = true }: Props) {
+export function ResultViewTable({
+  teams,
+  racers,
+  showPoint = true,
+  showAge = false,
+}: Props) {
   const [dataSource] = useState<Racer[]>(racers);
   const data: DataType[] = dataSource.map((racer, index) => ({
     key: racer.id,
@@ -132,6 +138,39 @@ export function ResultViewTable({ teams, racers, showPoint = true }: Props) {
         return <span>{renderTime(record.bestTime)}</span>;
       },
       width: 128,
+    },
+    {
+      title: '年齢',
+      dataIndex: 'age',
+      key: 'age',
+      width: 80,
+      hidden: !showAge,
+    },
+    {
+      title: '年齢補正',
+      dataIndex: 'ageHandicap',
+      key: 'ageHandicap',
+      width: 128,
+      hidden: !showAge,
+      render: (_: any, record: DataType) => {
+        return <span>-{renderTime((record.age! - 60) * 1000)}</span>;
+      },
+    },
+    {
+      title: '採用タイム',
+      dataIndex: 'adoptTime',
+      key: 'adoptTime',
+      width: 128,
+      hidden: !showAge,
+      render: (_: any, record: DataType) => {
+        return (
+          <span>
+            {record.bestTime
+              ? renderTime(record.bestTime! - (record.age! - 60) * 1000)
+              : ''}
+          </span>
+        );
+      },
     },
     {
       title: 'ポイント',

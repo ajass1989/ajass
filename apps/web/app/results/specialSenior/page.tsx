@@ -19,7 +19,12 @@ export default async function ResultsSeniorPage() {
         ]}
       />
       <h1>シニア</h1>
-      <ResultViewTable teams={teams} racers={racers} showPoint={false} />
+      <ResultViewTable
+        teams={teams}
+        racers={racers}
+        showPoint={false}
+        showAge={true}
+      />
     </>
   );
 }
