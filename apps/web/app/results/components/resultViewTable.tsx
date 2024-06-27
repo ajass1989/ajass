@@ -1,5 +1,4 @@
 'use client';
-
 import { Racer, Team } from '@prisma/client';
 import { Table, TableColumnsType } from 'antd';
 import { useState } from 'react';

@@ -70,6 +70,16 @@ export const summary = (
   return summary;
 };
 
+export const summaryWithoutSpecial = (
+  gender: GenderType,
+  category: CategoryType,
+) => {
+  let summary = '';
+  summary += gender == 'f' ? '女子' : '男子';
+  summary += category == 'ski' ? 'スキー' : 'スノボ';
+  return summary;
+};
+
 /**
  * 行スタイルを取得
  * @param record

@@ -55,6 +55,11 @@ const items: MenuItem[] = [
       <TeamOutlined />,
     ),
     getItem(
+      <Link href="/results/team">団体</Link>,
+      '/results/team',
+      <TeamOutlined />,
+    ),
+    getItem(
       <Link href="/results/skiMale">スキー男子</Link>,
       '/results/skiMale',
       <TeamOutlined />,
