@@ -644,7 +644,11 @@ export function ResultEditTable(props: Props) {
         // 背景色をスタイルで指定
         onRow={(record: any) => {
           return {
-            style: getRowStyle(record.summary),
+            style: getRowStyle(
+              record.gender as GenderType,
+              record.category as CategoryType,
+              record.special as SpecialType,
+            ),
           };
         }}
         sticky={true}

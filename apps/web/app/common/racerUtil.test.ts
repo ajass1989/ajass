@@ -149,24 +149,35 @@ describe('summary', () => {
 describe('getRowStyle', () => {
   test('正常系', () => {
     const testCases = [
-      { summary: 'ジュニア', expected: { backgroundColor: bgColorJunior } },
+      { special: 'junior', expected: { backgroundColor: bgColorJunior } },
       {
-        summary: '女子スノボ',
+        gender: 'f',
+        category: 'snowboard',
         expected: { backgroundColor: bgColorSnowboardFemale },
       },
       {
-        summary: '男子スノボ',
+        gender: 'm',
+        category: 'snowboard',
         expected: { backgroundColor: bgColorSnowboardMale },
       },
       {
-        summary: '女子スキー',
+        gender: 'f',
+        category: 'ski',
         expected: { backgroundColor: bgColorSkiFemale },
       },
-      { summary: '男子スキー', expected: { backgroundColor: bgColorSkiMale } },
+      {
+        gender: 'm',
+        category: 'ski',
+        expected: { backgroundColor: bgColorSkiMale },
+      },
     ];
 
     testCases.forEach((testCase) => {
-      const actual = getRowStyle(testCase.summary);
+      const actual = getRowStyle(
+        testCase.gender as GenderType,
+        testCase.category as CategoryType,
+        testCase.special as SpecialType,
+      );
       expect(actual).toEqual(testCase.expected);
     });
   });

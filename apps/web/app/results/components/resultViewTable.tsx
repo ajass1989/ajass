@@ -194,7 +194,11 @@ export function ResultViewTable({
         pagination={false}
         onRow={(record: DataType) => {
           return {
-            style: getRowStyle(record.summary),
+            style: getRowStyle(
+              record.gender as GenderType,
+              record.category as CategoryType,
+              record.special as SpecialType,
+            ),
           };
         }}
         sticky={true}

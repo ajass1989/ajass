@@ -370,10 +370,70 @@ describe('actions', () => {
 
   describe('listRacersWithSummaryPoint', () => {
     test('正常系', async () => {
+      const points = [
+        150, 130, 110, 90, 70, 50, 100, 80, 60, 230, 210, 190, 80, 60,
+      ];
+      const pointsSummary = [
+        550, 550, 550, 550, 550, 550, 180, 180, 180, 440, 440, 440, 80, 80,
+      ];
+      const genders = [
+        'm',
+        'm',
+        'm',
+        'm',
+        'm',
+        'm',
+        'f',
+        'f',
+        'f',
+        'm',
+        'm',
+        'm',
+        'f',
+        'f',
+      ];
+      const categories = [
+        'ski',
+        'ski',
+        'ski',
+        'ski',
+        'ski',
+        'ski',
+        'ski',
+        'ski',
+        'ski',
+        'snowboard',
+        'snowboard',
+        'snowboard',
+        'snowboard',
+        'snowboard',
+      ];
+      const pointGetter = [
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        true,
+        true,
+        false,
+        true,
+        true,
+        false,
+        true,
+        false,
+      ];
+
       const result = await listRacersWithSummaryPoint();
       expect(result.length).toBe(14);
-      // expect(result[0].teamId).toBe('1');
-      // expect(result[0].point).toBe(240);
+      Array.from({ length: result.length }).forEach((_, index) => {
+        expect(result[index].point).toBe(points[index]);
+        expect(result[index].summaryPoint).toBe(pointsSummary[index]);
+        expect(result[index].gender).toBe(genders[index]);
+        expect(result[index].category).toBe(categories[index]);
+        expect(result[index].pointGetter).toBe(pointGetter[index]);
+      });
     });
   });
 });

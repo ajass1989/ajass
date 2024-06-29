@@ -85,20 +85,40 @@ export const summaryWithoutSpecial = (
  * @param record
  * @returns
  */
-export const getRowStyle = (summary: string) => {
-  switch (summary) {
-    case 'ジュニア':
-      return { backgroundColor: bgColorJunior };
-    case '女子スノボ':
-      return { backgroundColor: bgColorSnowboardFemale };
-    case '男子スノボ':
-      return { backgroundColor: bgColorSnowboardMale };
-    case '女子スキー':
-      return { backgroundColor: bgColorSkiFemale };
-    case 'シニア':
-      return { backgroundColor: bgColorSenior };
-    case '男子スキー':
-      return { backgroundColor: bgColorSkiMale };
+export const getRowStyle = (
+  gender: GenderType,
+  category: CategoryType,
+  special: SpecialType,
+) => {
+  if (special == 'junior') {
+    return { backgroundColor: bgColorJunior };
+  }
+  if (special == 'senior') {
+    return { backgroundColor: bgColorSenior };
+  }
+  if (gender == 'f' && category == 'ski') {
+    return { backgroundColor: bgColorSkiFemale };
+  }
+  if (gender == 'm' && category == 'ski') {
+    return { backgroundColor: bgColorSkiMale };
+  }
+  if (gender == 'f' && category == 'snowboard') {
+    return { backgroundColor: bgColorSnowboardFemale };
+  }
+  if (gender == 'm' && category == 'snowboard') {
+    return { backgroundColor: bgColorSnowboardMale };
   }
   return { backgroundColor: bgColorDefault };
+};
+
+export const getRowStyleByPoint = (
+  gender: GenderType,
+  category: CategoryType,
+  special: SpecialType,
+  pointGetter: boolean,
+) => {
+  if (!pointGetter) {
+    return { backgroundColor: bgColorDefault };
+  }
+  return getRowStyle(gender, category, special);
 };

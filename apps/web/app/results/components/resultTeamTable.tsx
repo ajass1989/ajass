@@ -3,12 +3,12 @@
 import { Table, TableColumnsType } from 'antd';
 import { useState } from 'react';
 import {
-  getRowStyle,
+  getRowStyleByPoint,
   renderResult,
   renderTime,
   summaryWithoutSpecial,
 } from '../../common/racerUtil';
-import { CategoryType, GenderType } from '../../common/types';
+import { CategoryType, GenderType, SpecialType } from '../../common/types';
 import { RacerWithSummaryPoint, TeamWithPoint } from '../actions/actions';
 
 type Props = {
@@ -33,12 +33,15 @@ interface RacerDataType {
   bib: string;
   gender: string;
   category: string;
+  special: string;
   seed: number;
   result1: string;
   result2: string;
   bestTime: number | null;
   point: number;
   pointSummary: number;
+  pointGetter: boolean;
+  rowSpanSummary: number;
 }
 
 export function ResultTeamTable(props: Props) {
@@ -62,6 +65,9 @@ export function ResultTeamTable(props: Props) {
         title: '競技別ポイント',
         dataIndex: 'pointSummary',
         key: 'pointSummary',
+        onCell: (record: RacerDataType) => {
+          return { rowSpan: record.rowSpanSummary };
+        },
       },
       {
         title: '特別ポイント',
@@ -73,7 +79,7 @@ export function ResultTeamTable(props: Props) {
     // チームごとに選手を抽出
     const [racersByTeam] = useState<RacerWithSummaryPoint[]>(props.racers);
 
-    const data = racersByTeam.map((racer) => {
+    const data: RacerDataType[] = racersByTeam.map((racer) => {
       return {
         key: racer.id,
         summary: summaryWithoutSpecial(
@@ -85,6 +91,7 @@ export function ResultTeamTable(props: Props) {
         bib: racer.bib!.toString() ?? '',
         gender: racer.gender,
         category: racer.category,
+        special: racer.special,
         seed: racer.seed,
         result1: renderResult(racer.status1, racer.time1),
         result2: renderResult(racer.status2, racer.time2),
@@ -92,6 +99,8 @@ export function ResultTeamTable(props: Props) {
         point: racer.point,
         pointSummary: racer.summaryPoint,
         pointSpecial: 0, // TODO 特別ポイント計算
+        pointGetter: racer.pointGetter,
+        rowSpanSummary: racer.rowSpanSummary,
       };
     });
     return (
@@ -99,9 +108,14 @@ export function ResultTeamTable(props: Props) {
         columns={columns}
         dataSource={data}
         pagination={false}
-        onRow={(record: any) => {
+        onRow={(record) => {
           return {
-            style: getRowStyle(record.summary),
+            style: getRowStyleByPoint(
+              record.gender as GenderType,
+              record.category as CategoryType,
+              record.special as SpecialType,
+              record.pointGetter,
+            ),
           };
         }}
       />
