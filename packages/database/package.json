@@ -19,17 +19,20 @@
     "db:studio": "prisma studio"
   },
   "dependencies": {
-    "@prisma/client": "^5.10.2",
+    "@prisma/client": "*",
     "ts-node": "^10.9.2"
   },
   "devDependencies": {
+    "@eslint/js": "^9.6.0",
     "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",
-    "eslint": "^8.57.0",
-    "prisma": "^5.10.2",
-    "rimraf": "^5.0.5",
-    "tsx": "^4.7.1",
-    "typescript": "^5.3.3"
+    "eslint": "^9.6.0",
+    "globals": "^15.6.0",
+    "prisma": "^5.16.1",
+    "rimraf": "^5.0.7",
+    "tsx": "^4.16.0",
+    "typescript": "^5.5.2",
+    "typescript-eslint": "^7.14.1"
   },
   "prisma": {
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} src/seed.ts"
