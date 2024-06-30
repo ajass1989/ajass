@@ -1,9 +1,9 @@
 name: Pipeline
 on:
   push:
+
 jobs:
   test:
-    needs: [changes]
     env:
       DATABASE_URL: file:./database.db
     runs-on: ubuntu-latest
