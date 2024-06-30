@@ -47,7 +47,14 @@ interface RacerDataType {
 export function ResultTeamTable(props: Props) {
   const expandedRowRender = () => {
     const columns: TableColumnsType<RacerDataType> = [
-      { title: '種目', dataIndex: 'summary', key: 'summary' },
+      {
+        title: '種目',
+        dataIndex: 'summary',
+        key: 'summary',
+        onCell: (record: RacerDataType) => {
+          return { rowSpan: record.rowSpanSummary };
+        },
+      },
       { title: '選手名', dataIndex: 'name', key: 'name' },
       { title: 'ふりがな', dataIndex: 'kana', key: 'kana' },
       { title: 'ビブ', dataIndex: 'bib', key: 'bib' },
@@ -62,7 +69,7 @@ export function ResultTeamTable(props: Props) {
       },
       { title: 'ポイント', dataIndex: 'point', key: 'point' },
       {
-        title: '競技別ポイント',
+        title: '種目別ポイント',
         dataIndex: 'pointSummary',
         key: 'pointSummary',
         onCell: (record: RacerDataType) => {
@@ -71,8 +78,8 @@ export function ResultTeamTable(props: Props) {
       },
       {
         title: '特別ポイント',
-        dataIndex: 'pointSpecial',
-        key: 'pointSpecial',
+        dataIndex: 'specialPoint',
+        key: 'specialPoint',
       },
     ];
 
@@ -88,7 +95,7 @@ export function ResultTeamTable(props: Props) {
         ),
         name: racer.name,
         kana: racer.kana,
-        bib: racer.bib!.toString() ?? '',
+        bib: racer.bib?.toString() ?? '',
         gender: racer.gender,
         category: racer.category,
         special: racer.special,
@@ -98,7 +105,7 @@ export function ResultTeamTable(props: Props) {
         bestTime: racer.bestTime,
         point: racer.point,
         pointSummary: racer.summaryPoint,
-        pointSpecial: 0, // TODO 特別ポイント計算
+        specialPoint: racer.specialPoint,
         pointGetter: racer.pointGetter,
         rowSpanSummary: racer.rowSpanSummary,
       };
@@ -108,6 +115,7 @@ export function ResultTeamTable(props: Props) {
         columns={columns}
         dataSource={data}
         pagination={false}
+        rowHoverable={false}
         onRow={(record) => {
           return {
             style: getRowStyleByPoint(
@@ -136,12 +144,14 @@ export function ResultTeamTable(props: Props) {
     point: team.point,
     order: index + 1,
   }));
+
   return (
     <Table
       columns={columns}
       expandable={{ expandedRowRender, defaultExpandAllRows: true }}
       dataSource={data}
       pagination={false}
+      rowHoverable={false}
     />
   );
 }

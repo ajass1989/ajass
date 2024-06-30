@@ -202,6 +202,7 @@ export function ResultViewTable({
           };
         }}
         sticky={true}
+        rowHoverable={false}
       />
     </>
   );

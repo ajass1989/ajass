@@ -531,6 +531,7 @@ export function RacerTable(props: Props) {
               dataSource={dataSource}
               columns={mergedColumns}
               pagination={false}
+              rowHoverable={false}
             />
           </SortableContext>
         </DndContext>

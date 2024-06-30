@@ -23,8 +23,8 @@ export async function listRacers(dto: ListRacersRequestDto): Promise<Racer[]> {
 }
 
 /**
- *
- * @param racers 性別と競技で集計
+ * 性別と競技で集計
+ * @param racers
  * @param gender
  * @param category
  * @returns
@@ -74,9 +74,9 @@ export async function listTeamsWithPoint(): Promise<TeamWithPoint[]> {
 
 /**
  * 競技者データ型
- * 競技別ポイントを追加
+ * 種目別ポイントを追加
  * ポイントゲッターかどうかを追加
- * 競技別にまとめるためのrowSpanを追加
+ * 種目別にまとめるためのrowSpanを追加
  */
 export type RacerWithSummaryPoint = Racer & {
   summaryPoint: number;
@@ -84,6 +84,10 @@ export type RacerWithSummaryPoint = Racer & {
   rowSpanSummary: number;
 };
 
+/**
+ * 団体集計画面用のデータを取得
+ * @returns
+ */
 export async function listRacersWithSummaryPoint(): Promise<
   RacerWithSummaryPoint[]
 > {
@@ -139,7 +143,9 @@ export async function listRacersWithSummaryPoint(): Promise<
       };
     })
     .map((racer, index: number) => {
-      // 競技別にまとめるためのrowSpan
+      // 種目別にまとめるためのrowSpan
+      // 各種目の先頭競技者のrowSpanを競技者数から算出して設定する。
+      // その他の行のrowSpanは0とする。
       let rowSpanSummary = 0;
       if (index === 0) rowSpanSummary = pointGetterSkiMale;
       if (index === pointGetterSkiMale) rowSpanSummary = pointGetterSkiFemale;

@@ -452,6 +452,7 @@ export function TeamTable(props: Props) {
         dataSource={data}
         columns={columns as ColumnTypes}
         pagination={false}
+        rowHoverable={false}
       />
     </>
   );

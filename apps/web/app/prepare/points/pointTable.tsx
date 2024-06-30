@@ -240,6 +240,7 @@ export function PointTable(props: Props) {
         columns={columns as ColumnTypes}
         pagination={false}
         sticky={true}
+        rowHoverable={false}
       />
     </>
   );

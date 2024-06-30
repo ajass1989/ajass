@@ -652,6 +652,7 @@ export function ResultEditTable(props: Props) {
           };
         }}
         sticky={true}
+        rowHoverable={false}
       />
     </>
   );

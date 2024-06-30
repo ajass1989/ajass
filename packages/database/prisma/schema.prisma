@@ -39,26 +39,27 @@ model Team {
 }
 
 model Racer {
-  id          String   @id @default(cuid())
-  name        String
-  kana        String
-  category    String // ski, snowboard
-  bib         Int?     @unique
-  gender      String // f, m
-  seed        Int
-  teamId      String?
-  special     String // normal, senior, junior
-  isFirstTime Boolean
-  age         Int?
-  status1     String? // ds, dq, df
-  time1       Int?
-  status2     String? // ds, dq, df
-  time2       Int?
-  bestTime    Int?
-  point       Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  team        Team?    @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  id           String   @id @default(cuid())
+  name         String
+  kana         String
+  category     String // ski, snowboard
+  bib          Int?     @unique
+  gender       String // f, m
+  seed         Int
+  teamId       String?
+  special      String // normal, senior, junior
+  isFirstTime  Boolean
+  age          Int?
+  status1      String? // ds, dq, df
+  time1        Int?
+  status2      String? // ds, dq, df
+  time2        Int?
+  bestTime     Int?
+  point        Int      @default(0)
+  specialPoint Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  team         Team?    @relation(fields: [teamId], references: [id], onDelete: Cascade)
 }
 
 model Point {
