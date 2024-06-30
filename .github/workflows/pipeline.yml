@@ -1,0 +1,23 @@
+name: Pipeline
+on:
+  push:
+jobs:
+  test:
+    needs: [changes]
+    env:
+      DATABASE_URL: file:./database.db
+    runs-on: ubuntu-latest
+    steps:
+      - uses: szenius/set-timezone@v2.0
+        with:
+          timezoneLinux: Asia/Tokyo
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm run db:generate -w packages/database
+      - run: npm run build
+      - run: npm run db:migrate -w packages/database
+      - run: npm run db:seed -w packages/database
+      - run: npm run test -w apps/web

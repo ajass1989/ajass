@@ -5,14 +5,14 @@
     ".": "./src/client.ts"
   },
   "scripts": {
-    "db:migrate:deploy": "prisma migrate deploy",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate deploy",
     "db:migrate:dev": "prisma migrate dev",
     "db:reset": "prisma migrate reset --force",
     "db:push": "prisma db push",
     "db:seed": "tsx src/seed.ts",
     "dev": "prisma generate",
     "format": "prisma format",
-    "generate": "prisma generate",
     "lint": "eslint . --max-warnings 0",
     "prebuild": "npm run generate",
     "predev": "npm run generate",
@@ -24,9 +24,8 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.6.0",
-    "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",
-    "eslint": "^9.6.0",
+    "eslint": "^8.57.0",
     "globals": "^15.6.0",
     "prisma": "^5.16.1",
     "rimraf": "^5.0.7",
