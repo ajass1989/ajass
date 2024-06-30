@@ -33,6 +33,8 @@ import { DndContext, DragEndEvent } from '@dnd-kit/core';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { SyntheticListenerMap } from '@dnd-kit/core/dist/hooks/utilities';
 import { Rule } from 'antd/es/form';
+import { getRowStyle } from '../../../common/racerUtil';
+import { CategoryType, GenderType, SpecialType } from '../../../common/types';
 
 type Props = {
   title: string;
@@ -59,7 +61,7 @@ interface Item {
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
   editing: boolean;
   dataIndex: keyof Item;
-  title: any;
+  title: string;
   inputType: 'number' | 'text' | 'boolean' | 'category' | 'gender';
   record: Item;
   index: number;
@@ -75,7 +77,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
   children,
   ...restProps
 }) => {
-  let rules: Rule[] = [
+  const rules: Rule[] = [
     {
       required: true,
       message: `${title}は入力必須です。`,
@@ -156,7 +158,7 @@ interface DataType {
 
 interface RowContextProps {
   // eslint-disable-next-line no-unused-vars
-  setActivatorNodeRef?: (element: HTMLElement | null) => void;
+  setActivatorNodeRef?: (_: HTMLElement | null) => void;
   listeners?: SyntheticListenerMap;
 }
 
@@ -364,7 +366,7 @@ export function RacerTable(props: Props) {
       editable: true,
       visible: props.special != 'normal',
       inputType: 'category',
-      render: (_: any, record: Item) =>
+      render: (_: DataType, record: Item) =>
         record.category == 'ski' ? <span>スキー</span> : <span>スノボ</span>,
     },
     {
@@ -374,7 +376,7 @@ export function RacerTable(props: Props) {
       inputType: 'gender',
       editable: true,
       visible: props.special != 'normal',
-      render: (_: any, record: Item) =>
+      render: (_: DataType, record: Item) =>
         record.gender == 'f' ? <span>女性</span> : <span>男性</span>,
     },
     {
@@ -390,7 +392,7 @@ export function RacerTable(props: Props) {
       editable: true,
       inputType: 'boolean',
       visible: true,
-      render: (_: any, record: Item) => (
+      render: (_: DataType, record: Item) => (
         <Switch disabled defaultChecked={record.isFirstTime} />
       ),
     },
@@ -398,7 +400,7 @@ export function RacerTable(props: Props) {
       title: '操作',
       dataIndex: 'operation',
       visible: true,
-      render: (_: any, record: Item) => {
+      render: (_: DataType, record: Item) => {
         const editable = isEditing(record);
         return editable ? (
           <span>
@@ -530,6 +532,15 @@ export function RacerTable(props: Props) {
               bordered
               dataSource={dataSource}
               columns={mergedColumns}
+              onRow={(record: DataType) => {
+                return {
+                  style: getRowStyle(
+                    record.gender as GenderType,
+                    record.category as CategoryType,
+                    record.special as SpecialType,
+                  ),
+                };
+              }}
               pagination={false}
               rowHoverable={false}
             />

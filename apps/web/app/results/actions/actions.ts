@@ -5,7 +5,9 @@ type ListRacersRequestDto = {
   category?: 'ski' | 'snowboard';
   special?: 'normal' | 'junior' | 'senior';
 };
+
 export async function listRacers(dto: ListRacersRequestDto): Promise<Racer[]> {
+  console.log('hoge');
   return await prisma.racer.findMany({
     where: {
       // eventId: '2023',

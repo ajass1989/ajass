@@ -1,4 +1,5 @@
 'use client';
+// import { React } from 'react';
 import { Racer, Team } from '@prisma/client';
 import { Table, TableColumnsType } from 'antd';
 import { useState } from 'react';
@@ -43,7 +44,8 @@ export function ResultViewTable({
   showPoint = true,
   showAge = false,
 }: Props) {
-  const [dataSource] = useState<Racer[]>(racers);
+  console.log('hoge');
+  const [dataSource] = useState<any[]>(racers);
   const data: DataType[] = dataSource.map((racer, index) => ({
     key: racer.id,
     id: racer.id,
@@ -105,7 +107,7 @@ export function ResultViewTable({
     {
       title: '所属',
       dataIndex: 'team',
-      render: (_: any, record: DataType) => {
+      render: (_: DataType, record: DataType) => {
         return (
           <span>
             {teams.find((item: Team) => item.id == record.teamId)?.fullname ??
@@ -133,7 +135,7 @@ export function ResultViewTable({
       title: 'ベスト',
       dataIndex: 'bestTime',
       key: 'bestTime',
-      render: (_: any, record: DataType) => {
+      render: (_: DataType, record: DataType) => {
         return <span>{renderTime(record.bestTime)}</span>;
       },
       width: 128,
@@ -151,7 +153,7 @@ export function ResultViewTable({
       key: 'ageHandicap',
       width: 128,
       hidden: !showAge,
-      render: (_: any, record: DataType) => {
+      render: (_: DataType, record: DataType) => {
         return <span>-{renderTime((record.age! - 60) * 1000)}</span>;
       },
     },
@@ -161,7 +163,7 @@ export function ResultViewTable({
       key: 'adoptTime',
       width: 128,
       hidden: !showAge,
-      render: (_: any, record: DataType) => {
+      render: (_: DataType, record: DataType) => {
         return (
           <span>
             {record.bestTime
@@ -187,23 +189,21 @@ export function ResultViewTable({
   ];
 
   return (
-    <>
-      <Table
-        dataSource={data}
-        columns={columns}
-        pagination={false}
-        onRow={(record: DataType) => {
-          return {
-            style: getRowStyle(
-              record.gender as GenderType,
-              record.category as CategoryType,
-              record.special as SpecialType,
-            ),
-          };
-        }}
-        sticky={true}
-        rowHoverable={false}
-      />
-    </>
+    <Table
+      dataSource={data}
+      columns={columns}
+      pagination={false}
+      onRow={(record: DataType) => {
+        return {
+          style: getRowStyle(
+            record.gender as GenderType,
+            record.category as CategoryType,
+            record.special as SpecialType,
+          ),
+        };
+      }}
+      sticky={true}
+      rowHoverable={false}
+    />
   );
 }
