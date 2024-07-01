@@ -116,7 +116,6 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
     // pathnameから最大２階層目までを取り出して選択中のメニューを設定
     const current =
       parts.length > 2 ? `/${parts[1]}/${parts[2]}` : `/${parts[1]}`;
-    console.log(`current: ${current}`);
     setCurrent(current);
 
     // pathname から最大１階層目までを取り出してオープン中のメニューを設定

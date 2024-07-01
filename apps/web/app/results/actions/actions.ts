@@ -7,7 +7,6 @@ type ListRacersRequestDto = {
 };
 
 export async function listRacers(dto: ListRacersRequestDto): Promise<Racer[]> {
-  console.log('hoge');
   return await prisma.racer.findMany({
     where: {
       // eventId: '2023',
@@ -86,18 +85,28 @@ export type RacerWithSummaryPoint = Racer & {
   rowSpanSummary: number;
 };
 
-/**
- * 団体集計画面用のデータを取得
- * @returns
- */
-export async function listRacersWithSummaryPoint(): Promise<
-  RacerWithSummaryPoint[]
-> {
+async function listRacersByTeam(
+  teamId: string,
+): Promise<RacerWithSummaryPoint[]> {
   const racers = await prisma.racer.findMany({
     where: {
-      teamId: { not: null },
+      teamId,
     },
   });
+  // 種目ごとの人数をカウント
+  const countSkiMale = racers.filter(
+    (racer) => racer.gender === 'm' && racer.category === 'ski',
+  ).length;
+  const countSkiFemale = racers.filter(
+    (racer) => racer.gender === 'f' && racer.category === 'ski',
+  ).length;
+  const countSnowboardMale = racers.filter(
+    (racer) => racer.gender === 'm' && racer.category === 'snowboard',
+  ).length;
+  const countSnowboardFemale = racers.filter(
+    (racer) => racer.gender === 'f' && racer.category === 'snowboard',
+  ).length;
+
   let pointGetterSkiMale = 0;
   let pointGetterSkiFemale = 0;
   let pointGetterSnowboardMale = 0;
@@ -149,18 +158,65 @@ export async function listRacersWithSummaryPoint(): Promise<
       // 各種目の先頭競技者のrowSpanを競技者数から算出して設定する。
       // その他の行のrowSpanは0とする。
       let rowSpanSummary = 0;
-      if (index === 0) rowSpanSummary = pointGetterSkiMale;
-      if (index === pointGetterSkiMale) rowSpanSummary = pointGetterSkiFemale;
-      if (index === pointGetterSkiMale + pointGetterSkiFemale)
-        rowSpanSummary = pointGetterSnowboardMale;
       if (
-        index ===
-        pointGetterSkiMale + pointGetterSkiFemale + pointGetterSnowboardMale
-      )
-        rowSpanSummary = pointGetterSnowboardFemale;
+        racer.gender === 'm' &&
+        racer.category === 'ski' &&
+        !(
+          racers[index - 1]?.gender === 'm' &&
+          racers[index - 1]?.category === 'ski'
+        )
+      ) {
+        rowSpanSummary = countSkiMale;
+      }
+      if (
+        racer.gender === 'f' &&
+        racer.category === 'ski' &&
+        !(
+          racers[index - 1]?.gender === 'f' &&
+          racers[index - 1]?.category === 'ski'
+        )
+      ) {
+        rowSpanSummary = countSkiFemale;
+      }
+      if (
+        racer.gender === 'm' &&
+        racer.category === 'snowboard' &&
+        !(
+          racers[index - 1]?.gender === 'm' &&
+          racers[index - 1]?.category === 'snowboard'
+        )
+      ) {
+        rowSpanSummary = countSnowboardMale;
+      }
+      if (
+        racer.gender === 'f' &&
+        racer.category === 'snowboard' &&
+        !(
+          racers[index - 1]?.gender === 'f' &&
+          racers[index - 1]?.category === 'snowboard'
+        )
+      ) {
+        rowSpanSummary = countSnowboardFemale;
+      }
       return {
         ...racer,
         rowSpanSummary,
       };
     });
+}
+
+/**
+ * 団体集計画面用のデータを取得
+ * @returns
+ */
+export async function listRacersWithSummaryPoint(): Promise<
+  RacerWithSummaryPoint[]
+> {
+  const teams = await prisma.team.findMany({});
+  const racers = await Promise.all(
+    teams.map(async (team) => {
+      return await listRacersByTeam(team.id);
+    }),
+  );
+  return racers.flat();
 }

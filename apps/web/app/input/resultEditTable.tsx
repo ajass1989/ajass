@@ -19,6 +19,7 @@ import {
   UpdateBibRequestDto,
   updateBibs,
   updateRacersPoint,
+  updateRacersPoints,
   updateStatus,
   updateTime,
 } from './actions';
@@ -49,7 +50,9 @@ type Props = {
   racers: Racer[];
 };
 
-const EditableContext = React.createContext<FormInstance<any> | null>(null);
+const EditableContext = React.createContext<FormInstance<DataType> | null>(
+  null,
+);
 
 interface Item {
   key: string;
@@ -71,7 +74,7 @@ interface EditableRowProps {
   index: number;
 }
 
-// eslint-disable-next-line no-unused-vars
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const EditableRow: React.FC<EditableRowProps> = ({ index, ...props }) => {
   const [form] = Form.useForm();
   return (
@@ -89,11 +92,8 @@ interface EditableCellProps {
   children: React.ReactNode;
   dataIndex: keyof Item;
   record: Item;
-  // eslint-disable-next-line no-unused-vars
   handleChangeBib: (record: Item) => void;
-  // eslint-disable-next-line no-unused-vars
   handleChangeResult1: (record: Item) => void;
-  // eslint-disable-next-line no-unused-vars
   handleChangeResult2: (record: Item) => void;
 }
 
@@ -281,7 +281,6 @@ export function ResultEditTable(props: Props) {
   const [dataSource, setDataSource] = useState<Racer[]>(props.racers);
 
   // ソート順を定義
-  // eslint-disable-next-line no-unused-vars
   const sortOrderSummary: { [key in DataType['summary']]: number } = {
     ジュニア: 0,
     女子スノボ: 1,
@@ -375,7 +374,7 @@ export function ResultEditTable(props: Props) {
     {
       title: '滑走順',
       dataIndex: 'order',
-      render: (_: any, record, index) => index + 1,
+      render: (_: DataType, record, index) => index + 1,
       width: 80,
       responsive: ['lg'],
     },
@@ -411,7 +410,7 @@ export function ResultEditTable(props: Props) {
     {
       title: '所属',
       dataIndex: 'team',
-      render: (_: any, record) => (
+      render: (_: DataType, record) => (
         <span>
           {props.teams.find((item: Team) => item.id == record.teamId)
             ?.fullname ?? ''}
@@ -550,7 +549,6 @@ export function ResultEditTable(props: Props) {
     if (!result.success) {
       showAlert('error', result.error);
     }
-    console.log(result.result!);
     replaceRacers(result.result!);
   };
 
@@ -592,6 +590,23 @@ export function ResultEditTable(props: Props) {
     }
   };
 
+  /**
+   * ポイント更新処理
+   */
+  const handleUpdatePoints: PopconfirmProps['onConfirm'] = async () => {
+    const result = await updateRacersPoints();
+    if (result.success) {
+      const newDataSource: Racer[] = dataSource.map((data) => {
+        data.point = result.result!.find((item) => item.id == data.id)!.point;
+        return data;
+      });
+      setDataSource(newDataSource);
+      showAlert('success', 'ポイントを一括更新しました。');
+    } else {
+      showAlert('error', result.error);
+    }
+  };
+
   // Alert を表示する関数
   const showAlert = (alertType: AlertType, error?: string) => {
     setAlertMessage(error ?? '');
@@ -609,17 +624,25 @@ export function ResultEditTable(props: Props) {
     <>
       <Flex>
         <Popconfirm
-          title="ビブを一括付与します。"
+          title="滑走順に従ってビブを一括付与します。"
           description="現在付与されているビブは消えてしまいますがよろしいですか？"
           onConfirm={handleUpdateBibs}
           okText="はい"
-          cancelText="キャンセル"
+          cancelText="いいえ"
         >
           <Button style={{ marginBottom: 16, marginRight: 16 }}>
             ビブ一括付与
           </Button>
         </Popconfirm>
-        <Button type="primary">ポイント更新</Button>
+        <Popconfirm
+          title="ベストタイムに従ってポイントを一括更新します。"
+          description="現在のポイントは消えてしまいますがよろしいですか？"
+          onConfirm={handleUpdatePoints}
+          okText="はい"
+          cancelText="いいえ"
+        >
+          <Button type="primary">ポイント更新</Button>
+        </Popconfirm>
       </Flex>
       {alertVisible && (
         <Alert
@@ -642,6 +665,7 @@ export function ResultEditTable(props: Props) {
         pagination={false}
         bordered={true}
         // 背景色をスタイルで指定
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onRow={(record: any) => {
           return {
             style: getRowStyle(

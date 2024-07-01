@@ -22,7 +22,9 @@ type Props = {
   teams: TeamWithRacers[];
 };
 
-const EditableContext = React.createContext<FormInstance<any> | null>(null);
+const EditableContext = React.createContext<FormInstance<DataType> | null>(
+  null,
+);
 
 interface Item {
   key: string;
@@ -43,7 +45,7 @@ interface EditableRowProps {
   index: number;
 }
 
-// eslint-disable-next-line no-unused-vars
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const EditableRow: React.FC<EditableRowProps> = ({ index, ...props }) => {
   const [form] = Form.useForm();
   return (
@@ -56,14 +58,13 @@ const EditableRow: React.FC<EditableRowProps> = ({ index, ...props }) => {
 };
 
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
-  title: any;
+  title: string;
   editable: boolean;
   children: React.ReactNode;
   dataIndex: keyof Item;
   record: Item;
   editing: boolean;
   index: number;
-  // eslint-disable-next-line no-unused-vars
   handleSave: (record: Item) => void;
 }
 
@@ -224,7 +225,7 @@ export function TeamTable(props: Props) {
       title: 'チーム名',
       dataIndex: 'fullname',
       key: 'fullname',
-      render: (_: any, record: DataType) => (
+      render: (_: DataType, record: DataType) => (
         <>
           <Button type="link" onClick={() => handleClick(record.key)}>
             {record.fullname}
@@ -318,7 +319,7 @@ export function TeamTable(props: Props) {
     {
       title: '操作',
       key: 'action',
-      render: (_: any, record: DataType) => {
+      render: (_: DataType, record: DataType) => {
         return (
           <Popconfirm
             onConfirm={() => handleDelete(record.key)}
@@ -357,13 +358,10 @@ export function TeamTable(props: Props) {
    * 追加または編集されたチーム情報があれば取得して表示用データを更新する
    */
   useEffect(() => {
-    console.log('useEffect() newTeam:', newTeam);
-    // eslint-disable-next-line no-undef
     const teamData = localStorage.getItem('newTeam');
     if (teamData) {
       setNewTeam(JSON.parse(teamData));
       showAlert('success', '保存しました。');
-      // eslint-disable-next-line no-undef
       localStorage.removeItem('newTeam'); // 読み込み後は削除
     }
   }, []);
@@ -448,10 +446,10 @@ export function TeamTable(props: Props) {
             cell: EditableCell,
           },
         }}
-        bordered
         dataSource={data}
         columns={columns as ColumnTypes}
         pagination={false}
+        bordered={true}
         rowHoverable={false}
       />
     </>

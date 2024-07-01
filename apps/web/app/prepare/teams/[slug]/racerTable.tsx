@@ -1,5 +1,5 @@
 import React, { useContext, useId, useMemo, useState } from 'react';
-import type { TableProps } from 'antd';
+import { Alert, TableProps } from 'antd';
 import {
   Button,
   Form,
@@ -34,7 +34,12 @@ import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { SyntheticListenerMap } from '@dnd-kit/core/dist/hooks/utilities';
 import { Rule } from 'antd/es/form';
 import { getRowStyle } from '../../../common/racerUtil';
-import { CategoryType, GenderType, SpecialType } from '../../../common/types';
+import {
+  AlertType,
+  CategoryType,
+  GenderType,
+  SpecialType,
+} from '../../../common/types';
 
 type Props = {
   title: string;
@@ -157,7 +162,6 @@ interface DataType {
 }
 
 interface RowContextProps {
-  // eslint-disable-next-line no-unused-vars
   setActivatorNodeRef?: (_: HTMLElement | null) => void;
   listeners?: SyntheticListenerMap;
 }
@@ -219,6 +223,9 @@ export function RacerTable(props: Props) {
   }));
   const [dataSource, setDataSource] = useState<DataType[]>(_data);
   const [count, setCount] = useState<number>(_data.length);
+  const [alertType, setAlertType] = useState<AlertType>('error');
+  const [alertVisible, setAlertVisible] = useState<boolean>(false);
+  const [alertMessage, setAlertMessage] = useState<string>('');
 
   const handleDelete = async (key: React.Key) => {
     const result = await deleteRacer(key as string);
@@ -260,10 +267,11 @@ export function RacerTable(props: Props) {
       key: 'add',
       name: ``,
       kana: '',
-      category: 'ski',
+      category: props.category ?? '',
       age: null,
       isFirstTime: false,
-      gender: 'm', // TODO 上位からの引き回し
+      gender: props.gender ?? '', // TODO 上位からの引き回し
+      special: props.special,
       seed: newCount,
     };
     form.setFieldsValue({ ...newData });
@@ -273,40 +281,39 @@ export function RacerTable(props: Props) {
   };
 
   const handleSave = async (key: React.Key) => {
-    try {
-      const row = (await form.validateFields()) as Item;
-      const newDataSource = [...dataSource];
-      const index = dataSource.findIndex((item) => key === item.key);
-      let result: ActionResult<Racer>;
-      const gender = props.special == 'normal' ? props.gender! : row.gender;
-      const category =
-        props.special == 'normal' ? props.category! : row.category;
-      if (key === 'add') {
-        result = await addRacer({
-          name: row.name,
-          kana: row.kana,
-          category: category,
-          gender: gender,
-          seed: dataSource[index].seed, // seedはformから取得できない
-          teamId: props.teamId,
-          isFirstTime: row.isFirstTime,
-          age: row.age,
-          special: props.special,
-        });
-      } else {
-        const dto: RacerRequestDto = {
-          name: row.name,
-          kana: row.kana,
-          category: category,
-          gender: gender,
-          seed: dataSource[index].seed, // seedはformから取得できない
-          teamId: props.teamId,
-          isFirstTime: row.isFirstTime,
-          age: row.age,
-          special: props.special,
-        };
-        result = await updateRacer(dataSource[index].key, dto);
-      }
+    const row = (await form.validateFields()) as Item;
+    const newDataSource = [...dataSource];
+    const index = dataSource.findIndex((item) => key === item.key);
+    let result: ActionResult<Racer>;
+    const gender = props.special == 'normal' ? props.gender! : row.gender;
+    const category = props.special == 'normal' ? props.category! : row.category;
+    if (key === 'add') {
+      result = await addRacer({
+        name: row.name,
+        kana: row.kana,
+        category: category,
+        gender: gender,
+        seed: dataSource[index].seed, // seedはformから取得できない
+        teamId: props.teamId,
+        isFirstTime: row.isFirstTime,
+        age: row.age,
+        special: props.special,
+      });
+    } else {
+      const dto: RacerRequestDto = {
+        name: row.name,
+        kana: row.kana,
+        category: category,
+        gender: gender,
+        seed: dataSource[index].seed, // seedはformから取得できない
+        teamId: props.teamId,
+        isFirstTime: row.isFirstTime,
+        age: row.age,
+        special: props.special,
+      };
+      result = await updateRacer(dataSource[index].key, dto);
+    }
+    if (result.success) {
       const r: Item = {
         key: result.result!.id as string,
         name: result.result!.name,
@@ -325,8 +332,8 @@ export function RacerTable(props: Props) {
       });
       setDataSource(newDataSource);
       setEditingKey('');
-    } catch (errInfo) {
-      console.log('Validate Failed:', errInfo);
+    } else {
+      showAlert('error', result.error);
     }
   };
 
@@ -500,6 +507,19 @@ export function RacerTable(props: Props) {
   // https://github.com/clauderic/dnd-kit/issues/926#issuecomment-1640115665
   const id = useId();
 
+  // Alert を表示する関数
+  const showAlert = (alertType: AlertType, error?: string) => {
+    setAlertMessage(error ?? '');
+    setAlertVisible(true);
+    setAlertType(alertType);
+  };
+
+  // Alert を非表示にする関数
+  const closeAlert = () => {
+    setAlertMessage('');
+    setAlertVisible(false);
+  };
+
   return (
     <div>
       <h2>{props.title}</h2>
@@ -511,6 +531,15 @@ export function RacerTable(props: Props) {
       >
         追加
       </Button>
+      {alertVisible && (
+        <Alert
+          message={alertMessage}
+          type={alertType}
+          closable
+          onClose={closeAlert}
+          style={{ marginBottom: 16 }}
+        />
+      )}
       <Form form={form} component={false}>
         <DndContext
           modifiers={[restrictToVerticalAxis]}
@@ -529,7 +558,6 @@ export function RacerTable(props: Props) {
                 },
               }}
               rowClassName={() => 'editable-row'}
-              bordered
               dataSource={dataSource}
               columns={mergedColumns}
               onRow={(record: DataType) => {
@@ -542,6 +570,7 @@ export function RacerTable(props: Props) {
                 };
               }}
               pagination={false}
+              bordered={true}
               rowHoverable={false}
             />
           </SortableContext>

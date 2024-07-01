@@ -1,6 +1,8 @@
 {
   "name": "@repo/database",
   "version": "1.0.0",
+  "main": "./dist/index.js",
+  "types": "./src/index.ts",
   "exports": {
     ".": "./src/client.ts"
   },
@@ -13,7 +15,7 @@
     "db:seed": "tsx src/seed.ts",
     "dev": "prisma generate",
     "format": "prisma format",
-    "lint": "eslint . --max-warnings 0",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "prebuild": "npm run generate",
     "predev": "npm run generate",
     "db:studio": "prisma studio"

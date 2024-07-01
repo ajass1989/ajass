@@ -71,18 +71,11 @@ export function EditTeamForm(props: Props) {
     };
     const res = await updateTeam(values.key, team);
     if (res.success) {
-      // eslint-disable-next-line no-undef
       localStorage.setItem('newTeam', JSON.stringify(res.result));
       router.push(`/prepare/teams`);
     } else {
       showAlert(res.error);
     }
-  };
-
-  const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (
-    errorInfo,
-  ) => {
-    console.log('Failed:', errorInfo);
   };
 
   const team = props.team;
@@ -195,7 +188,6 @@ export function EditTeamForm(props: Props) {
         style={{ maxWidth: 600 }}
         initialValues={{ remember: true }}
         onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
         autoComplete="off"
       >
         <Form.Item<FieldType> name="key" initialValue={team.id} hidden={true}>

@@ -80,6 +80,35 @@ export async function updateBibs(
   }
 }
 
+export async function updateRacersPoints(): Promise<ActionResult<Racer[]>> {
+  try {
+    const racersBefore = await prisma.racer.findMany({
+      where: {
+        bib: { not: null },
+      },
+    });
+    const promises = racersBefore.map(async (racer) => {
+      await updateRacersPoint(racer.id);
+    });
+    await Promise.all(promises);
+    //
+    const racersAfter = await prisma.racer.findMany({
+      where: {
+        bib: { not: null },
+      },
+    });
+    return {
+      success: true,
+      result: racersAfter,
+    };
+  } catch (e) {
+    return {
+      success: false,
+      error: 'ポイントの更新に失敗しました。',
+    };
+  }
+}
+
 export type UpdateStatusRequestDto = {
   status1?: StatusType;
   status2?: StatusType;
@@ -92,7 +121,7 @@ export async function updateStatus(
   try {
     const racer = await prisma.$transaction(async (tx) => {
       // タイムとステータスの更新
-      let update1 = await tx.racer.update({
+      const update1 = await tx.racer.update({
         where: { id },
         data: {
           ...dto,
@@ -130,23 +159,19 @@ export type UpdateTimeRequestDto = {
 };
 
 function getBestTime(racer: Racer): number | null {
-  console.log(racer);
   if (
     racer.status1 == null &&
     racer.time1 &&
     racer.status2 == null &&
     racer.time2
   ) {
-    const bestTime = Math.min(racer.time1, racer.time2);
-    console.log('getBestTime(): ', bestTime);
-    return bestTime;
+    return Math.min(racer.time1, racer.time2);
   }
   if (
     racer.status1 == null &&
     racer.time1 &&
     (racer.status2 != null || !racer.time2)
   ) {
-    console.log('getBestTime(): ', racer.time1);
     return racer.time1;
   }
   if (
@@ -154,10 +179,8 @@ function getBestTime(racer: Racer): number | null {
     racer.status2 == null &&
     racer.time2
   ) {
-    console.log('getBestTime(): ', racer.time2);
     return racer.time2;
   }
-  console.log('getBestTime(): ', null);
   return null;
 }
 
@@ -247,7 +270,7 @@ export async function updateTime(
   try {
     const racer = await prisma.$transaction(async (tx) => {
       // タイムとステータスの更新
-      let update1 = await tx.racer.update({
+      const update1 = await tx.racer.update({
         where: { id },
         data: {
           ...dto,

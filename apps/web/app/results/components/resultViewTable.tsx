@@ -44,8 +44,7 @@ export function ResultViewTable({
   showPoint = true,
   showAge = false,
 }: Props) {
-  console.log('hoge');
-  const [dataSource] = useState<any[]>(racers);
+  const [dataSource] = useState<Racer[]>(racers);
   const data: DataType[] = dataSource.map((racer, index) => ({
     key: racer.id,
     id: racer.id,
@@ -193,6 +192,7 @@ export function ResultViewTable({
       dataSource={data}
       columns={columns}
       pagination={false}
+      bordered={true}
       onRow={(record: DataType) => {
         return {
           style: getRowStyle(

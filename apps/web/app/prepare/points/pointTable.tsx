@@ -9,11 +9,12 @@ import { AlertType } from '../../common/types';
 
 type Props = {
   points: Point[];
-  // eslint-disable-next-line no-unused-vars
   updatePoint: (point: Point) => void;
 };
 
-const EditableContext = React.createContext<FormInstance<any> | null>(null);
+const EditableContext = React.createContext<FormInstance<DataType> | null>(
+  null,
+);
 
 interface Item {
   key: number;
@@ -28,7 +29,7 @@ interface EditableRowProps {
   index: number;
 }
 
-// eslint-disable-next-line no-unused-vars
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const EditableRow: React.FC<EditableRowProps> = ({ index, ...props }) => {
   const [form] = Form.useForm();
   return (
@@ -46,7 +47,6 @@ interface EditableCellProps {
   children: React.ReactNode;
   dataIndex: keyof Item;
   record: Item;
-  // eslint-disable-next-line no-unused-vars
   handleSave: (record: Item) => void;
 }
 
@@ -239,6 +239,7 @@ export function PointTable(props: Props) {
         dataSource={data}
         columns={columns as ColumnTypes}
         pagination={false}
+        bordered={true}
         sticky={true}
         rowHoverable={false}
       />

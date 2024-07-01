@@ -248,7 +248,6 @@ export async function updateSeed(
         seed: 'asc',
       },
     });
-    console.log(`moveRecords: ${moveRecords.length}`);
     const newRacers = await Promise.all(
       moveRecords.map(async (racer: Racer) => {
         return await prisma.racer.update({

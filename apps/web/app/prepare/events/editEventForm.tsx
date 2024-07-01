@@ -67,12 +67,6 @@ export function EditEventForm(props: Props) {
     }
   };
 
-  const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (
-    errorInfo,
-  ) => {
-    console.log('Failed:', errorInfo);
-  };
-
   const data = props.dataSource;
 
   const handleChange = () => {
@@ -107,7 +101,6 @@ export function EditEventForm(props: Props) {
         style={{ maxWidth: 600 }}
         initialValues={{ remember: true }}
         onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
         autoComplete="off"
       >
         <Form.Item<FieldType> name="key" initialValue={data.id}>

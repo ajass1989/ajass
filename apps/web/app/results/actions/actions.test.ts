@@ -370,6 +370,7 @@ describe('actions', () => {
 
   describe('listRacersWithSummaryPoint', () => {
     test('正常系', async () => {
+      const rowSpanSummary = [6, 0, 0, 0, 0, 0, 3, 0, 0, 3, 0, 0, 2, 0];
       const points = [
         150, 130, 110, 90, 70, 50, 100, 80, 60, 230, 210, 190, 80, 60,
       ];
@@ -428,6 +429,7 @@ describe('actions', () => {
       const result = await listRacersWithSummaryPoint();
       expect(result.length).toBe(14);
       Array.from({ length: result.length }).forEach((_, index) => {
+        expect(result[index].rowSpanSummary).toBe(rowSpanSummary[index]);
         expect(result[index].point).toBe(points[index]);
         expect(result[index].summaryPoint).toBe(pointsSummary[index]);
         expect(result[index].gender).toBe(genders[index]);

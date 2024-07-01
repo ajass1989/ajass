@@ -7,6 +7,7 @@ import {
   listTeams,
   updateBib,
   updateBibs,
+  updateRacersPoints,
   updateStatus,
   updateTime,
 } from './actions';
@@ -503,6 +504,17 @@ describe('actions', () => {
     test('正常系', async () => {
       const result = await listTeams();
       expect(result.length).toBe(1);
+    });
+  });
+
+  describe('updateRacersPoints', () => {
+    test('正常系', async () => {
+      const result = await updateRacersPoints();
+      expect(result.success).toBeTruthy();
+      expect(result.result!.length).toBe(3);
+      expect(result.result!.find((racer) => racer.id === '3')!.point).toBe(130);
+      expect(result.result!.find((racer) => racer.id === '2')!.point).toBe(0);
+      expect(result.result!.find((racer) => racer.id === '1')!.point).toBe(0);
     });
   });
 });

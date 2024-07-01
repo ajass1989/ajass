@@ -1,5 +1,4 @@
 'use client';
-
 import { Table, TableColumnsType } from 'antd';
 import { useState } from 'react';
 import {
@@ -45,7 +44,7 @@ interface RacerDataType {
 }
 
 export function ResultTeamTable(props: Props) {
-  const expandedRowRender = () => {
+  const expandedRowRender = (record: TeamDataType) => {
     const columns: TableColumnsType<RacerDataType> = [
       {
         title: '種目',
@@ -65,7 +64,8 @@ export function ResultTeamTable(props: Props) {
         title: 'ベストタイム',
         dataIndex: 'bestTime',
         key: 'bestTime',
-        render: (_: any, record: RacerDataType) => renderTime(record.bestTime),
+        render: (_: RacerDataType, record: RacerDataType) =>
+          renderTime(record.bestTime),
       },
       { title: 'ポイント', dataIndex: 'point', key: 'point' },
       {
@@ -86,35 +86,38 @@ export function ResultTeamTable(props: Props) {
     // チームごとに選手を抽出
     const [racersByTeam] = useState<RacerWithSummaryPoint[]>(props.racers);
 
-    const data: RacerDataType[] = racersByTeam.map((racer) => {
-      return {
-        key: racer.id,
-        summary: summaryWithoutSpecial(
-          racer.gender as GenderType,
-          racer.category as CategoryType,
-        ),
-        name: racer.name,
-        kana: racer.kana,
-        bib: racer.bib?.toString() ?? '',
-        gender: racer.gender,
-        category: racer.category,
-        special: racer.special,
-        seed: racer.seed,
-        result1: renderResult(racer.status1, racer.time1),
-        result2: renderResult(racer.status2, racer.time2),
-        bestTime: racer.bestTime,
-        point: racer.point,
-        pointSummary: racer.summaryPoint,
-        specialPoint: racer.specialPoint,
-        pointGetter: racer.pointGetter,
-        rowSpanSummary: racer.rowSpanSummary,
-      };
-    });
+    const data: RacerDataType[] = racersByTeam
+      .filter((racer) => racer.teamId === record.teamId)
+      .map((racer) => {
+        return {
+          key: racer.id,
+          summary: summaryWithoutSpecial(
+            racer.gender as GenderType,
+            racer.category as CategoryType,
+          ),
+          name: racer.name,
+          kana: racer.kana,
+          bib: racer.bib?.toString() ?? '',
+          gender: racer.gender,
+          category: racer.category,
+          special: racer.special,
+          seed: racer.seed,
+          result1: renderResult(racer.status1, racer.time1),
+          result2: renderResult(racer.status2, racer.time2),
+          bestTime: racer.bestTime,
+          point: racer.point,
+          pointSummary: racer.summaryPoint,
+          specialPoint: racer.specialPoint,
+          pointGetter: racer.pointGetter,
+          rowSpanSummary: racer.rowSpanSummary,
+        };
+      });
     return (
       <Table
         columns={columns}
         dataSource={data}
         pagination={false}
+        bordered={true}
         rowHoverable={false}
         onRow={(record) => {
           return {
@@ -151,6 +154,7 @@ export function ResultTeamTable(props: Props) {
       expandable={{ expandedRowRender, defaultExpandAllRows: true }}
       dataSource={data}
       pagination={false}
+      bordered={true}
       rowHoverable={false}
     />
   );

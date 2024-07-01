@@ -45,18 +45,11 @@ export function AddTeamForm() {
     const team: TeamRequestDto = { ...values };
     const res = await addTeam(team);
     if (res.success) {
-      // eslint-disable-next-line no-undef
       localStorage.setItem('newTeam', JSON.stringify(res.result));
       router.push(`/prepare/teams`);
     } else {
       showAlert(res.error);
     }
-  };
-
-  const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (
-    errorInfo,
-  ) => {
-    console.log('Failed:', errorInfo);
   };
 
   return (
@@ -90,7 +83,6 @@ export function AddTeamForm() {
         style={{ maxWidth: 600 }}
         initialValues={{ remember: true }}
         onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
         autoComplete="off"
       >
         <Form.Item<FieldType>
