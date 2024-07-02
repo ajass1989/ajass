@@ -43,6 +43,10 @@ const aggregatePoint = (racers: Racer[], gender: string, category: string) => {
     .reduce((acc, racer) => acc + racer.point, 0);
 };
 
+const aggregateSpecialPoint = (racers: Racer[]) => {
+  return racers.reduce((acc, racer) => acc + racer.specialPoint, 0);
+};
+
 export type TeamWithPoint = Team & { point: number };
 
 export async function listTeamsWithPoint(): Promise<TeamWithPoint[]> {
@@ -53,21 +57,14 @@ export async function listTeamsWithPoint(): Promise<TeamWithPoint[]> {
   });
   return teams
     .map((team) => {
-      const pointSkiMale = aggregatePoint(team.racers, 'm', 'ski');
-      const pointSkiFemale = aggregatePoint(team.racers, 'f', 'ski');
-      const pointSnowboardMale = aggregatePoint(team.racers, 'm', 'snowboard');
-      const pointSnowboardFemale = aggregatePoint(
-        team.racers,
-        'f',
-        'snowboard',
-      );
       return {
         ...team,
         point:
-          pointSkiMale +
-          pointSkiFemale +
-          pointSnowboardMale +
-          pointSnowboardFemale,
+          aggregatePoint(team.racers, 'm', 'ski') +
+          aggregatePoint(team.racers, 'f', 'ski') +
+          aggregatePoint(team.racers, 'm', 'snowboard') +
+          aggregatePoint(team.racers, 'f', 'snowboard') +
+          aggregateSpecialPoint(team.racers),
       };
     })
     .sort((a, b) => b.point - a.point);

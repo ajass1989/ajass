@@ -199,7 +199,7 @@ export async function updateRacersPoint(
       gender: racer.gender,
       category: racer.category,
       bib: { not: null },
-      // TODO 個人参加を排除
+      teamId: { not: null },
     },
     orderBy: [
       {
@@ -210,6 +210,45 @@ export async function updateRacersPoint(
       },
     ],
   });
+
+  // 特別ポイントを取得
+  const specialPoints = await prisma.specialPoint.findMany({});
+
+  // 特別ポイントを適用
+  const specialRacers = await prisma.racer.findMany({
+    where: {
+      teamId: { not: null },
+      bestTime: { not: null },
+    },
+    orderBy: [
+      {
+        bestTime: 'desc',
+      },
+      {
+        bib: 'asc',
+      },
+    ],
+    take: 2,
+  });
+  if (specialRacers.length >= 1) {
+    await prisma.racer.update({
+      where: { id: specialRacers[0].id },
+      data: {
+        specialPoint:
+          specialPoints.find((point) => point.id === 'booby')?.point ?? 0,
+      },
+    });
+  }
+  if (specialRacers.length >= 2) {
+    await prisma.racer.update({
+      where: { id: specialRacers[1].id },
+      data: {
+        specialPoint:
+          specialPoints.find((point) => point.id == 'booby_maker')?.point ?? 0,
+      },
+    });
+  }
+
   // ポイントを取得
   const points = await prisma.point.findMany({
     select: {
