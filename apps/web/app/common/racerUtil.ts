@@ -111,6 +111,30 @@ export const getRowStyle = (
   return { backgroundColor: bgColorDefault };
 };
 
+/**
+ * 行スタイルを取得
+ * @param record
+ * @returns
+ */
+export const getRowStyleWithoutSpecial = (
+  gender: GenderType,
+  category: CategoryType,
+) => {
+  if (gender == 'f' && category == 'ski') {
+    return { backgroundColor: bgColorSkiFemale };
+  }
+  if (gender == 'm' && category == 'ski') {
+    return { backgroundColor: bgColorSkiMale };
+  }
+  if (gender == 'f' && category == 'snowboard') {
+    return { backgroundColor: bgColorSnowboardFemale };
+  }
+  if (gender == 'm' && category == 'snowboard') {
+    return { backgroundColor: bgColorSnowboardMale };
+  }
+  return { backgroundColor: bgColorDefault };
+};
+
 export const getRowStyleByPoint = (
   gender: GenderType,
   category: CategoryType,
@@ -120,5 +144,5 @@ export const getRowStyleByPoint = (
   if (!pointGetter) {
     return { backgroundColor: bgColorDefault };
   }
-  return getRowStyle(gender, category, special);
+  return getRowStyleWithoutSpecial(gender, category);
 };
