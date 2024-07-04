@@ -118,6 +118,13 @@ const EditableCell: React.FC<EditableCellProps> = ({
 
   const toggleEdit = () => {
     setEditing(!editing);
+    if (dataIndex === 'result1' || dataIndex === 'result2') {
+      const match = record[dataIndex].match(/^(\d{2}):(\d{2})\.(\d{2})$/);
+      if (match != null) {
+        form.setFieldsValue({ [dataIndex]: match[1] + match[2] + match[3] });
+        return;
+      }
+    }
     form.setFieldsValue({ [dataIndex]: record[dataIndex] });
   };
 
@@ -155,7 +162,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
     { value: 'df' },
     { value: 'dq' },
   ];
-  const regTime = /^(?:(?:[0-9]{1,2}:)?[0-5]?[0-9]\.[0-9]{1,3}|ds|df|dq)$/;
+  const regTime = /^([0-9]{6}|ds|df|dq)$/;
 
   // 編集状態のセルを返す
   const childNodeEditing = (dataIndex: string) => {
@@ -180,7 +187,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
             onSelect={changeValue}
             onBlur={changeValue}
             options={options}
-            placeholder={'00:00.00|ds|dq|df'}
+            placeholder={'000000|ds|dq|df'}
             style={{ width: '84px' }}
           />
         );
@@ -188,7 +195,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
           {
             pattern: regTime,
             message:
-              '[00:00.00]の形式、または[ds|dq|df]いずれかで入力してください。',
+              '[000000]の形式（分、秒、100分の1秒）、または[ds|dq|df]いずれかで入力してください。',
           },
         ];
         break;

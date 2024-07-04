@@ -30,21 +30,21 @@ export const renderResult = (status: string | null, time: number | null) => {
   return status || renderTime(time);
 };
 
+/**
+ *
+ * @param formatTime 6桁の数字
+ * @returns
+ */
 export const parseTime = (formatTime?: string) => {
   if (formatTime === '') return null;
   if (!formatTime) return undefined;
-  const parts = formatTime.split(':');
+
+  const min = formatTime.substring(0, 2);
+  const sec = formatTime.substring(2, 4);
   let ms = 0;
-  if (parts.length === 2) {
-    const [min, sec] = parts;
-    ms += dayjs.duration({ minutes: parseInt(min) }).asMilliseconds();
-    ms += dayjs.duration({ seconds: parseFloat(sec) }).asMilliseconds();
-  } else if (parts.length === 1) {
-    const [sec] = parts;
-    ms += dayjs.duration({ seconds: parseFloat(sec) }).asMilliseconds();
-  } else {
-    return undefined;
-  }
+  ms += dayjs.duration({ minutes: parseInt(min) }).asMilliseconds();
+  ms += dayjs.duration({ seconds: parseInt(sec) }).asMilliseconds();
+  ms += parseInt(formatTime.substring(4, 6)) * 10;
   return ms;
 };
 
