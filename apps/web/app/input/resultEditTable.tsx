@@ -18,10 +18,8 @@ import { Racer, Team } from '@repo/database';
 import {
   UpdateBibRequestDto,
   updateBibs,
-  updateRacersPoint,
-  updateRacersPoints,
-  updateStatus,
-  updateTime,
+  updatePoints,
+  updateResult,
 } from './actions';
 import {
   AlertType,
@@ -485,10 +483,8 @@ export function ResultEditTable(props: Props) {
     let result: ActionResult<Racer[]> = { success: false };
     if (row.result1 === '') {
       // 結果が空の場合は状態と記録をクリア
-      await updateStatus(row.id, {
+      result = await updateResult(row.id, {
         status1: null,
-      });
-      result = await updateTime(row.id, {
         time1: null,
       });
     } else if (
@@ -497,19 +493,16 @@ export function ResultEditTable(props: Props) {
       row.result1 === 'ds'
     ) {
       // 結果が dq, df, ds の場合は状態を更新
-      result = await updateStatus(row.id, {
+      result = await updateResult(row.id, {
         status1: row.result1 as StatusType,
       });
     } else {
       // 結果が時間の場合は状態をnullにして時間を更新
-      await updateStatus(row.id, {
+      result = await updateResult(row.id, {
         status1: null,
-      });
-      result = await updateTime(row.id, {
         time1: parseTime(row.result1),
       });
     }
-    result = await updateRacersPoint(row.id);
     if (!result.success) {
       showAlert('error', result.error);
     }
@@ -521,10 +514,8 @@ export function ResultEditTable(props: Props) {
     let result: ActionResult<Racer[]> = { success: false };
     if (row.result2 === '') {
       // 結果が空の場合は状態と記録をクリア
-      await updateStatus(row.id, {
+      result = await updateResult(row.id, {
         status2: null,
-      });
-      result = await updateTime(row.id, {
         time2: null,
       });
     } else if (
@@ -533,19 +524,16 @@ export function ResultEditTable(props: Props) {
       row.result2 === 'ds'
     ) {
       // 結果が dq, df, ds の場合は状態を更新
-      result = await updateStatus(row.id, {
+      result = await updateResult(row.id, {
         status2: row.result2 as StatusType,
       });
     } else {
       // 結果が時間の場合は状態をnullにして時間を更新
-      await updateStatus(row.id, {
+      result = await updateResult(row.id, {
         status2: null,
-      });
-      result = await updateTime(row.id, {
         time2: parseTime(row.result2),
       });
     }
-    result = await updateRacersPoint(row.id);
     if (!result.success) {
       showAlert('error', result.error);
     }
@@ -563,6 +551,7 @@ export function ResultEditTable(props: Props) {
       newItem.status2 = racer.status2;
       newItem.bestTime = racer.bestTime;
       newItem.point = racer.point;
+      newItem.totalOrder = racer.totalOrder;
       newData.splice(index, 1, {
         ...newItem,
       });
@@ -594,7 +583,7 @@ export function ResultEditTable(props: Props) {
    * ポイント更新処理
    */
   const handleUpdatePoints: PopconfirmProps['onConfirm'] = async () => {
-    const result = await updateRacersPoints();
+    const result = await updatePoints();
     if (result.success) {
       const newDataSource: Racer[] = dataSource.map((data) => {
         data.point = result.result!.find((item) => item.id == data.id)!.point;

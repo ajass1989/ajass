@@ -56,6 +56,7 @@ model Racer {
   time2        Int?
   bestTime     Int?
   point        Int      @default(0)
+  totalOrder   Int?
   specialPoint Int      @default(0)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt

@@ -3,6 +3,11 @@ import { Prisma, Racer, Team, prisma } from '@repo/database';
 import { ActionResult } from '../common/actionResult';
 import { StatusType } from '../common/types';
 
+/**
+ * ビブの更新
+ * @param dto
+ * @returns
+ */
 export async function updateBib(
   dto: UpdateBibRequestDto,
 ): Promise<ActionResult<Racer>> {
@@ -39,6 +44,11 @@ export type UpdateBibRequestDto = {
   bib: number | null;
 };
 
+/**
+ * ビブの一括更新
+ * @param dtos
+ * @returns
+ */
 export async function updateBibs(
   dtos: UpdateBibRequestDto[],
 ): Promise<ActionResult<Racer[]>> {
@@ -80,7 +90,7 @@ export async function updateBibs(
   }
 }
 
-export async function updateRacersPoints(): Promise<ActionResult<Racer[]>> {
+export async function updatePoints(): Promise<ActionResult<Racer[]>> {
   try {
     const racersBefore = await prisma.racer.findMany({
       where: {
@@ -88,7 +98,7 @@ export async function updateRacersPoints(): Promise<ActionResult<Racer[]>> {
       },
     });
     const promises = racersBefore.map(async (racer) => {
-      await updateRacersPoint(racer.id);
+      await updateResult(racer.id, {});
     });
     await Promise.all(promises);
     //
@@ -109,36 +119,143 @@ export async function updateRacersPoints(): Promise<ActionResult<Racer[]>> {
   }
 }
 
-export type UpdateStatusRequestDto = {
+export type UpdateResultRequestDto = {
   status1?: StatusType;
   status2?: StatusType;
+  time1?: number | null;
+  time2?: number | null;
 };
 
-export async function updateStatus(
+export async function updateResult(
   id: string,
-  dto: UpdateStatusRequestDto,
+  dto: UpdateResultRequestDto,
 ): Promise<ActionResult<Racer[]>> {
   try {
-    const racer = await prisma.$transaction(async (tx) => {
-      // タイムとステータスの更新
-      const update1 = await tx.racer.update({
-        where: { id },
-        data: {
-          ...dto,
-        },
-      });
-      // ベストタイムの更新
-      return await tx.racer.update({
-        where: { id },
-        data: {
-          bestTime: getBestTime(update1),
-        },
-      });
+    // 指定した選手のタイムと状態の更新
+    const updateRacer = await prisma.racer.update({
+      where: { id },
+      data: {
+        ...dto,
+      },
     });
-    // 獲得ポイントの更新
+
+    // 指定した選手のベストタイムの更新
+    await prisma.racer.update({
+      where: { id },
+      data: {
+        bestTime: getBestTime(updateRacer),
+      },
+    });
+
+    // 指定した選手が属する性別・カテゴリのポイントテーブルを取得
+    const pointsOriginal = await prisma.point.findMany({
+      select: {
+        id: true,
+        pointSkiFemale:
+          updateRacer.gender === 'f' && updateRacer.category === 'ski',
+        pointSkiMale:
+          updateRacer.gender === 'm' && updateRacer.category === 'ski',
+        pointSnowboardFemale:
+          updateRacer.gender === 'f' && updateRacer.category === 'snowboard',
+        pointSnowboardMale:
+          updateRacer.gender === 'm' && updateRacer.category === 'snowboard',
+      },
+      orderBy: {
+        id: 'asc',
+      },
+    });
+    type Point = {
+      id: number;
+      point: number;
+    };
+    const points: Point[] = pointsOriginal.map((p) => {
+      return {
+        id: p.id,
+        point:
+          p.pointSkiFemale ??
+          p.pointSkiMale ??
+          p.pointSnowboardFemale ??
+          p.pointSnowboardMale,
+      };
+    });
+
+    // 全選手の個人成績(ポイントと総合順位)の更新
+    const racers = await prisma.racer.findMany({
+      where: {
+        bib: { not: null },
+      },
+      orderBy: [
+        {
+          bestTime: { sort: 'asc', nulls: 'last' },
+        },
+        {
+          bib: 'desc', // タイムが同じ場合、bibの昇順
+        },
+      ],
+    });
+    await Promise.all(
+      racers.map(async (racer, i) => {
+        // デフォルトは配列最後の値
+        let point = points[points.length - 1].point;
+        // ポイントがない場合、最後のポイントを取得
+        if (i < points.length) {
+          point = points[i].point;
+        }
+        if (racer.bestTime === null) {
+          // if (typeof racer.bestTime !== 'number') {
+          point = 0;
+        }
+        return await prisma.racer.update({
+          where: { id: racer.id },
+          data: { point, totalOrder: i + 1 },
+        });
+      }),
+    );
+
+    // 全選手の個人成績（特別ポイント）の更新
+    const specialPoints = await prisma.specialPoint.findMany({});
+    const specialRacers = await prisma.racer.findMany({
+      where: {},
+      orderBy: [
+        {
+          bestTime: 'desc',
+        },
+        {
+          bib: 'asc',
+        },
+      ],
+      take: 2,
+    });
+    await prisma.racer.updateMany({
+      where: {},
+      data: {
+        specialPoint: 0,
+      },
+    });
+    if (specialRacers.length >= 1) {
+      await prisma.racer.update({
+        where: { id: specialRacers[0].id },
+        data: {
+          specialPoint:
+            specialPoints.find((point) => point.id === 'booby')?.point ?? 0,
+        },
+      });
+    }
+    if (specialRacers.length >= 2) {
+      await prisma.racer.update({
+        where: { id: specialRacers[1].id },
+        data: {
+          specialPoint:
+            specialPoints.find((point) => point.id == 'booby_maker')?.point ??
+            0,
+        },
+      });
+    }
+    // 最終的な全選手のデータを取得
+    const allRacers = await prisma.racer.findMany({});
     return {
       success: true,
-      result: [racer],
+      result: allRacers,
     };
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
@@ -152,11 +269,6 @@ export async function updateStatus(
     throw e;
   }
 }
-
-export type UpdateTimeRequestDto = {
-  time1?: number | null;
-  time2?: number | null;
-};
 
 function getBestTime(racer: Racer): number | null {
   if (
@@ -184,169 +296,9 @@ function getBestTime(racer: Racer): number | null {
   return null;
 }
 
-export async function updateRacersPoint(
-  id: string,
-): Promise<ActionResult<Racer[]>> {
-  // タイム更新対象のレーサーを取得
-  const racer = await prisma.racer.findUniqueOrThrow({
-    where: {
-      id,
-    },
-  });
-  // タイム更新対象と同じ性別・カテゴリのレーサー群をベストタイム順にソートして取得
-  const racers = await prisma.racer.findMany({
-    where: {
-      gender: racer.gender,
-      category: racer.category,
-      bib: { not: null },
-      teamId: { not: null },
-    },
-    orderBy: [
-      {
-        bestTime: { sort: 'asc', nulls: 'last' },
-      },
-      {
-        bib: 'desc', // タイムが同じ場合、bibの昇順
-      },
-    ],
-  });
-
-  // 特別ポイントを取得
-  const specialPoints = await prisma.specialPoint.findMany({});
-
-  // 特別ポイントを適用
-  const specialRacers = await prisma.racer.findMany({
-    where: {
-      teamId: { not: null },
-      bestTime: { not: null },
-    },
-    orderBy: [
-      {
-        bestTime: 'desc',
-      },
-      {
-        bib: 'asc',
-      },
-    ],
-    take: 2,
-  });
-  if (specialRacers.length >= 1) {
-    await prisma.racer.update({
-      where: { id: specialRacers[0].id },
-      data: {
-        specialPoint:
-          specialPoints.find((point) => point.id === 'booby')?.point ?? 0,
-      },
-    });
-  }
-  if (specialRacers.length >= 2) {
-    await prisma.racer.update({
-      where: { id: specialRacers[1].id },
-      data: {
-        specialPoint:
-          specialPoints.find((point) => point.id == 'booby_maker')?.point ?? 0,
-      },
-    });
-  }
-
-  // ポイントを取得
-  const points = await prisma.point.findMany({
-    select: {
-      id: true,
-      pointSkiFemale: racer.gender === 'f' && racer.category === 'ski',
-      pointSkiMale: racer.gender === 'm' && racer.category === 'ski',
-      pointSnowboardFemale:
-        racer.gender === 'f' && racer.category === 'snowboard',
-      pointSnowboardMale:
-        racer.gender === 'm' && racer.category === 'snowboard',
-    },
-    orderBy: {
-      id: 'asc',
-    },
-  });
-  type Point = {
-    id: number;
-    point: number;
-  };
-  const points2: Point[] = points.map((p) => {
-    return {
-      id: p.id,
-      point:
-        p.pointSkiFemale ??
-        p.pointSkiMale ??
-        p.pointSnowboardFemale ??
-        p.pointSnowboardMale,
-    };
-  });
-
-  // ポイントを更新
-  return {
-    success: true,
-    result: await Promise.all(
-      racers.map(async (racer, i) => {
-        // デフォルトは配列最後の値
-        let point = points2[points2.length - 1].point;
-        // ポイントがない場合、最後のポイントを取得
-        if (i < points2.length) {
-          point = points2[i].point;
-        }
-        if (typeof racer.bestTime !== 'number') {
-          point = 0;
-        }
-        return await prisma.racer.update({
-          where: { id: racer.id },
-          data: { point },
-        });
-      }),
-    ),
-  };
-}
-
-export async function updateTime(
-  id: string,
-  dto: UpdateTimeRequestDto,
-): Promise<ActionResult<Racer[]>> {
-  try {
-    const racer = await prisma.$transaction(async (tx) => {
-      // タイムとステータスの更新
-      const update1 = await tx.racer.update({
-        where: { id },
-        data: {
-          ...dto,
-        },
-      });
-      // ベストタイムの更新
-      const bestTime = getBestTime(update1);
-      return await tx.racer.update({
-        where: { id },
-        data: {
-          bestTime,
-        },
-      });
-    });
-    // 獲得ポイントの更新
-    return {
-      success: true,
-      result: [racer],
-    };
-  } catch (e) {
-    if (e instanceof Prisma.PrismaClientKnownRequestError) {
-      if (e.code === 'P2025') {
-        return {
-          success: false,
-          error: '保存に失敗しました。指定したキーが見つかりません。',
-        };
-      }
-    }
-    throw e;
-  }
-}
-
 export async function listRacers(): Promise<Racer[]> {
   return await prisma.racer.findMany({
-    where: {
-      // eventId: '2023',
-    },
+    where: {},
     orderBy: {
       bib: 'asc',
     },

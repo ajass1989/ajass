@@ -16,6 +16,7 @@ type Props = {
   racers: Racer[];
   showPoint?: boolean;
   showAge?: boolean;
+  showTotalOrder?: boolean;
 };
 
 // テーブル表示用のデータ型
@@ -43,6 +44,7 @@ export function ResultViewTable({
   racers,
   showPoint = true,
   showAge = false,
+  showTotalOrder = false,
 }: Props) {
   const [dataSource] = useState<Racer[]>(racers);
   const data: DataType[] = dataSource.map((racer, index) => ({
@@ -66,7 +68,7 @@ export function ResultViewTable({
     bestTime: racer.bestTime,
     age: racer.age,
     point: racer.point,
-    order: index + 1,
+    order: showTotalOrder ? racer.totalOrder : index + 1,
   }));
 
   const columns: TableColumnsType<DataType> = [

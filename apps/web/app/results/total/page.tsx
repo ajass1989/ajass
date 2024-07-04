@@ -19,7 +19,12 @@ export default async function ResultsTotalPage() {
         ]}
       />
       <h1>総合</h1>
-      <ResultViewTable teams={teams} racers={racers} showPoint={false} />
+      <ResultViewTable
+        teams={teams}
+        racers={racers}
+        showPoint={false}
+        showTotalOrder={true}
+      />
     </>
   );
 }
