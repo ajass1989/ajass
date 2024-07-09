@@ -10,7 +10,7 @@ import {
 } from 'antd';
 import { UpdateEventRequestDto, updateEvent } from './actions';
 import { useState } from 'react';
-import { AlertType } from '../../common/types';
+import { AlertType } from '../../../common/types';
 import { Event } from '@repo/database';
 import dayjs from 'dayjs';
 

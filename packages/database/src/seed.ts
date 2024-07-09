@@ -58,6 +58,9 @@ const TEST_RACERS = [
     age: 10,
     time1: 125000,
     time2: 99540,
+    bestTime: 99540,
+    point: 100,
+    totalOrder: 2,
   },
   {
     id: 'female-junior-2',
@@ -72,6 +75,8 @@ const TEST_RACERS = [
     isFirstTime: false,
     age: 15,
     time1: 53400,
+    point: 110,
+    totalOrder: 1,
   },
   {
     id: 'male-junior-3',
@@ -272,6 +277,8 @@ const TEST_RACERS = [
     special: 'normal',
     isFirstTime: false,
     age: 52,
+    point: 60,
+    totalOrder: 5,
   },
   {
     id: 'male-snowboard-26',
@@ -445,6 +452,8 @@ const TEST_RACERS = [
     special: 'normal',
     isFirstTime: false,
     age: 40,
+    point: 80,
+    totalOrder: 3,
   },
   {
     id: 'male-53',
@@ -484,6 +493,8 @@ const TEST_RACERS = [
     special: 'normal',
     isFirstTime: false,
     age: 25,
+    point: 70,
+    totalOrder: 4,
   },
   {
     id: 'male-56',

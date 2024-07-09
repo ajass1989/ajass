@@ -27,8 +27,8 @@ import {
   GenderType,
   SpecialType,
   StatusType,
-} from '../common/types';
-import { fgColorWarn } from '../common/colors';
+} from '../../common/types';
+import { fgColorWarn } from '../../common/colors';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { Rule } from 'antd/es/form';
@@ -38,8 +38,8 @@ import {
   renderResult,
   renderTime,
   summary,
-} from '../common/racerUtil';
-import { ActionResult } from '../common/actionResult';
+} from '../../common/racerUtil';
+import { ActionResult } from '../../common/actionResult';
 
 dayjs.extend(duration);
 

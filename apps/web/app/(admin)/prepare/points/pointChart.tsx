@@ -19,7 +19,7 @@ import {
   fgColorSkiMale,
   fgColorSnowboardFemale,
   fgColorSnowboardMale,
-} from '../../common/colors';
+} from '../../../common/colors';
 import { Point } from '@repo/database';
 
 type Props = {

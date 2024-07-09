@@ -15,7 +15,7 @@ import { TeamWithRacers, deleteTeam, updateTeamOrder } from './actions';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { Team } from '@repo/database';
-import { AlertType } from '../../common/types';
+import { AlertType } from '../../../common/types';
 import { useRouter } from 'next/navigation';
 
 type Props = {

@@ -5,7 +5,7 @@ import React, { useEffect, useRef } from 'react';
 import { useContext, useState } from 'react';
 import { updatePoint } from './actions';
 import { Point } from '@repo/database';
-import { AlertType } from '../../common/types';
+import { AlertType } from '../../../common/types';
 
 type Props = {
   points: Point[];

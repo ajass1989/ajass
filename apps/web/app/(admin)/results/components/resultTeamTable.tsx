@@ -1,14 +1,15 @@
 'use client';
-import { Table, TableColumnsType } from 'antd';
+import { Button, Flex, Table, TableColumnsType } from 'antd';
 import { useState } from 'react';
 import {
   getRowStyleByPoint,
   renderResult,
   renderTime,
   summaryWithoutSpecial,
-} from '../../common/racerUtil';
-import { CategoryType, GenderType, SpecialType } from '../../common/types';
+} from '../../../common/racerUtil';
+import { CategoryType, GenderType, SpecialType } from '../../../common/types';
 import { RacerWithSummaryPoint, TeamWithPoint } from '../actions/actions';
+import Link from 'next/link';
 
 type Props = {
   teams: TeamWithPoint[];
@@ -25,7 +26,6 @@ interface TeamDataType {
 
 interface RacerDataType {
   key: React.Key;
-  // id: string;
   summary: string;
   name: string;
   kana: string;
@@ -149,13 +149,22 @@ export function ResultTeamTable(props: Props) {
   }));
 
   return (
-    <Table
-      columns={columns}
-      expandable={{ expandedRowRender, defaultExpandAllRows: true }}
-      dataSource={data}
-      pagination={false}
-      bordered={true}
-      rowHoverable={false}
-    />
+    <>
+      <Flex>
+        <Button type="primary" style={{ marginBottom: 16 }}>
+          <Link href="/report" target="_blank">
+            帳票出力
+          </Link>
+        </Button>
+      </Flex>
+      <Table
+        columns={columns}
+        expandable={{ expandedRowRender, defaultExpandAllRows: true }}
+        dataSource={data}
+        pagination={false}
+        bordered={true}
+        rowHoverable={false}
+      />
+    </>
   );
 }

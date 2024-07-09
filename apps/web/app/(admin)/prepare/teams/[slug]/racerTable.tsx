@@ -12,7 +12,7 @@ import {
 } from 'antd';
 import { addRacer, deleteRacer, updateRacer, updateSeed } from './actions';
 import { RacerType } from './editTeamForm';
-import { ActionResult } from '../../../common/actionResult';
+import { ActionResult } from '../../../../common/actionResult';
 import { RacerRequestDto } from '../racerRequestDto';
 import {
   DeleteOutlined,
@@ -33,13 +33,13 @@ import { DndContext, DragEndEvent } from '@dnd-kit/core';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { SyntheticListenerMap } from '@dnd-kit/core/dist/hooks/utilities';
 import { Rule } from 'antd/es/form';
-import { getRowStyle } from '../../../common/racerUtil';
+import { getRowStyle } from '../../../../common/racerUtil';
 import {
   AlertType,
   CategoryType,
   GenderType,
   SpecialType,
-} from '../../../common/types';
+} from '../../../../common/types';
 
 type Props = {
   title: string;

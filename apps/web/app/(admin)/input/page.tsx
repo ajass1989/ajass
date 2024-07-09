@@ -1,6 +1,5 @@
 import { Breadcrumb } from 'antd';
 import { ResultEditTable } from './resultEditTable';
-// import { listRacers } from './actions';
 import { listTeams } from '../prepare/teams/actions';
 import { listRacers } from '../results/actions/actions';
 

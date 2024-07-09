@@ -8,8 +8,8 @@ import {
   renderResult,
   renderTime,
   summary,
-} from '../../common/racerUtil';
-import { CategoryType, GenderType, SpecialType } from '../../common/types';
+} from '../../../common/racerUtil';
+import { CategoryType, GenderType, SpecialType } from '../../../common/types';
 
 type Props = {
   teams: Team[];
