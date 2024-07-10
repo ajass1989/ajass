@@ -30,6 +30,10 @@ export const renderResult = (status: string | null, time: number | null) => {
   return status || renderTime(time);
 };
 
+// export const renderSpecial = (special: string) => {
+
+// }
+
 /**
  *
  * @param formatTime 6桁の数字

@@ -1,63 +1,19 @@
-import { getEvent } from '../(admin)/prepare/events/actions';
 import {
   listRacersWithSummaryPoint,
   listTeamsWithPoint,
-} from '../(admin)/results/actions/actions';
+} from '../../(admin)/results/actions/actions';
 import TeamView from './teamView';
-import './report.css';
+import '../report.css';
+import ReportHeader from '../components/reportHeader';
 
 export default async function ReportPage() {
-  const event = await getEvent();
   const teams = await listTeamsWithPoint();
   const racers = await listRacersWithSummaryPoint();
 
   return (
     <div className="reportContainer">
-      <h2>{event.name}</h2>
-      <table>
-        <tbody>
-          <tr>
-            <th scope="row" style={{ textAlign: 'left' }}>
-              日程
-            </th>
-            <td>
-              {event.date.getFullYear()}年{event.date.getMonth()}月
-              {event.date.getDate()}日（{event.date.getDate()}）
-            </td>
-          </tr>
-          <tr>
-            <th scope="row" style={{ textAlign: 'left' }}>
-              場所
-            </th>
-            <td> {event.location}</td>
-          </tr>
-          <tr>
-            <th scope="row" style={{ textAlign: 'left' }}>
-              種目
-            </th>
-            <td>{event.race}</td>
-          </tr>
-          <tr>
-            <th scope="row" style={{ textAlign: 'left' }}>
-              ポールセッター
-            </th>
-            <td>{event.setter}</td>
-          </tr>
-          <tr>
-            <th scope="row" style={{ textAlign: 'left' }}>
-              幹事会社
-            </th>
-            <td> {event.management}</td>
-          </tr>
-          <tr>
-            <th scope="row" style={{ textAlign: 'left' }}>
-              主催
-            </th>
-            <td>全国設計事務所スキー会</td>
-          </tr>
-        </tbody>
-      </table>
-      <h2>団体総合順位</h2>
+      <ReportHeader />
+      <h2>団体</h2>
       <table
         style={{
           width: '100%',

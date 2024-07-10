@@ -77,6 +77,7 @@ export async function listTeamsWithPoint(): Promise<TeamWithPoint[]> {
  * 種目別にまとめるためのrowSpanを追加
  */
 export type RacerWithSummaryPoint = Racer & {
+  team: { fullname: string | null };
   summaryPoint: number;
   pointGetter: boolean;
   rowSpanSummary: number;
@@ -88,6 +89,9 @@ async function listRacersByTeam(
   const racers = await prisma.racer.findMany({
     where: {
       teamId,
+    },
+    include: {
+      team: { select: { fullname: true } },
     },
   });
   // 種目ごとの人数をカウント
@@ -146,6 +150,7 @@ async function listRacersByTeam(
       }
       return {
         ...racer,
+        team: { fullname: racer.team?.fullname ?? '' },
         summaryPoint: aggregatePoint(racers, racer.gender, racer.category),
         pointGetter: pointGetter,
       };

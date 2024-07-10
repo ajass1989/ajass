@@ -1,14 +1,14 @@
 import {
   RacerWithSummaryPoint,
   TeamWithPoint,
-} from '../(admin)/results/actions/actions';
+} from '../../(admin)/results/actions/actions';
 import {
   renderResult,
   renderTime,
   summaryWithoutSpecial,
-} from '../common/racerUtil';
-import { CategoryType, GenderType } from '../common/types';
-import './report.css';
+} from '../../common/racerUtil';
+import { CategoryType, GenderType } from '../../common/types';
+import '../report.css';
 
 type Props = {
   teamOrder: number;
@@ -84,7 +84,7 @@ export default async function TeamView(props: Props) {
     if (racer.pointGetter) {
       return className;
     }
-    return `${className} notPointGetter`;
+    return `${className} disabled`;
   };
 
   return (

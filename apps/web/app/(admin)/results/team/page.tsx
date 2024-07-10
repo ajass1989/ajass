@@ -1,9 +1,10 @@
-import { Breadcrumb } from 'antd';
+import { Breadcrumb, Button, Flex } from 'antd';
 import { ResultTeamTable } from '../components/resultTeamTable';
 import {
   listRacersWithSummaryPoint,
   listTeamsWithPoint,
 } from '../actions/actions';
+import Link from 'next/link';
 
 export default async function ResultsTeamPage() {
   const teams = await listTeamsWithPoint();
@@ -21,6 +22,13 @@ export default async function ResultsTeamPage() {
         ]}
       />
       <h1>団体総合順位</h1>
+      <Flex>
+        <Button type="primary" style={{ marginBottom: 16 }}>
+          <Link href="/report/team" target="_blank">
+            帳票出力
+          </Link>
+        </Button>
+      </Flex>
       <ResultTeamTable teams={teams} racers={racers} />
     </>
   );
