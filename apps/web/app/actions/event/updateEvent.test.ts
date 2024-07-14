@@ -1,40 +1,15 @@
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
-import { UpdateEventRequestDto, getEvent, updateEvent } from './actions';
+import { UpdateEventRequestDto, updateEvent } from './updateEvent';
 import { prisma } from '@repo/database';
+import { generateTestData } from '../generateTestData';
 
 describe.concurrent('actions', () => {
   beforeEach(async () => {
-    await prisma.event.upsert({
-      where: { id: '2023' },
-      update: {},
-      create: {
-        id: '2023',
-        name: '大会1',
-        date: new Date('2023-02-05'),
-        location: '軽井沢プリンスホテルスキー場 パラレルコース',
-        race: '大回転（2本:ベストタイム）',
-        setter: 'セッター太郎',
-        management: '幹事会社A, 幹事会社B',
-      },
-    });
+    await generateTestData(prisma);
   });
 
   afterEach(() => {
     prisma.$disconnect();
-  });
-
-  describe.sequential('getEvent', () => {
-    test.sequential('正常系', async () => {
-      const event = await getEvent();
-      expect(event.name).toBe('大会1');
-      expect(event.date.toDateString()).toBe('Sun Feb 05 2023');
-      expect(event.location).toBe(
-        '軽井沢プリンスホテルスキー場 パラレルコース',
-      );
-      expect(event.race).toBe('大回転（2本:ベストタイム）');
-      expect(event.setter).toBe('セッター太郎');
-      expect(event.management).toBe('幹事会社A, 幹事会社B');
-    });
   });
 
   describe.sequential('updateEvent', () => {

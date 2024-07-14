@@ -1,7 +1,5 @@
-import {
-  RacerWithSummaryPoint,
-  TeamWithPoint,
-} from '../../(admin)/results/actions/actions';
+import { RacerWithSummaryPoint } from '../../actions/racer/listRacersWithSummaryPoint';
+import { TeamWithPoint } from '../../actions/team/listTeamsWithPoint';
 import {
   renderResult,
   renderTime,

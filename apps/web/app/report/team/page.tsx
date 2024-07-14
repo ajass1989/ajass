@@ -1,10 +1,8 @@
-import {
-  listRacersWithSummaryPoint,
-  listTeamsWithPoint,
-} from '../../(admin)/results/actions/actions';
 import TeamView from './teamView';
 import '../report.css';
 import ReportEventSummary from '../components/reportEventSummary';
+import { listTeamsWithPoint } from '../../actions/team/listTeamsWithPoint';
+import { listRacersWithSummaryPoint } from '../../actions/racer/listRacersWithSummaryPoint';
 
 export default async function ReportPage() {
   const teams = await listTeamsWithPoint();

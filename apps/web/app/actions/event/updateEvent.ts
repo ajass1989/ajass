@@ -1,13 +1,7 @@
 'use server';
 import { Prisma, prisma } from '@repo/database';
-import { ActionResult } from '../../../common/actionResult';
+import { ActionResult } from '../../common/actionResult';
 import { Event } from '@repo/database';
-
-export async function getEvent(): Promise<Event> {
-  return await prisma.event.findFirstOrThrow({
-    where: {},
-  });
-}
 
 export type UpdateEventRequestDto = {
   name: string;

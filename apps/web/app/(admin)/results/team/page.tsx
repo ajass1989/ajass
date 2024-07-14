@@ -1,10 +1,8 @@
 import { Breadcrumb, Button, Flex } from 'antd';
 import { ResultTeamTable } from '../components/resultTeamTable';
-import {
-  listRacersWithSummaryPoint,
-  listTeamsWithPoint,
-} from '../actions/actions';
+import { listRacersWithSummaryPoint } from '../../../actions/racer/listRacersWithSummaryPoint';
 import Link from 'next/link';
+import { listTeamsWithPoint } from '../../../actions/team/listTeamsWithPoint';
 
 export default async function ResultsTeamPage() {
   const teams = await listTeamsWithPoint();

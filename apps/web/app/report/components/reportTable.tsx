@@ -1,4 +1,4 @@
-import { RacerWithTeam } from '../../(admin)/results/actions/actions';
+import { RacerWithTeam } from '../../actions/racer/listRacers';
 import {
   renderResult,
   renderTime,

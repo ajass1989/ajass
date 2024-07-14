@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
-import { getPoints, updatePoint } from './actions';
+import { updatePoint } from './updatePoint';
 import { prisma } from '@repo/database';
 
 describe('actions', () => {
@@ -31,13 +31,6 @@ describe('actions', () => {
 
   afterEach(() => {
     prisma.$disconnect();
-  });
-
-  describe('getPoints', () => {
-    test('正常系', async () => {
-      const points = await getPoints();
-      expect(points.length).toBe(2);
-    });
   });
 
   describe('updatePoint', () => {

@@ -1,5 +1,5 @@
+import { getTeamWithRacers } from '../../../../actions/team/getTeamWithRacers';
 import { EditTeamForm } from './editTeamForm';
-import { getTeamWithRacers } from './actions';
 
 // export const dynamic = 'force-dynamic'; // 動的レンダリングを強制
 

@@ -16,12 +16,6 @@ import { useState } from 'react';
 import { EditOutlined, WarningFilled } from '@ant-design/icons';
 import { Racer, Team } from '@repo/database';
 import {
-  UpdateBibRequestDto,
-  updateBibs,
-  updatePoints,
-  updateResult,
-} from './actions';
-import {
   AlertType,
   CategoryType,
   GenderType,
@@ -40,12 +34,17 @@ import {
   summary,
 } from '../../common/racerUtil';
 import { ActionResult } from '../../common/actionResult';
+import { updateBibs } from '../../actions/racer/updateBibs';
+import { UpdateBibRequestDto } from '../../actions/racer/updateBib';
+import { updatePoints } from '../../actions/racer/updatePoints';
+import { updateResult } from '../../actions/racer/updateResult';
+import { RacerWithTeam } from '../../actions/racer/listRacers';
 
 dayjs.extend(duration);
 
 type Props = {
   teams: Team[];
-  racers: Racer[];
+  racers: RacerWithTeam[];
 };
 
 const EditableContext = React.createContext<FormInstance<DataType> | null>(
@@ -269,6 +268,7 @@ interface DataType {
   gender: string; // f, m
   seed: number;
   teamId: string | null;
+  team: { fullname: string };
   result1: string;
   result2: string;
   special: string;
@@ -283,7 +283,7 @@ export function ResultEditTable(props: Props) {
   const [alertType, setAlertType] = useState<AlertType>('error');
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
-  const [dataSource, setDataSource] = useState<Racer[]>(props.racers);
+  const [dataSource, setDataSource] = useState<RacerWithTeam[]>(props.racers);
 
   // ソート順を定義
   const sortOrderSummary: { [key in DataType['summary']]: number } = {
@@ -296,7 +296,7 @@ export function ResultEditTable(props: Props) {
   };
 
   const data: DataType[] = dataSource
-    .map((racer: Racer) => {
+    .map((racer: RacerWithTeam) => {
       return {
         key: racer.id,
         id: racer.id,
@@ -307,6 +307,7 @@ export function ResultEditTable(props: Props) {
         gender: racer.gender,
         seed: racer.seed,
         teamId: racer.teamId,
+        team: { fullname: racer.team.fullname ?? '' },
         result1: renderResult(racer.status1, racer.time1),
         result2: renderResult(racer.status2, racer.time2),
         special: racer.special,
@@ -415,12 +416,7 @@ export function ResultEditTable(props: Props) {
     {
       title: '所属',
       dataIndex: 'team',
-      render: (_: DataType, record) => (
-        <span>
-          {props.teams.find((item: Team) => item.id == record.teamId)
-            ?.fullname ?? ''}
-        </span>
-      ),
+      render: (_: DataType, record) => <span>{record.team.fullname}</span>,
       responsive: ['lg'],
       width: 128,
     },
@@ -575,7 +571,7 @@ export function ResultEditTable(props: Props) {
     });
     const result = await updateBibs(params);
     if (result.success) {
-      const newDataSource: Racer[] = dataSource.map((data) => {
+      const newDataSource: RacerWithTeam[] = dataSource.map((data) => {
         data.bib = result.result!.find((item) => item.id == data.id)!.bib;
         return data;
       });
@@ -592,7 +588,7 @@ export function ResultEditTable(props: Props) {
   const handleUpdatePoints: PopconfirmProps['onConfirm'] = async () => {
     const result = await updatePoints();
     if (result.success) {
-      const newDataSource: Racer[] = dataSource.map((data) => {
+      const newDataSource: RacerWithTeam[] = dataSource.map((data) => {
         data.point = result.result!.find((item) => item.id == data.id)!.point;
         return data;
       });

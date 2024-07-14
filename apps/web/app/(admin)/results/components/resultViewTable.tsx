@@ -1,6 +1,4 @@
 'use client';
-// import { React } from 'react';
-import { Racer, Team } from '@prisma/client';
 import { Table, TableColumnsType } from 'antd';
 import { useState } from 'react';
 import {
@@ -10,10 +8,10 @@ import {
   summary,
 } from '../../../common/racerUtil';
 import { CategoryType, GenderType, SpecialType } from '../../../common/types';
+import { RacerWithTeam } from '../../../actions/racer/listRacers';
 
 type Props = {
-  teams: Team[];
-  racers: Racer[];
+  racers: RacerWithTeam[];
   showPoint?: boolean;
   showAge?: boolean;
   showTotalOrder?: boolean;
@@ -30,6 +28,7 @@ interface DataType {
   gender: string; // f, m
   seed: number;
   teamId: string;
+  team: { fullname: string };
   result1: string;
   result2: string;
   special: string;
@@ -40,13 +39,12 @@ interface DataType {
 }
 
 export function ResultViewTable({
-  teams,
   racers,
   showPoint = true,
   showAge = false,
   showTotalOrder = false,
 }: Props) {
-  const [dataSource] = useState<Racer[]>(racers);
+  const [dataSource] = useState<RacerWithTeam[]>(racers);
   const data: DataType[] = dataSource.map((racer, index) => ({
     key: racer.id,
     id: racer.id,
@@ -57,6 +55,7 @@ export function ResultViewTable({
     gender: racer.gender,
     seed: racer.seed,
     teamId: racer.teamId ?? '',
+    team: { fullname: racer.team.fullname ?? '' },
     result1: renderResult(racer.status1, racer.time1),
     result2: renderResult(racer.status2, racer.time2),
     special: racer.special,
@@ -109,12 +108,7 @@ export function ResultViewTable({
       title: '所属',
       dataIndex: 'team',
       render: (_: DataType, record: DataType) => {
-        return (
-          <span>
-            {teams.find((item: Team) => item.id == record.teamId)?.fullname ??
-              ''}
-          </span>
-        );
+        return <span>{record.team.fullname}</span>;
       },
       key: 'team',
       responsive: ['lg'],

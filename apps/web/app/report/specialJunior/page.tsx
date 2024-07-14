@@ -1,4 +1,4 @@
-import { listRacers } from '../../(admin)/results/actions/actions';
+import { listRacers } from '../../actions/racer/listRacers';
 import ReportEventSummary from '../components/reportEventSummary';
 import ReportTable from '../components/reportTable';
 

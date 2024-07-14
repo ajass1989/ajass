@@ -3,7 +3,7 @@ import { EditOutlined } from '@ant-design/icons';
 import { Alert, Button, Form, FormInstance, InputNumber, Table } from 'antd';
 import React, { useEffect, useRef } from 'react';
 import { useContext, useState } from 'react';
-import { updatePoint } from './actions';
+import { updatePoint } from '../../../actions/point/updatePoint';
 import { Point } from '@repo/database';
 import { AlertType } from '../../../common/types';
 

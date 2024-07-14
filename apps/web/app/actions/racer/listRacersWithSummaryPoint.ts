@@ -1,48 +1,4 @@
-import { Racer, Team, prisma } from '@repo/database';
-
-type ListRacersRequestDto = {
-  gender?: 'f' | 'm';
-  category?: 'ski' | 'snowboard';
-  special?: 'normal' | 'junior' | 'senior';
-};
-
-/**
- * 競技者データ型
- * 種目別ポイントを追加
- * ポイントゲッターかどうかを追加
- * 種目別にまとめるためのrowSpanを追加
- */
-export type RacerWithTeam = Racer & {
-  team: { fullname: string };
-};
-
-export async function listRacers(
-  dto: ListRacersRequestDto,
-): Promise<RacerWithTeam[]> {
-  const racers = await prisma.racer.findMany({
-    where: {
-      // eventId: '2023',
-      ...dto,
-    },
-    include: {
-      team: { select: { fullname: true } },
-    },
-    orderBy: [
-      {
-        bestTime: { sort: 'asc', nulls: 'last' },
-      },
-      {
-        bib: 'desc', // タイムが同じ場合、bibの昇順
-      },
-    ],
-  });
-  return racers.map((racer) => {
-    return {
-      ...racer,
-      team: { fullname: racer.team?.fullname ?? '' },
-    };
-  });
-}
+import { Racer, prisma } from '@repo/database';
 
 /**
  * 性別と競技で集計
@@ -63,33 +19,6 @@ const aggregatePoint = (racers: Racer[], gender: string, category: string) => {
     .slice(0, limit)
     .reduce((acc, racer) => acc + racer.point, 0);
 };
-
-const aggregateSpecialPoint = (racers: Racer[]) => {
-  return racers.reduce((acc, racer) => acc + racer.specialPoint, 0);
-};
-
-export type TeamWithPoint = Team & { point: number };
-
-export async function listTeamsWithPoint(): Promise<TeamWithPoint[]> {
-  const teams = await prisma.team.findMany({
-    include: {
-      racers: true,
-    },
-  });
-  return teams
-    .map((team) => {
-      return {
-        ...team,
-        point:
-          aggregatePoint(team.racers, 'm', 'ski') +
-          aggregatePoint(team.racers, 'f', 'ski') +
-          aggregatePoint(team.racers, 'm', 'snowboard') +
-          aggregatePoint(team.racers, 'f', 'snowboard') +
-          aggregateSpecialPoint(team.racers),
-      };
-    })
-    .sort((a, b) => b.point - a.point);
-}
 
 /**
  * 競技者データ型

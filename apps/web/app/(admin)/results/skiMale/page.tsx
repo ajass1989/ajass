@@ -1,8 +1,8 @@
 import { Breadcrumb, Button, Flex } from 'antd';
 import { ResultViewTable } from '../components/resultViewTable';
-import { listTeams } from '../../prepare/teams/actions';
-import { listRacers } from '../actions/actions';
 import Link from 'next/link';
+import { listTeams } from '../../../actions/team/listTeams';
+import { listRacers } from '../../../actions/racer/listRacers';
 
 export default async function ResultsSkiMalePage() {
   const teams = await listTeams();

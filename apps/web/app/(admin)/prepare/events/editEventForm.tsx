@@ -8,7 +8,10 @@ import {
   FormProps,
   Input,
 } from 'antd';
-import { UpdateEventRequestDto, updateEvent } from './actions';
+import {
+  UpdateEventRequestDto,
+  updateEvent,
+} from '../../../actions/event/updateEvent';
 import { useState } from 'react';
 import { AlertType } from '../../../common/types';
 import { Event } from '@repo/database';

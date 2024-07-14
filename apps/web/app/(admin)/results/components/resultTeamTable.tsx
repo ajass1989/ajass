@@ -8,7 +8,8 @@ import {
   summaryWithoutSpecial,
 } from '../../../common/racerUtil';
 import { CategoryType, GenderType, SpecialType } from '../../../common/types';
-import { RacerWithSummaryPoint, TeamWithPoint } from '../actions/actions';
+import { RacerWithSummaryPoint } from '../../../actions/racer/listRacersWithSummaryPoint';
+import { TeamWithPoint } from '../../../actions/team/listTeamsWithPoint';
 
 type Props = {
   teams: TeamWithPoint[];

@@ -1,11 +1,9 @@
 import { Breadcrumb, Button, Flex } from 'antd';
 import { ResultViewTable } from '../components/resultViewTable';
-import { listTeams } from '../../input/actions';
-import { listRacers } from '../actions/actions';
 import Link from 'next/link';
+import { listRacers } from '../../../actions/racer/listRacers';
 
 export default async function ResultsTotalPage() {
-  const teams = await listTeams();
   const racers = await listRacers({});
   return (
     <>
@@ -28,7 +26,6 @@ export default async function ResultsTotalPage() {
         </Button>
       </Flex>
       <ResultViewTable
-        teams={teams}
         racers={racers}
         showPoint={false}
         showTotalOrder={true}

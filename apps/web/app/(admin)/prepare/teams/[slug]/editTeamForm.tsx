@@ -8,11 +8,11 @@ import {
   Input,
   InputNumber,
 } from 'antd';
-import { updateTeam } from './actions';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { RacerTable } from './racerTable';
 import { Racer, Team } from '@repo/database';
+import { updateTeam } from '../../../../actions/team/updateTeam';
 
 type Props = {
   team: Team & {

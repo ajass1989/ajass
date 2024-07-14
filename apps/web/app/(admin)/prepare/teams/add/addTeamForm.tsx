@@ -8,7 +8,7 @@ import {
   Input,
   InputNumber,
 } from 'antd';
-import { addTeam } from './actions';
+import { addTeam } from '../../../../actions/team/addTeam';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { TeamRequestDto } from '../teamRequestDto';

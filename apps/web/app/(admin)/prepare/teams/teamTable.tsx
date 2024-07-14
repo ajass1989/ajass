@@ -11,12 +11,14 @@ import {
   TableProps,
 } from 'antd';
 import Link from 'next/link';
-import { TeamWithRacers, deleteTeam, updateTeamOrder } from './actions';
+import { updateTeamOrder } from '../../../actions/team/updateTeamOrder';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { Team } from '@repo/database';
 import { AlertType } from '../../../common/types';
 import { useRouter } from 'next/navigation';
+import { TeamWithRacers } from '../../../actions/team/listTeamsWithRacers';
+import { deleteTeam } from '../../../actions/team/deleteTeam';
 
 type Props = {
   teams: TeamWithRacers[];

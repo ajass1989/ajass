@@ -1,10 +1,6 @@
 'use server';
 import { Point, Prisma, prisma } from '@repo/database';
-import { ActionResult } from '../../../common/actionResult';
-
-export async function getPoints(): Promise<Point[]> {
-  return await prisma.point.findMany();
-}
+import { ActionResult } from '../../common/actionResult';
 
 export type UpdatePointParams = {
   pointSkiMale?: number;

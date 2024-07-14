@@ -1,7 +1,7 @@
 import { Breadcrumb } from 'antd';
 import { ResultEditTable } from './resultEditTable';
-import { listTeams } from '../prepare/teams/actions';
-import { listRacers } from '../results/actions/actions';
+import { listRacers } from '../../actions/racer/listRacers';
+import { listTeams } from '../../actions/team/listTeams';
 
 export default async function InputPage() {
   const teams = await listTeams();

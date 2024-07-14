@@ -1,7 +1,7 @@
 'use server';
 import { Prisma, Team, prisma } from '@repo/database';
-import { ActionResult } from '../../../../common/actionResult';
-import { TeamRequestDto } from '../teamRequestDto';
+import { ActionResult } from '../../common/actionResult';
+import { TeamRequestDto } from '../../(admin)/prepare/teams/teamRequestDto';
 
 export async function addTeam(
   dto: TeamRequestDto,

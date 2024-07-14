@@ -1,4 +1,4 @@
-import { getEvent } from '../../(admin)/prepare/events/actions';
+import { getEvent } from '../../actions/event/getEvent';
 
 export default async function ReportEventSummary() {
   const event = await getEvent();
