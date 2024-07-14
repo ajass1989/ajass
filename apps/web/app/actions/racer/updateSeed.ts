@@ -4,7 +4,6 @@ import { ActionResult } from '../../common/actionResult';
 
 /**
  * シードの入れ替え
- *
  * @param activeId 移動対象のRacerId
  * @param overId 移動先のRacerId
  */

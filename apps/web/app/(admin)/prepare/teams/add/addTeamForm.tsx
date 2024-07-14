@@ -11,7 +11,7 @@ import {
 import { addTeam } from '../../../../actions/team/addTeam';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { TeamRequestDto } from '../teamRequestDto';
+import { TeamRequestDto } from '../../../../actions/team/teamRequestDto';
 
 type FieldType = {
   key: string;

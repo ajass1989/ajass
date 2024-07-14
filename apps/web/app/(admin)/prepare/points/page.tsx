@@ -1,7 +1,7 @@
-import { getPoints } from '../../../actions/point/getPoints';
+import { listPoints } from '../../../actions/point/getPoints';
 import { PointTabs } from './pointTabs';
 
 export default async function PreparePointsPage() {
-  const points = await getPoints();
+  const points = await listPoints();
   return <PointTabs points={points} />;
 }

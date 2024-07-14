@@ -2,23 +2,32 @@
 import { Point, Prisma, prisma } from '@repo/database';
 import { ActionResult } from '../../common/actionResult';
 
-export type UpdatePointParams = {
+/**
+ * ポイント更新パラメータ
+ */
+export type UpdatePointRequestDto = {
   pointSkiMale?: number;
   pointSkiFemale?: number;
   pointSnowboardMale?: number;
   pointSnowboardFemale?: number;
 };
 
+/**
+ * ポイントの更新
+ * @param id ポイントID
+ * @param dto 更新するポイント情報
+ * @returns 更新後のポイント情報
+ */
 export async function updatePoint(
   id: number,
-  params: UpdatePointParams,
+  dto: UpdatePointRequestDto,
 ): Promise<ActionResult<Point>> {
   try {
     const newValue = await prisma.point.update({
       where: { id },
-      data: { ...params },
+      data: { ...dto },
     });
-    const dto: Point = {
+    const result: Point = {
       id: newValue.id,
       pointSkiMale: newValue.pointSkiMale,
       pointSkiFemale: newValue.pointSkiFemale,
@@ -29,7 +38,7 @@ export async function updatePoint(
     };
     return {
       success: true,
-      result: dto,
+      result: result,
     };
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {

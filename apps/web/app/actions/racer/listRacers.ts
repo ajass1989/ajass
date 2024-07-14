@@ -1,7 +1,10 @@
 'use server';
 import { Racer, prisma } from '@repo/database';
 
-type ListRacersRequestDto = {
+/**
+ * 競技者一覧取得リクエストDTO
+ */
+export type ListRacersRequestDto = {
   gender?: 'f' | 'm';
   category?: 'ski' | 'snowboard';
   special?: 'normal' | 'junior' | 'senior';
@@ -17,6 +20,11 @@ export type RacerWithTeam = Racer & {
   team: { fullname: string };
 };
 
+/**
+ * 競技者一覧取得
+ * @param dto
+ * @returns
+ */
 export async function listRacers(
   dto: ListRacersRequestDto,
 ): Promise<RacerWithTeam[]> {

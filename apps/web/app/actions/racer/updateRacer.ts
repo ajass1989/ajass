@@ -1,11 +1,23 @@
 'use server';
 import { Prisma, Racer, prisma } from '@repo/database';
-import { RacerRequestDto } from '../../(admin)/prepare/teams/racerRequestDto';
 import { ActionResult } from '../../common/actionResult';
+
+export type UpdateRacerRequestDto = {
+  name: string;
+  kana: string;
+  category: string;
+  bib?: number;
+  gender: string;
+  seed: number;
+  teamId: string | null;
+  isFirstTime: boolean;
+  age: number | null;
+  special: string;
+};
 
 export async function updateRacer(
   id: string,
-  dto: RacerRequestDto,
+  dto: UpdateRacerRequestDto,
 ): Promise<ActionResult<Racer>> {
   try {
     const data: Prisma.RacerUncheckedUpdateInput = { ...dto };

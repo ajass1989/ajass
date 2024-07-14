@@ -2,6 +2,13 @@
 import { Prisma, prisma } from '@repo/database';
 import { ActionResult } from '../../common/actionResult';
 
+/**
+ * 滑走順の更新
+ * @param id 更新対象のチームID
+ * @param orderFemale 滑走順（女子）
+ * @param orderMale 滑走順（男子）
+ * @returns
+ */
 export async function updateTeamOrder(
   id: string,
   orderFemale: number,
@@ -9,10 +16,10 @@ export async function updateTeamOrder(
 ): Promise<ActionResult<void>> {
   try {
     await prisma.team.update({
-      where: { id: id },
+      where: { id },
       data: {
-        orderFemale: orderFemale,
-        orderMale: orderMale,
+        orderFemale,
+        orderMale,
       },
     });
 

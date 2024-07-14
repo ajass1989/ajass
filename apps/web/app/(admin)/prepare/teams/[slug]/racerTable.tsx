@@ -13,7 +13,6 @@ import {
 import { updateSeed } from '../../../../actions/racer/updateSeed';
 import { RacerType } from './editTeamForm';
 import { ActionResult } from '../../../../common/actionResult';
-import { RacerRequestDto } from '../racerRequestDto';
 import {
   DeleteOutlined,
   EditOutlined,
@@ -42,7 +41,10 @@ import {
 } from '../../../../common/types';
 import { deleteRacer } from '../../../../actions/racer/deleteRacer';
 import { addRacer } from '../../../../actions/racer/addRacer';
-import { updateRacer } from '../../../../actions/racer/updateRacer';
+import {
+  UpdateRacerRequestDto,
+  updateRacer,
+} from '../../../../actions/racer/updateRacer';
 
 type Props = {
   title: string;
@@ -303,7 +305,7 @@ export function RacerTable(props: Props) {
         special: props.special,
       });
     } else {
-      const dto: RacerRequestDto = {
+      const dto: UpdateRacerRequestDto = {
         name: row.name,
         kana: row.kana,
         category: category,

@@ -3,6 +3,9 @@ import { Prisma, Racer, prisma } from '@repo/database';
 import { ActionResult } from '../../common/actionResult';
 import { StatusType } from '../../common/types';
 
+/**
+ * 結果の更新リクエストDTO
+ */
 export type UpdateResultRequestDto = {
   status1?: StatusType;
   status2?: StatusType;
@@ -10,6 +13,12 @@ export type UpdateResultRequestDto = {
   time2?: number | null;
 };
 
+/**
+ * 結果の更新
+ * @param id 競技者ID
+ * @param dto 更新する結果情報
+ * @returns 更新後の全選手情報
+ */
 export async function updateResult(
   id: string,
   dto: UpdateResultRequestDto,
@@ -154,6 +163,11 @@ export async function updateResult(
   }
 }
 
+/**
+ * 一本目と二本目のタイムからベストタイムを取得
+ * @param racer 対象の選手
+ * @returns ベストタイム
+ */
 function getBestTime(racer: Racer): number | null {
   if (
     racer.status1 == null &&

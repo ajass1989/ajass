@@ -1,3 +1,6 @@
+/**
+ * チームの追加、更新リクエストDTO
+ */
 export type TeamRequestDto = {
   fullname: string;
   shortname: string;

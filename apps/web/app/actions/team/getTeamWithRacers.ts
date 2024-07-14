@@ -1,10 +1,16 @@
 'use server';
 import { Prisma, Racer, Team, prisma } from '@repo/database';
 import { ActionResult } from '../../common/actionResult';
+import { TeamWithRacers } from './listTeamsWithRacers';
 
+/**
+ * チーム情報の取得（チームに所属する選手情報も取得）
+ * @param id チームID
+ * @returns チーム情報と所属する選手情報
+ */
 export async function getTeamWithRacers(
   id: string,
-): Promise<ActionResult<Team & { racers: Racer[] }>> {
+): Promise<ActionResult<TeamWithRacers>> {
   try {
     const team = await prisma.team.findFirstOrThrow({
       where: { id: id },

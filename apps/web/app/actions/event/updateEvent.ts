@@ -3,6 +3,9 @@ import { Prisma, prisma } from '@repo/database';
 import { ActionResult } from '../../common/actionResult';
 import { Event } from '@repo/database';
 
+/**
+ * イベント更新パラメータ
+ */
 export type UpdateEventRequestDto = {
   name: string;
   date: string;
@@ -12,6 +15,12 @@ export type UpdateEventRequestDto = {
   management: string;
 };
 
+/**
+ * イベント情報の更新
+ * @param id イベントID
+ * @param dto 更新するイベント情報
+ * @returns 更新後のイベント情報
+ */
 export async function updateEvent(
   id: string,
   dto: UpdateEventRequestDto,

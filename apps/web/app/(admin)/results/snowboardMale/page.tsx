@@ -1,11 +1,9 @@
 import { Breadcrumb, Button, Flex } from 'antd';
 import { ResultViewTable } from '../components/resultViewTable';
 import Link from 'next/link';
-import { listTeams } from '../../../actions/team/listTeams';
 import { listRacers } from '../../../actions/racer/listRacers';
 
 export default async function ResultsSnowboardMalePage() {
-  const teams = await listTeams();
   const racers = await listRacers({ gender: 'm', category: 'snowboard' });
   return (
     <>
@@ -27,7 +25,7 @@ export default async function ResultsSnowboardMalePage() {
           </Link>
         </Button>
       </Flex>
-      <ResultViewTable teams={teams} racers={racers} />
+      <ResultViewTable racers={racers} />
     </>
   );
 }

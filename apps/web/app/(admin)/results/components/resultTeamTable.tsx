@@ -7,7 +7,7 @@ import {
   renderTime,
   summaryWithoutSpecial,
 } from '../../../common/racerUtil';
-import { CategoryType, GenderType, SpecialType } from '../../../common/types';
+import { CategoryType, GenderType } from '../../../common/types';
 import { RacerWithSummaryPoint } from '../../../actions/racer/listRacersWithSummaryPoint';
 import { TeamWithPoint } from '../../../actions/team/listTeamsWithPoint';
 
@@ -124,7 +124,7 @@ export function ResultTeamTable(props: Props) {
             style: getRowStyleByPoint(
               record.gender as GenderType,
               record.category as CategoryType,
-              record.special as SpecialType,
+              // record.special as SpecialType,
               record.pointGetter,
             ),
           };

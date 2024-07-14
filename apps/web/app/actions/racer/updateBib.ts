@@ -3,6 +3,14 @@ import { Prisma, Racer, prisma } from '@repo/database';
 import { ActionResult } from '../../common/actionResult';
 
 /**
+ * ビブの更新リクエストDTO
+ */
+export type UpdateBibRequestDto = {
+  id: string;
+  bib: number | null;
+};
+
+/**
  * ビブの更新
  * @param dto
  * @returns
@@ -37,8 +45,3 @@ export async function updateBib(
     throw e;
   }
 }
-
-export type UpdateBibRequestDto = {
-  id: string;
-  bib: number | null;
-};

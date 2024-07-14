@@ -1,10 +1,15 @@
 'use server';
 import { Prisma, Racer, prisma } from '@repo/database';
-import { RacerRequestDto } from '../../(admin)/prepare/teams/racerRequestDto';
+import { UpdateRacerRequestDto } from './updateRacer';
 import { ActionResult } from '../../common/actionResult';
 
+/**
+ * 競技者情報の追加
+ * @param dto 競技者情報
+ * @returns 更新後の競技者情報
+ */
 export async function addRacer(
-  dto: RacerRequestDto,
+  dto: UpdateRacerRequestDto,
 ): Promise<ActionResult<Racer>> {
   try {
     const data: Prisma.RacerUncheckedCreateInput = {

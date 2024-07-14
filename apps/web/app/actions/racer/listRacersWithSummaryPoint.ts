@@ -1,26 +1,6 @@
 import { Racer, prisma } from '@repo/database';
 
 /**
- * 性別と競技で集計
- * @param racers
- * @param gender
- * @param category
- * @returns
- */
-const aggregatePoint = (racers: Racer[], gender: string, category: string) => {
-  let limit = 0;
-  if (gender === 'm' && category === 'ski') limit = 5;
-  if (gender === 'f' && category === 'ski') limit = 2;
-  if (gender === 'm' && category === 'snowboard') limit = 2;
-  if (gender === 'f' && category === 'snowboard') limit = 1;
-  return racers
-    .filter((racer) => racer.gender == gender && racer.category == category)
-    .sort((a, b) => b.point - a.point)
-    .slice(0, limit)
-    .reduce((acc, racer) => acc + racer.point, 0);
-};
-
-/**
  * 競技者データ型
  * 種目別ポイントを追加
  * ポイントゲッターかどうかを追加
@@ -32,6 +12,22 @@ export type RacerWithSummaryPoint = Racer & {
   pointGetter: boolean;
   rowSpanSummary: number;
 };
+
+/**
+ * 団体集計画面用のデータを取得
+ * @returns
+ */
+export async function listRacersWithSummaryPoint(): Promise<
+  RacerWithSummaryPoint[]
+> {
+  const teams = await prisma.team.findMany({});
+  const racers = await Promise.all(
+    teams.map(async (team) => {
+      return await listRacersByTeam(team.id);
+    }),
+  );
+  return racers.flat();
+}
 
 async function listRacersByTeam(
   teamId: string,
@@ -158,17 +154,21 @@ async function listRacersByTeam(
 }
 
 /**
- * 団体集計画面用のデータを取得
+ * 性別と競技で集計
+ * @param racers
+ * @param gender
+ * @param category
  * @returns
  */
-export async function listRacersWithSummaryPoint(): Promise<
-  RacerWithSummaryPoint[]
-> {
-  const teams = await prisma.team.findMany({});
-  const racers = await Promise.all(
-    teams.map(async (team) => {
-      return await listRacersByTeam(team.id);
-    }),
-  );
-  return racers.flat();
-}
+const aggregatePoint = (racers: Racer[], gender: string, category: string) => {
+  let limit = 0;
+  if (gender === 'm' && category === 'ski') limit = 5;
+  if (gender === 'f' && category === 'ski') limit = 2;
+  if (gender === 'm' && category === 'snowboard') limit = 2;
+  if (gender === 'f' && category === 'snowboard') limit = 1;
+  return racers
+    .filter((racer) => racer.gender == gender && racer.category == category)
+    .sort((a, b) => b.point - a.point)
+    .slice(0, limit)
+    .reduce((acc, racer) => acc + racer.point, 0);
+};

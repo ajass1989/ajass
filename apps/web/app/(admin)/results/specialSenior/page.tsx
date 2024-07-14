@@ -1,11 +1,9 @@
 import { Breadcrumb, Button, Flex } from 'antd';
 import { ResultViewTable } from '../components/resultViewTable';
 import Link from 'next/link';
-import { listTeams } from '../../../actions/team/listTeams';
 import { listRacers } from '../../../actions/racer/listRacers';
 
 export default async function ResultsSeniorPage() {
-  const teams = await listTeams();
   const racers = await listRacers({ special: 'senior' });
   return (
     <>
@@ -27,12 +25,7 @@ export default async function ResultsSeniorPage() {
           </Link>
         </Button>
       </Flex>
-      <ResultViewTable
-        teams={teams}
-        racers={racers}
-        showPoint={false}
-        showAge={true}
-      />
+      <ResultViewTable racers={racers} showPoint={false} showAge={true} />
     </>
   );
 }

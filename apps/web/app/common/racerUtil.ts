@@ -13,6 +13,11 @@ import {
 
 dayjs.extend(duration);
 
+/**
+ * タイムの描画
+ * @param time タイム
+ * @returns 描画用のタイム
+ */
 export const renderTime = (time: number | null) => {
   if (!time) {
     return '';
@@ -26,18 +31,20 @@ export const renderTime = (time: number | null) => {
   return `${minutes}:${seconds}.${milliseconds}`;
 };
 
+/**
+ * 結果の描画（タイム＋状態）
+ * @param status 状態
+ * @param time タイム
+ * @returns 描画用の結果
+ */
 export const renderResult = (status: string | null, time: number | null) => {
   return status || renderTime(time);
 };
 
-// export const renderSpecial = (special: string) => {
-
-// }
-
 /**
- *
+ * タイムのパース
  * @param formatTime 6桁の数字
- * @returns
+ * @returns タイム（ミリ秒）
  */
 export const parseTime = (formatTime?: string) => {
   if (formatTime === '') return null;
@@ -52,7 +59,13 @@ export const parseTime = (formatTime?: string) => {
   return ms;
 };
 
-// 種目のフォーマット
+/**
+ * 種目のフォーマット
+ * @param special 特別枠（シニア、ジュニア）
+ * @param gender 性別（男性、女性）
+ * @param category 競技（スキー、スノボ）
+ * @returns 描画用の種目
+ */
 export const summary = (
   special: SpecialType,
   gender: GenderType,
@@ -74,6 +87,12 @@ export const summary = (
   return summary;
 };
 
+/**
+ * 特別枠なしの種目のフォーマット
+ * @param gender 性別（男性、女性）
+ * @param category 競技（スキー、スノボ）
+ * @returns 描画用の種目
+ */
 export const summaryWithoutSpecial = (
   gender: GenderType,
   category: CategoryType,
@@ -116,7 +135,7 @@ export const getRowStyle = (
 };
 
 /**
- * 行スタイルを取得
+ * 特別枠無しの行スタイルを取得
  * @param record
  * @returns
  */
@@ -139,10 +158,17 @@ export const getRowStyleWithoutSpecial = (
   return { backgroundColor: bgColorDefault };
 };
 
+/**
+ *
+ * @param gender
+ * @param category
+ * @param special
+ * @param pointGetter
+ * @returns
+ */
 export const getRowStyleByPoint = (
   gender: GenderType,
   category: CategoryType,
-  special: SpecialType,
   pointGetter: boolean,
 ) => {
   if (!pointGetter) {

@@ -2,6 +2,11 @@
 import { Prisma, prisma } from '@repo/database';
 import { ActionResult } from '../../common/actionResult';
 
+/**
+ * チームの削除
+ * @param id チームID
+ * @returns 削除結果
+ */
 export async function deleteTeam(id: string): Promise<ActionResult<void>> {
   try {
     await prisma.team.delete({

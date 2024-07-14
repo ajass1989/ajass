@@ -20,12 +20,24 @@ const aggregatePoint = (racers: Racer[], gender: string, category: string) => {
     .reduce((acc, racer) => acc + racer.point, 0);
 };
 
+/**
+ * 特別ポイントの集計
+ * @param racers 集計対象競技者一覧
+ * @returns 特別ポイントの集計値
+ */
 const aggregateSpecialPoint = (racers: Racer[]) => {
   return racers.reduce((acc, racer) => acc + racer.specialPoint, 0);
 };
 
+/**
+ * チーム情報とポイント
+ */
 export type TeamWithPoint = Team & { point: number };
 
+/**
+ * チーム一覧とポイントの取得
+ * @returns チーム一覧とポイント
+ */
 export async function listTeamsWithPoint(): Promise<TeamWithPoint[]> {
   const teams = await prisma.team.findMany({
     include: {

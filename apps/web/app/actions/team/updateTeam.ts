@@ -1,8 +1,14 @@
 'use server';
 import { Prisma, Team, prisma } from '@repo/database';
 import { ActionResult } from '../../common/actionResult';
-import { TeamRequestDto } from '../../(admin)/prepare/teams/teamRequestDto';
+import { TeamRequestDto } from './teamRequestDto';
 
+/**
+ * チーム情報の更新
+ * @param id チームID
+ * @param dto 更新するチーム情報
+ * @returns 更新後のチーム情報
+ */
 export async function updateTeam(
   id: string,
   dto: TeamRequestDto,
