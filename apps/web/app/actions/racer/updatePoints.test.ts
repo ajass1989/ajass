@@ -5,6 +5,7 @@ import { generateTestData } from '../generateTestData';
 
 describe('actions', () => {
   beforeEach(async () => {
+    await prisma.racer.deleteMany({});
     await generateTestData(prisma);
   });
   afterEach(() => {
@@ -15,19 +16,16 @@ describe('actions', () => {
     test('正常系', async () => {
       const result = await updatePoints();
       expect(result.success).toBeTruthy();
-      expect(result.result!.length).toBe(14);
-      expect(result.result!.find((racer) => racer.id === '3')!.point).toBe(130);
-      expect(
-        result.result!.find((racer) => racer.id === '3')!.specialPoint,
-      ).toBe(20);
-      expect(result.result!.find((racer) => racer.id === '2')!.point).toBe(0);
-      expect(
-        result.result!.find((racer) => racer.id === '2')!.specialPoint,
-      ).toBe(0);
-      expect(result.result!.find((racer) => racer.id === '1')!.point).toBe(0);
-      expect(
-        result.result!.find((racer) => racer.id === '1')!.specialPoint,
-      ).toBe(15);
+      expect(result.result!.length).toBe(18);
+      const racer3 = result.result!.find((racer) => racer.id === '3');
+      expect(racer3!.point).toBe(130);
+      expect(racer3!.specialPoint).toBe(20);
+      const racer2 = result.result!.find((racer) => racer.id === '2');
+      expect(racer2!.point).toBe(0);
+      expect(racer2!.specialPoint).toBe(0);
+      const racer1 = result.result!.find((racer) => racer.id === '1');
+      expect(racer1!.point).toBe(0);
+      expect(racer1!.specialPoint).toBe(15);
     });
   });
 });

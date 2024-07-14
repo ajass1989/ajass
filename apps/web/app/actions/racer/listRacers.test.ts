@@ -14,7 +14,7 @@ describe('actions', () => {
   describe('listRacers', () => {
     test('正常系', async () => {
       const result = await listRacers({});
-      expect(result.length).toBe(14);
+      expect(result.length).toBe(18);
     });
   });
 });

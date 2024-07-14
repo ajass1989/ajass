@@ -40,20 +40,21 @@ export async function generateTestData(prisma: PrismaClient) {
       orderFemale: 2,
     },
   ];
-  await prisma.team.deleteMany({});
+  // await prisma.team.deleteMany({});
   await Promise.all(
-    TEST_TEAMS.map((team) =>
-      prisma.team.upsert({
-        where: {
-          id: team.id,
-        },
-        update: {
-          ...team,
-        },
-        create: {
-          ...team,
-        },
-      }),
+    TEST_TEAMS.map(
+      async (team) =>
+        await prisma.team.upsert({
+          where: {
+            id: team.id,
+          },
+          update: {
+            ...team,
+          },
+          create: {
+            ...team,
+          },
+        }),
     ),
   );
 
@@ -76,6 +77,7 @@ export async function generateTestData(prisma: PrismaClient) {
       time2: null,
       bestTime: null,
       point: 100,
+      specialPoint: 0,
     },
     {
       id: '2',
@@ -95,6 +97,7 @@ export async function generateTestData(prisma: PrismaClient) {
       time2: null,
       bestTime: null,
       point: 80,
+      specialPoint: 0,
     },
     {
       id: '3',
@@ -114,6 +117,7 @@ export async function generateTestData(prisma: PrismaClient) {
       time2: 123456,
       bestTime: 123456,
       point: 60,
+      specialPoint: 0,
     },
     {
       id: '11',
@@ -133,6 +137,7 @@ export async function generateTestData(prisma: PrismaClient) {
       time2: null,
       bestTime: null,
       point: 150,
+      specialPoint: 0,
     },
     {
       id: '12',
@@ -152,6 +157,7 @@ export async function generateTestData(prisma: PrismaClient) {
       time2: null,
       bestTime: null,
       point: 130,
+      specialPoint: 0,
     },
     {
       id: '13',
@@ -171,6 +177,7 @@ export async function generateTestData(prisma: PrismaClient) {
       time2: null,
       bestTime: null,
       point: 110,
+      specialPoint: 0,
     },
     {
       id: '14',
@@ -190,6 +197,7 @@ export async function generateTestData(prisma: PrismaClient) {
       time2: null,
       bestTime: null,
       point: 90,
+      specialPoint: 0,
     },
     {
       id: '15',
@@ -209,6 +217,7 @@ export async function generateTestData(prisma: PrismaClient) {
       time2: null,
       bestTime: null,
       point: 70,
+      specialPoint: 0,
     },
     {
       id: '16',
@@ -228,6 +237,7 @@ export async function generateTestData(prisma: PrismaClient) {
       time2: null,
       bestTime: null,
       point: 50,
+      specialPoint: 0,
     },
     {
       id: '21',
@@ -247,6 +257,7 @@ export async function generateTestData(prisma: PrismaClient) {
       time2: null,
       bestTime: null,
       point: 80,
+      specialPoint: 0,
     },
     {
       id: '22',
@@ -266,6 +277,7 @@ export async function generateTestData(prisma: PrismaClient) {
       time2: null,
       bestTime: null,
       point: 60,
+      specialPoint: 0,
     },
     {
       id: '31',
@@ -285,6 +297,7 @@ export async function generateTestData(prisma: PrismaClient) {
       time2: null,
       bestTime: null,
       point: 230,
+      specialPoint: 0,
     },
     {
       id: '32',
@@ -304,6 +317,7 @@ export async function generateTestData(prisma: PrismaClient) {
       time2: null,
       bestTime: null,
       point: 210,
+      specialPoint: 0,
     },
     {
       id: '33',
@@ -323,22 +337,104 @@ export async function generateTestData(prisma: PrismaClient) {
       time2: null,
       bestTime: null,
       point: 190,
+      specialPoint: 0,
+    },
+    {
+      id: '41',
+      name: 'racer41',
+      kana: 'レーサー41',
+      category: 'ski',
+      bib: 41,
+      gender: 'm',
+      seed: 41,
+      teamId: '1',
+      special: 'junior',
+      isFirstTime: true,
+      age: 10,
+      status1: null,
+      time1: null,
+      status2: null,
+      time2: null,
+      bestTime: null,
+      point: 0,
+      specialPoint: 0,
+    },
+    {
+      id: '42',
+      name: 'racer42',
+      kana: 'レーサー42',
+      category: 'snowboard',
+      bib: 42,
+      gender: 'f',
+      seed: 42,
+      teamId: '1',
+      special: 'junior',
+      isFirstTime: false,
+      age: 14,
+      status1: null,
+      time1: null,
+      status2: null,
+      time2: null,
+      bestTime: null,
+      point: 0,
+      specialPoint: 0,
+    },
+    {
+      id: '51',
+      name: 'racer51',
+      kana: 'レーサー51',
+      category: 'ski',
+      bib: 51,
+      gender: 'f',
+      seed: 51,
+      teamId: '1',
+      special: 'senior',
+      isFirstTime: true,
+      age: 65,
+      status1: null,
+      time1: null,
+      status2: null,
+      time2: null,
+      bestTime: null,
+      point: 0,
+      specialPoint: 0,
+    },
+    {
+      id: '52',
+      name: 'racer52',
+      kana: 'レーサー52',
+      category: 'snowboard',
+      bib: 52,
+      gender: 'f',
+      seed: 52,
+      teamId: '1',
+      special: 'senior',
+      isFirstTime: false,
+      age: 75,
+      status1: null,
+      time1: null,
+      status2: null,
+      time2: null,
+      bestTime: null,
+      point: 0,
+      specialPoint: 0,
     },
   ];
-  await prisma.racer.deleteMany({});
+  // await prisma.racer.deleteMany({});
   await Promise.all(
-    TEST_RACERS.map((result) =>
-      prisma.racer.upsert({
-        where: {
-          id: result.id,
-        },
-        update: {
-          ...result,
-        },
-        create: {
-          ...result,
-        },
-      }),
+    TEST_RACERS.map(
+      async (result) =>
+        await prisma.racer.upsert({
+          where: {
+            id: result.id,
+          },
+          update: {
+            ...result,
+          },
+          create: {
+            ...result,
+          },
+        }),
     ),
   );
 
@@ -358,20 +454,21 @@ export async function generateTestData(prisma: PrismaClient) {
       pointSnowboardFemale: 42,
     },
   ];
-  await prisma.point.deleteMany({});
+  // await prisma.point.deleteMany({});
   await Promise.all(
-    TEST_POINTS.map((result) =>
-      prisma.point.upsert({
-        where: {
-          id: result.id,
-        },
-        update: {
-          ...result,
-        },
-        create: {
-          ...result,
-        },
-      }),
+    TEST_POINTS.map(
+      async (result) =>
+        await prisma.point.upsert({
+          where: {
+            id: result.id,
+          },
+          update: {
+            ...result,
+          },
+          create: {
+            ...result,
+          },
+        }),
     ),
   );
 
@@ -386,18 +483,19 @@ export async function generateTestData(prisma: PrismaClient) {
     },
   ];
   await Promise.all(
-    TEST_SPECIAL_POINTS.map((result) =>
-      prisma.specialPoint.upsert({
-        where: {
-          id: result.id,
-        },
-        update: {
-          ...result,
-        },
-        create: {
-          ...result,
-        },
-      }),
+    TEST_SPECIAL_POINTS.map(
+      async (result) =>
+        await prisma.specialPoint.upsert({
+          where: {
+            id: result.id,
+          },
+          update: {
+            ...result,
+          },
+          create: {
+            ...result,
+          },
+        }),
     ),
   );
 }

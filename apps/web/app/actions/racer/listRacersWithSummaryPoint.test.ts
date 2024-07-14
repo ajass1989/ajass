@@ -14,12 +14,16 @@ describe('actions', () => {
 
   describe('listRacersWithSummaryPoint', () => {
     test('正常系', async () => {
-      const rowSpanSummary = [6, 0, 0, 0, 0, 0, 3, 0, 0, 3, 0, 0, 2, 0];
+      const rowSpanSummary = [
+        7, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 3, 0, 0, 4, 0, 0, 0,
+      ];
       const points = [
-        150, 130, 110, 90, 70, 50, 100, 80, 60, 230, 210, 190, 80, 60,
+        150, 130, 110, 90, 70, 50, 0, 100, 80, 60, 0, 230, 210, 190, 80, 60, 0,
+        0,
       ];
       const pointsSummary = [
-        550, 550, 550, 550, 550, 550, 180, 180, 180, 440, 440, 440, 80, 80,
+        550, 550, 550, 550, 550, 550, 550, 180, 180, 180, 180, 440, 440, 440,
+        80, 80, 80, 80,
       ];
       const genders = [
         'm',
@@ -28,12 +32,16 @@ describe('actions', () => {
         'm',
         'm',
         'm',
+        'm',
+        'f',
         'f',
         'f',
         'f',
         'm',
         'm',
         'm',
+        'f',
+        'f',
         'f',
         'f',
       ];
@@ -47,6 +55,10 @@ describe('actions', () => {
         'ski',
         'ski',
         'ski',
+        'ski',
+        'ski',
+        'snowboard',
+        'snowboard',
         'snowboard',
         'snowboard',
         'snowboard',
@@ -60,25 +72,37 @@ describe('actions', () => {
         true,
         true,
         false,
+        false,
         true,
         true,
+        false,
         false,
         true,
         true,
         false,
         true,
+        false,
+        false,
         false,
       ];
 
       const result = await listRacersWithSummaryPoint();
-      expect(result.length).toBe(14);
+      expect(result.length).toBe(18);
       Array.from({ length: result.length }).forEach((_, index) => {
-        expect(result[index].rowSpanSummary).toBe(rowSpanSummary[index]);
-        expect(result[index].point).toBe(points[index]);
-        expect(result[index].summaryPoint).toBe(pointsSummary[index]);
-        expect(result[index].gender).toBe(genders[index]);
-        expect(result[index].category).toBe(categories[index]);
-        expect(result[index].pointGetter).toBe(pointGetter[index]);
+        expect(result[index].rowSpanSummary, `index: ${index}`).toBe(
+          rowSpanSummary[index],
+        );
+        expect(result[index].point, `index: ${index}`).toBe(points[index]);
+        expect(result[index].summaryPoint, `index: ${index}`).toBe(
+          pointsSummary[index],
+        );
+        expect(result[index].gender, `index: ${index}`).toBe(genders[index]);
+        expect(result[index].category, `index: ${index}`).toBe(
+          categories[index],
+        );
+        expect(result[index].pointGetter, `index: ${index}`).toBe(
+          pointGetter[index],
+        );
       });
     });
   });

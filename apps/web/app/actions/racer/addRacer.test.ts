@@ -5,6 +5,11 @@ import { generateTestData } from '../generateTestData';
 
 describe('actions', () => {
   beforeEach(async () => {
+    await prisma.racer.deleteMany({
+      where: {
+        name: 'racer99',
+      },
+    });
     await generateTestData(prisma);
   });
 

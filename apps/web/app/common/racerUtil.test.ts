@@ -115,19 +115,19 @@ describe('summary', () => {
       category: 'snowboard',
       expected: 'ジュニア',
     },
-    { special: 'normal', gender: 'm', category: 'ski', expected: '男子スキー' },
+    { special: 'normal', gender: 'm', category: 'ski', expected: 'スキー男子' },
     {
       special: 'normal',
       gender: 'm',
       category: 'snowboard',
-      expected: '男子スノボ',
+      expected: 'スノボ男子',
     },
-    { special: 'normal', gender: 'f', category: 'ski', expected: '女子スキー' },
+    { special: 'normal', gender: 'f', category: 'ski', expected: 'スキー女子' },
     {
       special: 'normal',
       gender: 'f',
       category: 'snowboard',
-      expected: '女子スノボ',
+      expected: 'スノボ女子',
     },
   ];
 

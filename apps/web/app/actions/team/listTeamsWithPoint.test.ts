@@ -15,8 +15,10 @@ describe('actions', () => {
   describe('listTeamsWithPoint', () => {
     test('正常系', async () => {
       const result = await listTeamsWithPoint();
-      expect(result.length).toBe(2);
-      expect(result[0].point).toBe(1250);
+      const team1 = result.find((team) => team.id === '1');
+      expect(team1!.point).toBe(1250);
+      const team2 = result.find((team) => team.id === '2');
+      expect(team2!.point).toBe(0);
     });
   });
 });

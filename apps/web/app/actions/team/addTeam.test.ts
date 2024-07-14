@@ -5,10 +5,15 @@ import { generateTestData } from '../generateTestData';
 
 describe('actions', () => {
   beforeEach(async () => {
+    await prisma.team.deleteMany({
+      where: {
+        fullname: 'チーム10',
+      },
+    });
     await generateTestData(prisma);
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     prisma.$disconnect();
   });
 

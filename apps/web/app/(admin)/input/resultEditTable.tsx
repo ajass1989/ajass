@@ -288,11 +288,11 @@ export function ResultEditTable(props: Props) {
   // ソート順を定義
   const sortOrderSummary: { [key in DataType['summary']]: number } = {
     ジュニア: 0,
-    女子スノボ: 1,
-    男子スノボ: 2,
-    女子スキー: 3,
+    スノボ女子: 1,
+    スノボ男子: 2,
+    スキー女子: 3,
     シニア: 4,
-    男子スキー: 5,
+    スキー男子: 5,
   };
 
   const data: DataType[] = dataSource

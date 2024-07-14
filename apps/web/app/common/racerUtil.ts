@@ -67,8 +67,8 @@ export const summary = (
       summary += 'ジュニア';
       break;
     case 'normal':
-      summary += gender == 'f' ? '女子' : '男子';
       summary += category == 'ski' ? 'スキー' : 'スノボ';
+      summary += gender == 'f' ? '女子' : '男子';
       break;
   }
   return summary;
@@ -79,8 +79,8 @@ export const summaryWithoutSpecial = (
   category: CategoryType,
 ) => {
   let summary = '';
-  summary += gender == 'f' ? '女子' : '男子';
   summary += category == 'ski' ? 'スキー' : 'スノボ';
+  summary += gender == 'f' ? '女子' : '男子';
   return summary;
 };
 

@@ -19,6 +19,9 @@ export async function updatePoints(): Promise<ActionResult<Racer[]>> {
       where: {
         bib: { not: null },
       },
+      orderBy: {
+        point: 'desc',
+      },
     });
     return {
       success: true,

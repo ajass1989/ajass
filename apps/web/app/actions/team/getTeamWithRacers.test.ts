@@ -17,7 +17,7 @@ describe('actions', () => {
       const result = await getTeamWithRacers('1');
       expect(result.success).toBeTruthy();
       expect(result.result!.fullname).toBe('チーム1');
-      expect(result.result!.racers.length).toBe(14);
+      expect(result.result!.racers.length).toBe(18);
       const racer15 = result.result!.racers.find((r) => r.id === '1');
       expect(racer15!.name).toBe('racer1');
     });

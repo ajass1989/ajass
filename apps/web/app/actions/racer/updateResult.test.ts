@@ -19,7 +19,7 @@ describe('actions', () => {
       };
       const result = await updateResult('2', dto);
       expect(result.success).toBeTruthy();
-      expect(result.result!.length).toBe(14);
+      expect(result.result!.length).toBe(18);
 
       const racer2 = result.result!.find((r) => r.id === '2');
       expect(racer2!.id).toBe('2');
@@ -38,7 +38,7 @@ describe('actions', () => {
       };
       const result = await updateResult('3', dto);
       expect(result.success).toBeTruthy();
-      expect(result.result!.length).toBe(14);
+      expect(result.result!.length).toBe(18);
 
       const racer3 = result.result!.find((r) => r.id === '3');
       expect(racer3!.id).toBe('3');
@@ -57,7 +57,7 @@ describe('actions', () => {
       };
       const result = await updateResult('2', dto);
       expect(result.success).toBeTruthy();
-      expect(result.result!.length).toBe(14);
+      expect(result.result!.length).toBe(18);
 
       const racer2 = result.result!.find((r) => r.id === '2');
       expect(racer2!.id).toBe('2');
@@ -76,7 +76,7 @@ describe('actions', () => {
       };
       const result = await updateResult('3', dto);
       expect(result.success).toBeTruthy();
-      expect(result.result!.length).toBe(14);
+      expect(result.result!.length).toBe(18);
 
       const racer3 = result.result!.find((r) => r.id === '3');
       expect(racer3!.id).toBe('3');
@@ -107,7 +107,7 @@ describe('actions', () => {
       };
       const result = await updateResult('1', dto);
       expect(result.success).toBeTruthy();
-      expect(result.result!.length).toBe(14);
+      expect(result.result!.length).toBe(18);
 
       const racer1 = result.result!.find((r) => r.id === '1');
       expect(racer1!.id).toBe('1');
@@ -126,7 +126,7 @@ describe('actions', () => {
       };
       const result = await updateResult('1', dto);
       expect(result.success).toBeTruthy();
-      expect(result.result!.length).toBe(14);
+      expect(result.result!.length).toBe(18);
 
       const racer1 = result.result!.find((r) => r.id === '1');
       expect(racer1!.id).toBe('1');
@@ -163,7 +163,7 @@ describe('actions', () => {
       };
       const result = await updateResult('1', dto);
       expect(result.success).toBeTruthy();
-      expect(result.result!.length).toBe(14);
+      expect(result.result!.length).toBe(18);
 
       const racer1 = result.result!.find((r) => r.id === '1');
       expect(racer1!.id).toBe('1');
@@ -182,7 +182,7 @@ describe('actions', () => {
       };
       const result1 = await updateResult('1', dto1);
       expect(result1.success).toBeTruthy();
-      expect(result1.result!.length).toBe(14);
+      expect(result1.result!.length).toBe(18);
 
       const racer11 = result1.result!.find((r) => r.id === '1');
       expect(racer11!.id).toBe('1');
@@ -199,7 +199,7 @@ describe('actions', () => {
       };
       const result2 = await updateResult('2', dto2);
       expect(result2.success).toBeTruthy();
-      expect(result2.result!.length).toBe(14);
+      expect(result2.result!.length).toBe(18);
 
       const racer22 = result2.result!.find((r) => r.id === '2');
       expect(racer22!.id).toBe('2');
@@ -216,7 +216,7 @@ describe('actions', () => {
       };
       const result3 = await updateResult('3', dto3);
       expect(result3.success).toBeTruthy();
-      expect(result3.result!.length).toBe(14);
+      expect(result3.result!.length).toBe(18);
 
       const racer33 = result3.result!.find((r) => r.id === '3');
       expect(racer33!.id).toBe('3');
