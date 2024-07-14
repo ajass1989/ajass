@@ -27,7 +27,6 @@ export default async function ResultsTotalPage() {
           </Link>
         </Button>
       </Flex>
-
       <ResultViewTable
         teams={teams}
         racers={racers}

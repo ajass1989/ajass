@@ -126,9 +126,6 @@ export default async function TeamView(props: Props) {
               {racer.totalOrder}
             </td>
             <td className={addNotPointGetterClass(racer, 'number cell')}>
-              補正
-            </td>
-            <td className={addNotPointGetterClass(racer, 'number cell')}>
               {racer.point}
             </td>
             {tdSummaryPoint(racer)}

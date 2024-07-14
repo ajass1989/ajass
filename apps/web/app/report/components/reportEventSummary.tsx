@@ -1,6 +1,6 @@
 import { getEvent } from '../../(admin)/prepare/events/actions';
 
-export default async function ReportHeader() {
+export default async function ReportEventSummary() {
   const event = await getEvent();
   return (
     <>

@@ -1,4 +1,4 @@
-import { RacerWithSummaryPoint } from '../../(admin)/results/actions/actions';
+import { RacerWithTeam } from '../../(admin)/results/actions/actions';
 import {
   renderResult,
   renderTime,
@@ -8,16 +8,13 @@ import { CategoryType, GenderType } from '../../common/types';
 import '../report.css';
 
 type Props = {
-  racers: RacerWithSummaryPoint[];
+  racers: RacerWithTeam[];
 };
 
 export default async function ReportTable(props: Props) {
   const { racers } = props;
 
-  const addNoBestTimeClass = (
-    racer: RacerWithSummaryPoint,
-    className: string,
-  ) => {
+  const addNoBestTimeClass = (racer: RacerWithTeam, className: string) => {
     if (racer.bestTime) {
       return className;
     }

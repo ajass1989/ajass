@@ -4,7 +4,7 @@ import {
 } from '../../(admin)/results/actions/actions';
 import TeamView from './teamView';
 import '../report.css';
-import ReportHeader from '../components/reportHeader';
+import ReportEventSummary from '../components/reportEventSummary';
 
 export default async function ReportPage() {
   const teams = await listTeamsWithPoint();
@@ -12,7 +12,7 @@ export default async function ReportPage() {
 
   return (
     <div className="reportContainer">
-      <ReportHeader />
+      <ReportEventSummary />
       <h2>団体</h2>
       <table
         style={{
@@ -53,9 +53,6 @@ export default async function ReportPage() {
             </th>
             <th style={{ borderStyle: 'solid', padding: '4px', margin: '4px' }}>
               順位
-            </th>
-            <th style={{ borderStyle: 'solid', padding: '4px', margin: '4px' }}>
-              補正
             </th>
             <th style={{ borderStyle: 'solid', padding: '4px', margin: '4px' }}>
               ポイント

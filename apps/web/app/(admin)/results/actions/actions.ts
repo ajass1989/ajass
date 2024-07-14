@@ -6,11 +6,26 @@ type ListRacersRequestDto = {
   special?: 'normal' | 'junior' | 'senior';
 };
 
-export async function listRacers(dto: ListRacersRequestDto): Promise<Racer[]> {
-  return await prisma.racer.findMany({
+/**
+ * 競技者データ型
+ * 種目別ポイントを追加
+ * ポイントゲッターかどうかを追加
+ * 種目別にまとめるためのrowSpanを追加
+ */
+export type RacerWithTeam = Racer & {
+  team: { fullname: string };
+};
+
+export async function listRacers(
+  dto: ListRacersRequestDto,
+): Promise<RacerWithTeam[]> {
+  const racers = await prisma.racer.findMany({
     where: {
       // eventId: '2023',
       ...dto,
+    },
+    include: {
+      team: { select: { fullname: true } },
     },
     orderBy: [
       {
@@ -20,6 +35,12 @@ export async function listRacers(dto: ListRacersRequestDto): Promise<Racer[]> {
         bib: 'desc', // タイムが同じ場合、bibの昇順
       },
     ],
+  });
+  return racers.map((racer) => {
+    return {
+      ...racer,
+      team: { fullname: racer.team?.fullname ?? '' },
+    };
   });
 }
 
