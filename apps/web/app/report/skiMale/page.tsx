@@ -1,4 +1,5 @@
 import { listRacers } from '../../actions/racer/listRacers';
+import { SKI_MALE } from '../../common/constant';
 import ReportEventSummary from '../components/reportEventSummary';
 import ReportTable from '../components/reportTable';
 
@@ -8,7 +9,7 @@ export default async function ReportPage() {
   return (
     <div className="reportContainer">
       <ReportEventSummary />
-      <h2>スキー男子</h2>
+      <h2>{SKI_MALE}</h2>
       <ReportTable racers={racers} />
     </div>
   );

@@ -37,6 +37,7 @@ interface RacerDataType {
   result1: string;
   result2: string;
   bestTime: number | null;
+  totalOrder: number | null;
   point: number;
   pointSummary: number;
   pointGetter: boolean;
@@ -54,10 +55,10 @@ export function ResultTeamTable(props: Props) {
           return { rowSpan: record.rowSpanSummary };
         },
       },
-      { title: '選手名', dataIndex: 'name', key: 'name' },
-      { title: 'ふりがな', dataIndex: 'kana', key: 'kana' },
       { title: 'ビブ', dataIndex: 'bib', key: 'bib' },
       { title: 'シード', dataIndex: 'seed', key: 'seed' },
+      { title: '選手名', dataIndex: 'name', key: 'name' },
+      { title: 'ふりがな', dataIndex: 'kana', key: 'kana' },
       { title: '記録1', dataIndex: 'result1', key: 'result1' },
       { title: '記録2', dataIndex: 'result2', key: 'result2' },
       {
@@ -67,7 +68,12 @@ export function ResultTeamTable(props: Props) {
         render: (_: RacerDataType, record: RacerDataType) =>
           renderTime(record.bestTime),
       },
-      { title: 'ポイント', dataIndex: 'point', key: 'point' },
+      {
+        title: '順位',
+        dataIndex: 'totalOrder',
+        key: 'totalOrder',
+      },
+      { title: '個人ポイント', dataIndex: 'point', key: 'point' },
       {
         title: '種目別ポイント',
         dataIndex: 'pointSummary',
@@ -105,6 +111,7 @@ export function ResultTeamTable(props: Props) {
           result1: renderResult(racer.status1, racer.time1),
           result2: renderResult(racer.status2, racer.time2),
           bestTime: racer.bestTime,
+          totalOrder: racer.totalOrder,
           point: racer.point,
           pointSummary: racer.summaryPoint,
           specialPoint: racer.specialPoint,

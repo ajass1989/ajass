@@ -19,6 +19,14 @@ import { AlertType } from '../../../common/types';
 import { useRouter } from 'next/navigation';
 import { TeamWithRacers } from '../../../actions/team/listTeamsWithRacers';
 import { deleteTeam } from '../../../actions/team/deleteTeam';
+import {
+  FEMALE,
+  JUNIOR,
+  MALE,
+  SENIOR,
+  SKI,
+  SNOWBOARD,
+} from '../../../common/constant';
 
 type Props = {
   teams: TeamWithRacers[];
@@ -237,14 +245,14 @@ export function TeamTable(props: Props) {
       sorter: (a: DataType, b: DataType) => (a.fullname > b.fullname ? 1 : -1),
     },
     {
-      title: '滑走順男子',
+      title: '男子滑走順',
       dataIndex: 'orderMale',
       key: 'orderMale',
       editable: true,
       sorter: (a: DataType, b: DataType) => a.orderMale - b.orderMale,
     },
     {
-      title: '滑走順女子',
+      title: '女子滑走順',
       dataIndex: 'orderFemale',
       key: 'orderFemale',
       editable: true,
@@ -260,17 +268,17 @@ export function TeamTable(props: Props) {
           sorter: (a: DataType, b: DataType) => a.racerCount - b.racerCount,
         },
         {
-          title: 'スノボ',
+          title: SNOWBOARD,
           children: [
             {
-              title: '男子',
+              title: MALE,
               dataIndex: 'snowboardMaleCount',
               key: 'snowboardMaleCount',
               sorter: (a: DataType, b: DataType) =>
                 a.snowboardMaleCount - b.snowboardMaleCount,
             },
             {
-              title: '女子',
+              title: FEMALE,
               dataIndex: 'snowboardFemaleCount',
               key: 'snowboardFemaleCount',
               sorter: (a: DataType, b: DataType) =>
@@ -279,17 +287,17 @@ export function TeamTable(props: Props) {
           ],
         },
         {
-          title: 'スキー',
+          title: SKI,
           children: [
             {
-              title: '男子',
+              title: MALE,
               dataIndex: 'skiMaleCount',
               key: 'skiMaleCount',
               sorter: (a: DataType, b: DataType) =>
                 a.skiMaleCount - b.skiMaleCount,
             },
             {
-              title: '女子',
+              title: FEMALE,
               dataIndex: 'skiFemaleCount',
               key: 'skiFemaleCount',
               sorter: (a: DataType, b: DataType) =>
@@ -301,14 +309,14 @@ export function TeamTable(props: Props) {
           title: '特別枠',
           children: [
             {
-              title: 'シニア',
+              title: SENIOR,
               dataIndex: 'seniorCount',
               key: 'seniorCount',
               sorter: (a: DataType, b: DataType) =>
                 a.seniorCount - b.seniorCount,
             },
             {
-              title: 'ジュニア',
+              title: JUNIOR,
               dataIndex: 'juniorCount',
               key: 'juniorCount',
               sorter: (a: DataType, b: DataType) =>

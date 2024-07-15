@@ -2,6 +2,7 @@ import { Breadcrumb, Button, Flex } from 'antd';
 import { ResultViewTable } from '../components/resultViewTable';
 import Link from 'next/link';
 import { listRacers } from '../../../actions/racer/listRacers';
+import { SKI_MALE } from '../../../common/constant';
 
 export default async function ResultsSkiMalePage() {
   const racers = await listRacers({ gender: 'm', category: 'ski' });
@@ -13,11 +14,11 @@ export default async function ResultsSkiMalePage() {
             title: '結果',
           },
           {
-            title: 'スキー男子',
+            title: SKI_MALE,
           },
         ]}
       />
-      <h1>スキー男子</h1>
+      <h1>{SKI_MALE}</h1>
       <Flex>
         <Button type="primary" style={{ marginBottom: 16 }}>
           <Link href="/report/skiMale" target="_blank">

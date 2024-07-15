@@ -9,6 +9,9 @@ import '../report.css';
 
 type Props = {
   racers: RacerWithTeam[];
+  showPoint?: boolean;
+  showAge?: boolean;
+  showTotalOrder?: boolean;
 };
 
 export default async function ReportTable(props: Props) {
@@ -62,6 +65,24 @@ export default async function ReportTable(props: Props) {
           <th style={{ borderStyle: 'solid', padding: '4px', margin: '4px' }}>
             ベストタイム
           </th>
+          <th
+            hidden={!props.showAge}
+            style={{ borderStyle: 'solid', padding: '4px', margin: '4px' }}
+          >
+            年齢
+          </th>
+          <th
+            hidden={!props.showAge}
+            style={{ borderStyle: 'solid', padding: '4px', margin: '4px' }}
+          >
+            年齢補正
+          </th>
+          <th
+            hidden={!props.showAge}
+            style={{ borderStyle: 'solid', padding: '4px', margin: '4px' }}
+          >
+            採用タイム
+          </th>
           <th style={{ borderStyle: 'solid', padding: '4px', margin: '4px' }}>
             順位
           </th>
@@ -91,6 +112,15 @@ export default async function ReportTable(props: Props) {
               {renderResult(racer.status2, racer.time2)}
             </td>
             <td className="number cell">{renderTime(racer.bestTime)}</td>
+            <td className="number cell" hidden={!props.showAge}>
+              {racer.age}
+            </td>
+            <td className="number cell" hidden={!props.showAge}>
+              {renderTime(racer.ageHandicap)}
+            </td>
+            <td className="number cell" hidden={!props.showAge}>
+              {renderTime(racer.adoptTime)}
+            </td>
             <td className="number cell">{racer.bestTime ? index + 1 : ''}</td>
           </tr>
         ))}

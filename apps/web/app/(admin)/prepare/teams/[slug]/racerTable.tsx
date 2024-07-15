@@ -45,6 +45,7 @@ import {
   UpdateRacerRequestDto,
   updateRacer,
 } from '../../../../actions/racer/updateRacer';
+import { FEMALE, MALE, SKI, SNOWBOARD } from '../../../../common/constant';
 
 type Props = {
   title: string;
@@ -123,8 +124,8 @@ const EditableCell: React.FC<EditableCellProps> = ({
       inputNode = (
         <Select
           options={[
-            { value: 'f', label: <span>女性</span> },
-            { value: 'm', label: <span>男性</span> },
+            { value: 'f', label: <span>{FEMALE}</span> },
+            { value: 'm', label: <span>{MALE}</span> },
           ]}
         />
       );
@@ -133,8 +134,8 @@ const EditableCell: React.FC<EditableCellProps> = ({
       inputNode = (
         <Select
           options={[
-            { value: 'ski', label: <span>スキー</span> },
-            { value: 'snowboard', label: <span>スノボ</span> },
+            { value: 'ski', label: <span>{SKI}</span> },
+            { value: 'snowboard', label: <span>{SNOWBOARD}</span> },
           ]}
         />
       );
@@ -379,7 +380,11 @@ export function RacerTable(props: Props) {
       visible: props.special != 'normal',
       inputType: 'category',
       render: (_: DataType, record: Item) =>
-        record.category == 'ski' ? <span>スキー</span> : <span>スノボ</span>,
+        record.category == 'ski' ? (
+          <span>{SKI}</span>
+        ) : (
+          <span>{SNOWBOARD}</span>
+        ),
     },
     {
       title: '性別',
@@ -389,7 +394,7 @@ export function RacerTable(props: Props) {
       editable: true,
       visible: props.special != 'normal',
       render: (_: DataType, record: Item) =>
-        record.gender == 'f' ? <span>女性</span> : <span>男性</span>,
+        record.gender == 'f' ? <span>{FEMALE}</span> : <span>{MALE}</span>,
     },
     {
       title: '年齢',

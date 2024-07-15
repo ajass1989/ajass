@@ -11,6 +11,16 @@ import {
 } from '@ant-design/icons';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import {
+  JUNIOR,
+  SENIOR,
+  SKI_FEMALE,
+  SKI_MALE,
+  SNOWBOARD_FEMALE,
+  SNOWBOARD_MALE,
+  TEAM,
+  TOTAL,
+} from '../common/constant';
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -49,42 +59,42 @@ const items: MenuItem[] = [
   getItem(<Link href="/input">入力</Link>, '/input', <EditOutlined />),
   getItem('結果', '/results', <UnorderedListOutlined />, [
     getItem(
-      <Link href="/results/total">総合</Link>,
+      <Link href="/results/total">{TOTAL}</Link>,
       '/results/total',
       <TeamOutlined />,
     ),
     getItem(
-      <Link href="/results/team">団体</Link>,
+      <Link href="/results/team">{TEAM}</Link>,
       '/results/team',
       <TeamOutlined />,
     ),
     getItem(
-      <Link href="/results/skiMale">スキー男子</Link>,
+      <Link href="/results/skiMale">{SKI_MALE}</Link>,
       '/results/skiMale',
       <TeamOutlined />,
     ),
     getItem(
-      <Link href="/results/skiFemale">スキー女子</Link>,
+      <Link href="/results/skiFemale">{SKI_FEMALE}</Link>,
       '/results/skiFemale',
       <TeamOutlined />,
     ),
     getItem(
-      <Link href="/results/snowboardMale">スノボ男子</Link>,
+      <Link href="/results/snowboardMale">{SNOWBOARD_MALE}</Link>,
       '/results/snowboardMale',
       <TeamOutlined />,
     ),
     getItem(
-      <Link href="/results/snowboardFemale">スノボ女子</Link>,
+      <Link href="/results/snowboardFemale">{SNOWBOARD_FEMALE}</Link>,
       '/results/snowboardFemale',
       <TeamOutlined />,
     ),
     getItem(
-      <Link href="/results/specialJunior">ジュニア</Link>,
+      <Link href="/results/specialJunior">{JUNIOR}</Link>,
       '/results/specialJunior',
       <TeamOutlined />,
     ),
     getItem(
-      <Link href="/results/specialSenior">シニア</Link>,
+      <Link href="/results/specialSenior">{SENIOR}</Link>,
       '/results/specialSenior',
       <TeamOutlined />,
     ),

@@ -21,6 +21,12 @@ import {
   fgColorSnowboardMale,
 } from '../../../common/colors';
 import { Point } from '@repo/database';
+import {
+  SKI_FEMALE,
+  SKI_MALE,
+  SNOWBOARD_FEMALE,
+  SNOWBOARD_MALE,
+} from '../../../common/constant';
 
 type Props = {
   points: Point[];
@@ -40,25 +46,25 @@ export function PointChart(props: Props) {
     labels: props.points.map((point) => point.id),
     datasets: [
       {
-        label: 'スキー男子',
+        label: SKI_MALE,
         data: props.points.map((point) => point.pointSkiMale),
         borderColor: fgColorSkiMale,
         backgroundColor: bgColorSkiMale,
       },
       {
-        label: 'スキー女子',
+        label: SKI_FEMALE,
         data: props.points.map((point) => point.pointSkiFemale),
         borderColor: fgColorSkiFemale,
         backgroundColor: bgColorSkiFemale,
       },
       {
-        label: 'スノボ男子',
+        label: SNOWBOARD_MALE,
         data: props.points.map((point) => point.pointSnowboardMale),
         borderColor: fgColorSnowboardMale,
         backgroundColor: bgColorSnowboardMale,
       },
       {
-        label: 'スノボ女子',
+        label: SNOWBOARD_FEMALE,
         data: props.points.map((point) => point.pointSnowboardFemale),
         borderColor: fgColorSnowboardFemale,
         backgroundColor: bgColorSnowboardFemale,

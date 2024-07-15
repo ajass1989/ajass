@@ -6,6 +6,12 @@ import { useContext, useState } from 'react';
 import { updatePoint } from '../../../actions/point/updatePoint';
 import { Point } from '@repo/database';
 import { AlertType } from '../../../common/types';
+import {
+  SKI_FEMALE,
+  SKI_MALE,
+  SNOWBOARD_FEMALE,
+  SNOWBOARD_MALE,
+} from '../../../common/constant';
 
 type Props = {
   points: Point[];
@@ -154,22 +160,22 @@ export function PointTable(props: Props) {
       dataIndex: 'key',
     },
     {
-      title: 'スキー男子',
+      title: SKI_MALE,
       dataIndex: 'pointSkiMale',
       editable: true,
     },
     {
-      title: 'スキー女子',
+      title: SKI_FEMALE,
       dataIndex: 'pointSkiFemale',
       editable: true,
     },
     {
-      title: 'スノボ男子',
+      title: SNOWBOARD_MALE,
       dataIndex: 'pointSnowboardMale',
       editable: true,
     },
     {
-      title: 'スノボ女子',
+      title: SNOWBOARD_FEMALE,
       dataIndex: 'pointSnowboardFemale',
       editable: true,
     },

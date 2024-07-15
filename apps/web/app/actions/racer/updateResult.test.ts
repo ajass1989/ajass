@@ -47,7 +47,7 @@ describe('actions', () => {
       expect(racer3!.status2).toBe(null);
       expect(racer3!.time2).toBe(123456);
       expect(racer3!.bestTime).toBe(123456);
-      expect(racer3!.point).toBe(130);
+      expect(racer3!.point).toBe(105);
     });
 
     test('正常系:status2=nullで更新', async () => {
@@ -85,7 +85,7 @@ describe('actions', () => {
       expect(racer3!.status2).toBe('dq');
       expect(racer3!.time2).toBe(123456);
       expect(racer3!.bestTime).toBe(123456);
-      expect(racer3!.point).toBe(130);
+      expect(racer3!.point).toBe(105);
     });
 
     test('準正常系:存在しないid', async () => {
@@ -208,7 +208,7 @@ describe('actions', () => {
       expect(racer22!.status2).toBe(null);
       expect(racer22!.time2).toBe(123450);
       expect(racer22!.bestTime).toBe(123450);
-      expect(racer22!.point).toBe(130);
+      expect(racer22!.point).toBe(105);
 
       const dto3: UpdateResultRequestDto = {
         time1: undefined,
@@ -225,7 +225,7 @@ describe('actions', () => {
       expect(racer33!.status2).toBe(null);
       expect(racer33!.time2).toBe(123440);
       expect(racer33!.bestTime).toBe(123440);
-      expect(racer33!.point).toBe(130);
+      expect(racer33!.point).toBe(105);
     });
 
     test('準正常系:存在しないid', async () => {

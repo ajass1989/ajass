@@ -2,6 +2,7 @@ import { Breadcrumb, Button, Flex } from 'antd';
 import { ResultViewTable } from '../components/resultViewTable';
 import Link from 'next/link';
 import { listRacers } from '../../../actions/racer/listRacers';
+import { SENIOR } from '../../../common/constant';
 
 export default async function ResultsSeniorPage() {
   const racers = await listRacers({ special: 'senior' });
@@ -13,11 +14,11 @@ export default async function ResultsSeniorPage() {
             title: '結果',
           },
           {
-            title: 'シニア',
+            title: SENIOR,
           },
         ]}
       />
-      <h1>シニア</h1>
+      <h1>{SENIOR}</h1>
       <Flex>
         <Button type="primary" style={{ marginBottom: 16 }}>
           <Link href="/report/specialSenior" target="_blank">

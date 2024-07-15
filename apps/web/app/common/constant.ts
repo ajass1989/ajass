@@ -1,0 +1,12 @@
+export const SKI_MALE = '男子スキー';
+export const SKI_FEMALE = '女子スキー';
+export const SNOWBOARD_MALE = '男子スノボ';
+export const SNOWBOARD_FEMALE = '女子スノボ';
+export const SENIOR = 'シニア';
+export const JUNIOR = 'ジュニア';
+export const TEAM = '団体';
+export const TOTAL = '総合';
+export const MALE = '男子';
+export const FEMALE = '女子';
+export const SKI = 'スキー';
+export const SNOWBOARD = 'スノボ';

@@ -157,9 +157,9 @@ const EditableCell: React.FC<EditableCellProps> = ({
 
   const options = [
     { value: '' },
-    { value: 'ds' },
-    { value: 'df' },
-    { value: 'dq' },
+    { label: 'DS', value: 'ds' },
+    { label: 'DF', value: 'df' },
+    { label: 'DQ', value: 'dq' },
   ];
   const regTime = /^([0-9]{6}|ds|df|dq)$/;
 
@@ -288,11 +288,11 @@ export function ResultEditTable(props: Props) {
   // ソート順を定義
   const sortOrderSummary: { [key in DataType['summary']]: number } = {
     ジュニア: 0,
-    スノボ女子: 1,
-    スノボ男子: 2,
-    スキー女子: 3,
+    女子スノボ: 1,
+    男子スノボ: 2,
+    女子スキー: 3,
     シニア: 4,
-    スキー男子: 5,
+    男子スキー: 5,
   };
 
   const data: DataType[] = dataSource

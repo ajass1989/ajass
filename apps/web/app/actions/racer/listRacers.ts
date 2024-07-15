@@ -18,6 +18,8 @@ export type ListRacersRequestDto = {
  */
 export type RacerWithTeam = Racer & {
   team: { fullname: string };
+  ageHandicap: number | null;
+  adoptTime: number | null;
 };
 
 /**
@@ -44,10 +46,33 @@ export async function listRacers(
       },
     ],
   });
-  return racers.map((racer) => {
+  const racers2 = racers.map((racer) => {
     return {
       ...racer,
       team: { fullname: racer.team?.fullname ?? '' },
+      ageHandicap:
+        racer.special === 'senior' ? -(racer.age! - 60) * 1000 : null,
+      adoptTime:
+        racer.special === 'senior' && racer.bestTime
+          ? racer.bestTime - (racer.age! - 60) * 1000
+          : null,
     };
   });
+  // シニアの場合に限り、年齢補正タイムでソートする
+  if (dto.special === 'senior') {
+    return racers2.sort((a, b) => {
+      if (!a.adoptTime || !b.adoptTime) {
+        return -1;
+      }
+      if (!a.bib || !b.bib) {
+        return -1;
+      }
+      if (a.adoptTime === b.adoptTime) {
+        return a.bib - b.bib;
+      }
+      return a.adoptTime - b.adoptTime;
+    });
+  }
+
+  return racers2;
 }

@@ -42,7 +42,6 @@ export function ResultViewTable({
   racers,
   showPoint = true,
   showAge = false,
-  showTotalOrder = false,
 }: Props) {
   const [dataSource] = useState<RacerWithTeam[]>(racers);
   const data: DataType[] = dataSource.map((racer, index) => ({
@@ -67,7 +66,7 @@ export function ResultViewTable({
     bestTime: racer.bestTime,
     age: racer.age,
     point: racer.point,
-    order: showTotalOrder ? racer.totalOrder : index + 1,
+    order: racer.bestTime ? index + 1 : '',
   }));
 
   const columns: TableColumnsType<DataType> = [
@@ -169,17 +168,17 @@ export function ResultViewTable({
       },
     },
     {
+      title: '順位',
+      dataIndex: 'order',
+      key: 'order',
+      width: 80,
+    },
+    {
       title: 'ポイント',
       dataIndex: 'point',
       key: 'point',
       width: 80,
       hidden: !showPoint,
-    },
-    {
-      title: '順位',
-      dataIndex: 'order',
-      key: 'order',
-      width: 80,
     },
   ];
 

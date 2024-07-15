@@ -10,6 +10,7 @@ import {
   bgColorSnowboardFemale,
   bgColorSnowboardMale,
 } from './colors';
+import { FEMALE, JUNIOR, MALE, SENIOR, SKI, SNOWBOARD } from './constant';
 
 dayjs.extend(duration);
 
@@ -38,7 +39,7 @@ export const renderTime = (time: number | null) => {
  * @returns 描画用の結果
  */
 export const renderResult = (status: string | null, time: number | null) => {
-  return status || renderTime(time);
+  return status?.toUpperCase() || renderTime(time);
 };
 
 /**
@@ -74,14 +75,14 @@ export const summary = (
   let summary = '';
   switch (special) {
     case 'senior':
-      summary += 'シニア';
+      summary += SENIOR;
       break;
     case 'junior':
-      summary += 'ジュニア';
+      summary += JUNIOR;
       break;
     case 'normal':
-      summary += category == 'ski' ? 'スキー' : 'スノボ';
-      summary += gender == 'f' ? '女子' : '男子';
+      summary += gender == 'f' ? FEMALE : MALE;
+      summary += category == 'ski' ? SKI : SNOWBOARD;
       break;
   }
   return summary;
@@ -98,8 +99,8 @@ export const summaryWithoutSpecial = (
   category: CategoryType,
 ) => {
   let summary = '';
-  summary += category == 'ski' ? 'スキー' : 'スノボ';
-  summary += gender == 'f' ? '女子' : '男子';
+  summary += gender == 'f' ? FEMALE : MALE;
+  summary += category == 'ski' ? SKI : SNOWBOARD;
   return summary;
 };
 

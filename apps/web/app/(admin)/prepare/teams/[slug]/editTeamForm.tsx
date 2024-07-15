@@ -13,6 +13,14 @@ import React, { useState } from 'react';
 import { RacerTable } from './racerTable';
 import { Racer, Team } from '@repo/database';
 import { updateTeam } from '../../../../actions/team/updateTeam';
+import {
+  JUNIOR,
+  SENIOR,
+  SKI_FEMALE,
+  SKI_MALE,
+  SNOWBOARD_FEMALE,
+  SNOWBOARD_MALE,
+} from '../../../../common/constant';
 
 type Props = {
   team: Team & {
@@ -246,7 +254,7 @@ export function EditTeamForm(props: Props) {
       <RacerTable
         dataSource={snowboardMaleRacers}
         teamId={props.team.id}
-        title="スノボ男子"
+        title={SNOWBOARD_MALE}
         special="normal"
         gender="m"
         category="snowboard"
@@ -254,7 +262,7 @@ export function EditTeamForm(props: Props) {
       <RacerTable
         dataSource={snowboardFemaleRacers}
         teamId={props.team.id}
-        title="スノボ女子"
+        title={SNOWBOARD_FEMALE}
         special="normal"
         gender="f"
         category="snowboard"
@@ -262,7 +270,7 @@ export function EditTeamForm(props: Props) {
       <RacerTable
         dataSource={skiMaleRacers}
         teamId={props.team.id}
-        title="スキー男子"
+        title={SKI_MALE}
         special="normal"
         gender="m"
         category="ski"
@@ -270,7 +278,7 @@ export function EditTeamForm(props: Props) {
       <RacerTable
         dataSource={skiFemaleRacers}
         teamId={props.team.id}
-        title="スキー女子"
+        title={SKI_FEMALE}
         special="normal"
         gender="f"
         category="ski"
@@ -278,13 +286,13 @@ export function EditTeamForm(props: Props) {
       <RacerTable
         dataSource={juniorRacers}
         teamId={props.team.id}
-        title="ジュニア"
+        title={JUNIOR}
         special="junior"
       />
       <RacerTable
         dataSource={seniorRacers}
         teamId={props.team.id}
-        title="シニア"
+        title={SENIOR}
         special="senior"
       />
     </>
