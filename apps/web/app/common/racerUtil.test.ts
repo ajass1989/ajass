@@ -21,6 +21,11 @@ describe('renderTime', () => {
     expect(actual).toBe('00:01.00');
   });
 
+  test('正常系:time=-1秒', () => {
+    const actual = renderTime(-1000);
+    expect(actual).toBe('-00:01.00');
+  });
+
   test('正常系:time=1分', () => {
     const actual = renderTime(60000);
     expect(actual).toBe('01:00.00');
@@ -45,7 +50,7 @@ describe('renderTime', () => {
 describe('renderResult', () => {
   test('正常系:status=ds,time=1秒', () => {
     const actual = renderResult('ds', 1000);
-    expect(actual).toBe('ds');
+    expect(actual).toBe('DS');
   });
 
   test('正常系:status=null,time=1秒', () => {
@@ -55,7 +60,7 @@ describe('renderResult', () => {
 
   test('正常系:status=ds,time=null', () => {
     const actual = renderResult('ds', null);
-    expect(actual).toBe('ds');
+    expect(actual).toBe('DS');
   });
 
   test('正常系:status=null,time=null', () => {

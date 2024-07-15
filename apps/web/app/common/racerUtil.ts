@@ -23,13 +23,18 @@ export const renderTime = (time: number | null) => {
   if (!time) {
     return '';
   }
-  const timeDuration = dayjs.duration(time, 'milliseconds');
+  let sign = '';
+  if (time < 0) {
+    sign = '-';
+  }
+  const absTime = Math.abs(time);
+  const timeDuration = dayjs.duration(absTime, 'milliseconds');
   const minutes = timeDuration.minutes().toString().padStart(2, '0');
   const seconds = timeDuration.seconds().toString().padStart(2, '0');
   const milliseconds = (timeDuration.milliseconds() / 10)
     .toString()
     .padStart(2, '0');
-  return `${minutes}:${seconds}.${milliseconds}`;
+  return `${sign}${minutes}:${seconds}.${milliseconds}`;
 };
 
 /**

@@ -35,6 +35,8 @@ interface DataType {
   summary: string;
   bestTime: number | null;
   age: number | null;
+  ageHandicap: number | null;
+  adoptTime: number | null;
   point: number | null;
 }
 
@@ -65,6 +67,8 @@ export function ResultViewTable({
     ),
     bestTime: racer.bestTime,
     age: racer.age,
+    ageHandicap: racer.ageHandicap,
+    adoptTime: racer.adoptTime,
     point: racer.point,
     order: racer.bestTime ? index + 1 : '',
   }));
@@ -148,7 +152,7 @@ export function ResultViewTable({
       width: 128,
       hidden: !showAge,
       render: (_: DataType, record: DataType) => {
-        return <span>-{renderTime((record.age! - 60) * 1000)}</span>;
+        return <span>{renderTime(record.ageHandicap)}</span>;
       },
     },
     {
@@ -158,13 +162,7 @@ export function ResultViewTable({
       width: 128,
       hidden: !showAge,
       render: (_: DataType, record: DataType) => {
-        return (
-          <span>
-            {record.bestTime
-              ? renderTime(record.bestTime! - (record.age! - 60) * 1000)
-              : ''}
-          </span>
-        );
+        return <span>{renderTime(record.adoptTime)}</span>;
       },
     },
     {

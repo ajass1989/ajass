@@ -12,7 +12,9 @@ import {
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
+  FEMALE,
   JUNIOR,
+  MALE,
   SENIOR,
   SKI_FEMALE,
   SKI_MALE,
@@ -53,6 +55,11 @@ const items: MenuItem[] = [
     getItem(
       <Link href="/prepare/points">ポイント</Link>,
       '/prepare/points',
+      <UnorderedListOutlined />,
+    ),
+    getItem(
+      <Link href="/prepare/specialPoints">特別ポイント</Link>,
+      '/prepare/specialPoints',
       <UnorderedListOutlined />,
     ),
   ]),
@@ -96,6 +103,16 @@ const items: MenuItem[] = [
     getItem(
       <Link href="/results/specialSenior">{SENIOR}</Link>,
       '/results/specialSenior',
+      <TeamOutlined />,
+    ),
+    getItem(
+      <Link href="/results/male">{MALE}</Link>,
+      '/results/male',
+      <TeamOutlined />,
+    ),
+    getItem(
+      <Link href="/results/female">{FEMALE}</Link>,
+      '/results/female',
       <TeamOutlined />,
     ),
   ]),

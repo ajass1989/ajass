@@ -1,4 +1,4 @@
-import { listPoints } from '../../../actions/point/getPoints';
+import { listPoints } from '../../../actions/point/listPoints';
 import { PointTabs } from './pointTabs';
 
 export default async function PreparePointsPage() {
