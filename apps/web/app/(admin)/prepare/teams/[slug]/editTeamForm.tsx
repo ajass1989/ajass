@@ -3,13 +3,16 @@ import {
   Alert,
   Breadcrumb,
   Button,
+  Flex,
   Form,
   FormProps,
   Input,
   InputNumber,
+  InputRef,
+  Typography,
 } from 'antd';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { RacerTable } from './racerTable';
 import { Racer, Team } from '@repo/database';
 import { updateTeam } from '../../../../actions/team/updateTeam';
@@ -21,6 +24,13 @@ import {
   SNOWBOARD_FEMALE,
   SNOWBOARD_MALE,
 } from '../../../../common/constant';
+import {
+  CsvRacerType,
+  parseCSV,
+  validateData,
+} from '../../../../common/csvReader';
+import { UpdateRacerRequestDto } from '../../../../actions/racer/updateRacer';
+import { addRacer } from '../../../../actions/racer/addRacer';
 
 type Props = {
   team: Team & {
@@ -39,6 +49,7 @@ type FieldType = {
 
 export interface RacerType {
   key: string;
+  id: string;
   name: string;
   kana: string;
   category: string; // ski, snowboard
@@ -47,6 +58,7 @@ export interface RacerType {
   isFirstTime: boolean;
   bib: number | null;
   gender: string; // f, m
+  special: string; // normal, junior, senior
 }
 
 export function EditTeamForm(props: Props) {
@@ -54,6 +66,7 @@ export function EditTeamForm(props: Props) {
   const [alertVisible, setAlertVisible] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [edited, setEdited] = useState<boolean>(false);
+  const [dataSource, setDataSource] = useState<Racer[]>(props.team.racers);
 
   // Alert を表示する関数
   const showAlert = (error?: string) => {
@@ -87,8 +100,9 @@ export function EditTeamForm(props: Props) {
   };
 
   const team = props.team;
-  const originRacers = props.team.racers.map((racer) => {
+  const originRacers = dataSource.map((racer) => {
     return {
+      id: racer.id,
       key: racer.id,
       name: racer.name,
       kana: racer.kana,
@@ -163,6 +177,92 @@ export function EditTeamForm(props: Props) {
 
   const handleChange = () => {
     setEdited(true);
+  };
+
+  const addFileRef = useRef<InputRef>(null);
+  const [fileName, setFileName] = useState<string>('');
+
+  const handleUploadButtonClick = () => {
+    if (addFileRef.current?.input) {
+      addFileRef.current.input.click();
+    }
+  };
+
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const files = Array.from(event.target.files || []);
+
+    if (files.length > 0) {
+      const file = files[0];
+      setFileName(file.name); // ファイル名を状態に設定
+      const content = await readFileAsText(file);
+      const parsedData = await parseCSV(content);
+      const errors = validateData(parsedData); //	データのバリデーション
+      if (errors.length > 0) {
+        showAlert(errors.join('\n'));
+      } else {
+        onBulkAdd(parsedData, file.name);
+      }
+    }
+  };
+
+  // ファイルをテキストとして読み込む関数
+  const readFileAsText = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = (error) => reject(error);
+      reader.readAsText(file);
+    });
+  };
+
+  const onBulkAdd = async (data: CsvRacerType[], fileName: string) => {
+    const errors = [];
+    const racers = await Promise.all(
+      data.map(async (racer) => {
+        let category = '';
+        if (racer.skiFemale || racer.skiMale) category = 'ski';
+        if (racer.snowboardFemale || racer.snowboardMale)
+          category = 'snowboard';
+        let special = 'normal';
+        if (racer.junior) special = 'junior';
+        if (racer.senior) special = 'senior';
+        const dto: UpdateRacerRequestDto = {
+          name: racer.name,
+          kana: racer.kana,
+          category: category,
+          gender: racer.gender,
+          seed: racer.seed,
+          teamId: props.team.id,
+          isFirstTime: false,
+          age: racer.age ? racer.age : null,
+          special: special,
+        };
+        const result = await addRacer(dto);
+        if (result.success) {
+          return result.result!;
+        } else {
+          errors.push(result.error);
+        }
+      }),
+    );
+    const r2 = racers.filter((racer): racer is Racer => racer !== undefined);
+    const r3 = r2.map((racer) => {
+      return {
+        key: racer.id,
+        id: racer.id,
+        name: racer.name,
+        kana: racer.kana,
+        gender: racer.gender,
+        category: racer.category,
+        seed: racer.seed,
+        age: racer.age,
+        special: racer.special,
+        isFirstTime: racer.isFirstTime,
+        bib: racer.bib,
+      };
+    });
   };
 
   return (
@@ -250,6 +350,20 @@ export function EditTeamForm(props: Props) {
           </Button>
         </Form.Item>
       </Form>
+
+      <Flex style={{ marginBottom: 16 }}>
+        <Button type="primary" onClick={handleUploadButtonClick}>
+          選手一括追加
+        </Button>
+        <Input
+          ref={addFileRef}
+          type="file"
+          accept=".csv"
+          style={{ display: 'none' }}
+          onChange={handleFileChange}
+        />
+        <Typography>{dataSource.length}</Typography>
+      </Flex>
 
       <RacerTable
         dataSource={snowboardMaleRacers}
