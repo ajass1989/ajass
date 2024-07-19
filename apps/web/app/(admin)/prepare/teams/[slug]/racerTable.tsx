@@ -56,25 +56,12 @@ type Props = {
   dataSource: RacerType[];
 };
 
-interface Item {
-  key: string;
-  name: string;
-  kana: string;
-  category: string; // ski, snowboard
-  age: number;
-  isFirstTime: boolean;
-  gender: string; // f, m
-  seed: number;
-  teamId: string;
-  special: string;
-}
-
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
   editing: boolean;
-  dataIndex: keyof Item;
+  dataIndex: keyof RacerType;
   title: string;
   inputType: 'number' | 'text' | 'boolean' | 'category' | 'gender';
-  record: Item;
+  record: RacerType;
   index: number;
   children: React.ReactNode;
 }
@@ -155,18 +142,6 @@ const EditableCell: React.FC<EditableCellProps> = ({
   );
 };
 
-interface DataType {
-  key: string;
-  name: string;
-  kana: string;
-  category: string;
-  age: number | null;
-  isFirstTime: boolean;
-  gender: string;
-  seed: number;
-  special?: string;
-}
-
 interface RowContextProps {
   setActivatorNodeRef?: (_: HTMLElement | null) => void;
   listeners?: SyntheticListenerMap;
@@ -224,11 +199,8 @@ const Row: React.FC<RowProps> = (props) => {
 
 export function RacerTable(props: Props) {
   const [form] = Form.useForm();
-  const _data: DataType[] = props.dataSource.map((item: RacerType) => ({
-    ...item,
-  }));
-  const [dataSource, setDataSource] = useState<DataType[]>(_data);
-  const [count, setCount] = useState<number>(_data.length);
+  const [dataSource, setDataSource] = useState<RacerType[]>(props.dataSource);
+  const [count, setCount] = useState<number>(props.dataSource.length);
   const [alertType, setAlertType] = useState<AlertType>('error');
   const [alertVisible, setAlertVisible] = useState<boolean>(false);
   const [alertMessage, setAlertMessage] = useState<string>('');
@@ -239,7 +211,8 @@ export function RacerTable(props: Props) {
       return;
     }
     const newData = result.result!.map((racer) => {
-      const r: DataType = {
+      const r: RacerType = {
+        id: racer.id,
         key: racer.id as string,
         name: racer.name,
         kana: racer.kana,
@@ -248,13 +221,15 @@ export function RacerTable(props: Props) {
         seed: racer.seed,
         isFirstTime: racer.isFirstTime,
         age: racer.age!,
+        bib: racer.bib,
+        special: racer.special,
       };
       return r;
     });
     setDataSource(newData);
   };
 
-  const handleEdit = (record: Partial<Item> & { key: React.Key }) => {
+  const handleEdit = (record: Partial<RacerType> & { key: React.Key }) => {
     form.setFieldsValue({ ...record });
     setEditingKey(record.key as string);
   };
@@ -269,7 +244,8 @@ export function RacerTable(props: Props) {
 
   const handleAdd = () => {
     const newCount = count + 1;
-    const newData: DataType = {
+    const newData: RacerType = {
+      id: 'add',
       key: 'add',
       name: ``,
       kana: '',
@@ -279,6 +255,7 @@ export function RacerTable(props: Props) {
       gender: props.gender ?? '', // TODO 上位からの引き回し
       special: props.special,
       seed: newCount,
+      bib: null,
     };
     form.setFieldsValue({ ...newData });
     setDataSource([...dataSource, newData]);
@@ -287,7 +264,7 @@ export function RacerTable(props: Props) {
   };
 
   const handleSave = async (key: React.Key) => {
-    const row = (await form.validateFields()) as Item;
+    const row = (await form.validateFields()) as RacerType;
     const newDataSource = [...dataSource];
     const index = dataSource.findIndex((item) => key === item.key);
     let result: ActionResult<Racer>;
@@ -320,17 +297,19 @@ export function RacerTable(props: Props) {
       result = await updateRacer(dataSource[index].key, dto);
     }
     if (result.success) {
-      const r: Item = {
+      const r: RacerType = {
+        id: result.result!.id,
         key: result.result!.id as string,
         name: result.result!.name,
         kana: result.result!.kana,
         category: result.result!.category,
         gender: result.result!.gender,
         seed: result.result!.seed,
-        teamId: props.teamId,
+        // teamId: props.teamId,
         isFirstTime: result.result!.isFirstTime,
         age: result.result!.age!,
         special: props.special,
+        bib: null,
       };
       newDataSource.splice(index, 1, {
         ...r,
@@ -379,7 +358,7 @@ export function RacerTable(props: Props) {
       editable: true,
       visible: props.special != 'normal',
       inputType: 'category',
-      render: (_: DataType, record: Item) =>
+      render: (_: RacerType, record: RacerType) =>
         record.category == 'ski' ? (
           <span>{SKI}</span>
         ) : (
@@ -393,7 +372,7 @@ export function RacerTable(props: Props) {
       inputType: 'gender',
       editable: true,
       visible: props.special != 'normal',
-      render: (_: DataType, record: Item) =>
+      render: (_: RacerType, record: RacerType) =>
         record.gender == 'f' ? <span>{FEMALE}</span> : <span>{MALE}</span>,
     },
     {
@@ -409,7 +388,7 @@ export function RacerTable(props: Props) {
       editable: true,
       inputType: 'boolean',
       visible: true,
-      render: (_: DataType, record: Item) => (
+      render: (_: RacerType, record: RacerType) => (
         <Switch disabled defaultChecked={record.isFirstTime} />
       ),
     },
@@ -417,7 +396,7 @@ export function RacerTable(props: Props) {
       title: '操作',
       dataIndex: 'operation',
       visible: true,
-      render: (_: DataType, record: Item) => {
+      render: (_: RacerType, record: RacerType) => {
         const editable = isEditing(record);
         return editable ? (
           <span>
@@ -473,7 +452,7 @@ export function RacerTable(props: Props) {
     }
     return {
       ...col,
-      onCell: (record: Item) => ({
+      onCell: (record: RacerType) => ({
         record,
         inputType: col.inputType,
         dataIndex: col.dataIndex,
@@ -484,7 +463,7 @@ export function RacerTable(props: Props) {
   });
 
   const [editingKey, setEditingKey] = useState('');
-  const isEditing = (record: DataType) => record.key === editingKey;
+  const isEditing = (record: RacerType) => record.key === editingKey;
 
   const onDragEnd = async ({ active, over }: DragEndEvent) => {
     if (!over) {
@@ -570,7 +549,7 @@ export function RacerTable(props: Props) {
               rowClassName={() => 'editable-row'}
               dataSource={dataSource}
               columns={mergedColumns}
-              onRow={(record: DataType) => {
+              onRow={(record: RacerType) => {
                 return {
                   style: getRowStyle(
                     record.gender as GenderType,
