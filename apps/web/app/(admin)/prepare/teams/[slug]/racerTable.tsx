@@ -1,4 +1,4 @@
-import React, { useContext, useId, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useId, useMemo, useState } from 'react';
 import { Alert, TableProps } from 'antd';
 import {
   Button,
@@ -32,7 +32,7 @@ import { DndContext, DragEndEvent } from '@dnd-kit/core';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { SyntheticListenerMap } from '@dnd-kit/core/dist/hooks/utilities';
 import { Rule } from 'antd/es/form';
-import { getRowStyle } from '../../../../common/racerUtil';
+import { getRowStyle, summary } from '../../../../common/racerUtil';
 import {
   AlertType,
   CategoryType,
@@ -46,14 +46,13 @@ import {
   updateRacer,
 } from '../../../../actions/racer/updateRacer';
 import { FEMALE, MALE, SKI, SNOWBOARD } from '../../../../common/constant';
+import { listRacers } from '../../../../actions/racer/listRacers';
 
 type Props = {
-  title: string;
   teamId: string;
-  special: string;
-  gender?: string;
-  category?: string;
-  dataSource: RacerType[];
+  special: SpecialType;
+  gender?: GenderType;
+  category?: CategoryType;
 };
 
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
@@ -199,11 +198,41 @@ const Row: React.FC<RowProps> = (props) => {
 
 export function RacerTable(props: Props) {
   const [form] = Form.useForm();
-  const [dataSource, setDataSource] = useState<RacerType[]>(props.dataSource);
-  const [count, setCount] = useState<number>(props.dataSource.length);
   const [alertType, setAlertType] = useState<AlertType>('error');
   const [alertVisible, setAlertVisible] = useState<boolean>(false);
   const [alertMessage, setAlertMessage] = useState<string>('');
+  const [dataSource, setDataSource] = useState<RacerType[]>([]);
+  const [count, setCount] = useState<number>(dataSource.length);
+
+  useEffect(() => {
+    const getData = async () => {
+      const racers = await listRacers({
+        gender: props.gender,
+        category: props.category,
+        special: props.special,
+      });
+
+      const r = racers
+        .map((racer: Racer) => {
+          return {
+            id: racer.id,
+            key: racer.id,
+            name: racer.name,
+            kana: racer.kana,
+            gender: racer.gender,
+            category: racer.category,
+            seed: racer.seed,
+            age: racer.age,
+            special: racer.special,
+            isFirstTime: racer.isFirstTime,
+            bib: racer.bib,
+          };
+        })
+        .sort((a, b) => a.seed - b.seed);
+      setDataSource(r);
+    };
+    getData();
+  }, []);
 
   const handleDelete = async (key: React.Key) => {
     const result = await deleteRacer(key as string);
@@ -511,7 +540,7 @@ export function RacerTable(props: Props) {
 
   return (
     <div>
-      <h2>{props.title}</h2>
+      <h2>{summary(props.special, props.gender, props.category)}</h2>
       <Button
         onClick={handleAdd}
         type="primary"

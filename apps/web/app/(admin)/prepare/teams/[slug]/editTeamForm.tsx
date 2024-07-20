@@ -9,21 +9,12 @@ import {
   Input,
   InputNumber,
   InputRef,
-  Typography,
 } from 'antd';
 import { useRouter } from 'next/navigation';
-import React, { useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { RacerTable } from './racerTable';
 import { Racer, Team } from '@repo/database';
 import { updateTeam } from '../../../../actions/team/updateTeam';
-import {
-  JUNIOR,
-  SENIOR,
-  SKI_FEMALE,
-  SKI_MALE,
-  SNOWBOARD_FEMALE,
-  SNOWBOARD_MALE,
-} from '../../../../common/constant';
 import {
   CsvRacerType,
   parseCSV,
@@ -66,7 +57,6 @@ export function EditTeamForm(props: Props) {
   const [alertVisible, setAlertVisible] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [edited, setEdited] = useState<boolean>(false);
-  const [dataSource, setDataSource] = useState<Racer[]>(props.team.racers);
 
   // Alert を表示する関数
   const showAlert = (error?: string) => {
@@ -100,87 +90,12 @@ export function EditTeamForm(props: Props) {
   };
 
   const team = props.team;
-  const originRacers = dataSource.map((racer) => {
-    return {
-      id: racer.id,
-      key: racer.id,
-      name: racer.name,
-      kana: racer.kana,
-      gender: racer.gender,
-      category: racer.category,
-      seed: racer.seed,
-      age: racer.age,
-      special: racer.special,
-      isFirstTime: racer.isFirstTime,
-      bib: racer.bib,
-    };
-  });
-
-  const snowboardMaleRacers: RacerType[] = originRacers
-    .filter((racer) => {
-      return (
-        racer.gender == 'm' &&
-        racer.category == 'snowboard' &&
-        racer.special == 'normal'
-      );
-    })
-    .sort((a, b) => {
-      return a.seed - b.seed;
-    });
-  const snowboardFemaleRacers: RacerType[] = originRacers
-    .filter((racer) => {
-      return (
-        racer.gender == 'f' &&
-        racer.category == 'snowboard' &&
-        racer.special == 'normal'
-      );
-    })
-    .sort((a, b) => {
-      return a.seed - b.seed;
-    });
-  const skiMaleRacers: RacerType[] = originRacers
-    .filter((racer) => {
-      return (
-        racer.gender == 'm' &&
-        racer.category == 'ski' &&
-        racer.special == 'normal'
-      );
-    })
-    .sort((a, b) => {
-      return a.seed - b.seed;
-    });
-  const skiFemaleRacers: RacerType[] = originRacers
-    .filter((racer) => {
-      return (
-        racer.gender == 'f' &&
-        racer.category == 'ski' &&
-        racer.special == 'normal'
-      );
-    })
-    .sort((a, b) => {
-      return a.seed - b.seed;
-    });
-  const juniorRacers: RacerType[] = originRacers
-    .filter((racer) => {
-      return racer.special == 'junior';
-    })
-    .sort((a, b) => {
-      return a.seed - b.seed;
-    });
-  const seniorRacers: RacerType[] = originRacers
-    .filter((racer) => {
-      return racer.special == 'senior';
-    })
-    .sort((a, b) => {
-      return a.seed - b.seed;
-    });
 
   const handleChange = () => {
     setEdited(true);
   };
 
   const addFileRef = useRef<InputRef>(null);
-  const [fileName, setFileName] = useState<string>('');
 
   const handleUploadButtonClick = () => {
     if (addFileRef.current?.input) {
@@ -195,14 +110,13 @@ export function EditTeamForm(props: Props) {
 
     if (files.length > 0) {
       const file = files[0];
-      setFileName(file.name); // ファイル名を状態に設定
       const content = await readFileAsText(file);
       const parsedData = await parseCSV(content);
-      const errors = validateData(parsedData); //	データのバリデーション
+      const errors = validateData(parsedData);
       if (errors.length > 0) {
         showAlert(errors.join('\n'));
       } else {
-        onBulkAdd(parsedData, file.name);
+        onBulkAdd(parsedData);
       }
     }
   };
@@ -217,9 +131,13 @@ export function EditTeamForm(props: Props) {
     });
   };
 
-  const onBulkAdd = async (data: CsvRacerType[], fileName: string) => {
+  const reloadPage = useCallback(() => {
+    window.location.reload();
+  }, []);
+
+  const onBulkAdd = async (data: CsvRacerType[] /*, fileName: string*/) => {
     const errors = [];
-    const racers = await Promise.all(
+    await Promise.all(
       data.map(async (racer) => {
         let category = '';
         if (racer.skiFemale || racer.skiMale) category = 'ski';
@@ -247,22 +165,7 @@ export function EditTeamForm(props: Props) {
         }
       }),
     );
-    const r2 = racers.filter((racer): racer is Racer => racer !== undefined);
-    const r3 = r2.map((racer) => {
-      return {
-        key: racer.id,
-        id: racer.id,
-        name: racer.name,
-        kana: racer.kana,
-        gender: racer.gender,
-        category: racer.category,
-        seed: racer.seed,
-        age: racer.age,
-        special: racer.special,
-        isFirstTime: racer.isFirstTime,
-        bib: racer.bib,
-      };
-    });
+    reloadPage();
   };
 
   return (
@@ -362,53 +265,34 @@ export function EditTeamForm(props: Props) {
           style={{ display: 'none' }}
           onChange={handleFileChange}
         />
-        <Typography>{dataSource.length}</Typography>
       </Flex>
 
       <RacerTable
-        dataSource={snowboardMaleRacers}
         teamId={props.team.id}
-        title={SNOWBOARD_MALE}
         special="normal"
         gender="m"
         category="snowboard"
       />
       <RacerTable
-        dataSource={snowboardFemaleRacers}
         teamId={props.team.id}
-        title={SNOWBOARD_FEMALE}
         special="normal"
         gender="f"
         category="snowboard"
       />
       <RacerTable
-        dataSource={skiMaleRacers}
         teamId={props.team.id}
-        title={SKI_MALE}
         special="normal"
         gender="m"
         category="ski"
       />
       <RacerTable
-        dataSource={skiFemaleRacers}
         teamId={props.team.id}
-        title={SKI_FEMALE}
         special="normal"
         gender="f"
         category="ski"
       />
-      <RacerTable
-        dataSource={juniorRacers}
-        teamId={props.team.id}
-        title={JUNIOR}
-        special="junior"
-      />
-      <RacerTable
-        dataSource={seniorRacers}
-        teamId={props.team.id}
-        title={SENIOR}
-        special="senior"
-      />
+      <RacerTable teamId={props.team.id} special="junior" />
+      <RacerTable teamId={props.team.id} special="senior" />
     </>
   );
 }

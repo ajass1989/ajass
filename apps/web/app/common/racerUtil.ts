@@ -74,8 +74,8 @@ export const parseTime = (formatTime?: string) => {
  */
 export const summary = (
   special: SpecialType,
-  gender: GenderType,
-  category: CategoryType,
+  gender?: GenderType,
+  category?: CategoryType,
 ) => {
   let summary = '';
   switch (special) {
