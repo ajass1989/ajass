@@ -8,6 +8,7 @@ export type ListRacersRequestDto = {
   gender?: 'f' | 'm';
   category?: 'ski' | 'snowboard';
   special?: 'normal' | 'junior' | 'senior';
+  teamId?: string;
 };
 
 /**

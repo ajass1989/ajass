@@ -20,8 +20,7 @@ import {
   parseCSV,
   validateData,
 } from '../../../../common/csvReader';
-import { UpdateRacerRequestDto } from '../../../../actions/racer/updateRacer';
-import { addRacer } from '../../../../actions/racer/addRacer';
+import { addRacerBulk } from '../../../../actions/racer/addRacerBulk';
 
 type Props = {
   team: Team & {
@@ -135,36 +134,37 @@ export function EditTeamForm(props: Props) {
     window.location.reload();
   }, []);
 
-  const onBulkAdd = async (data: CsvRacerType[] /*, fileName: string*/) => {
-    const errors = [];
-    await Promise.all(
-      data.map(async (racer) => {
-        let category = '';
-        if (racer.skiFemale || racer.skiMale) category = 'ski';
-        if (racer.snowboardFemale || racer.snowboardMale)
-          category = 'snowboard';
-        let special = 'normal';
-        if (racer.junior) special = 'junior';
-        if (racer.senior) special = 'senior';
-        const dto: UpdateRacerRequestDto = {
-          name: racer.name,
-          kana: racer.kana,
-          category: category,
-          gender: racer.gender,
-          seed: racer.seed,
-          teamId: props.team.id,
-          isFirstTime: false,
-          age: racer.age ? racer.age : null,
-          special: special,
-        };
-        const result = await addRacer(dto);
-        if (result.success) {
-          return result.result!;
-        } else {
-          errors.push(result.error);
-        }
-      }),
+  const onBulkAdd = async (data: CsvRacerType[]) => {
+    const dtos = await Promise.all(
+      data
+        .sort((a, b) => a.seed - b.seed)
+        .filter((racer) => racer.other === false) // 応援は排除
+        .map(async (racer) => {
+          let category = '';
+          if (racer.skiFemale || racer.skiMale) category = 'ski';
+          if (racer.snowboardFemale || racer.snowboardMale)
+            category = 'snowboard';
+          let special = 'normal';
+          if (racer.junior) special = 'junior';
+          if (racer.senior) special = 'senior';
+          return {
+            name: racer.name,
+            kana: racer.kana,
+            category: category,
+            gender: racer.gender,
+            seed: racer.seed,
+            teamId: props.team.id,
+            isFirstTime: false,
+            age: racer.age ? racer.age : null,
+            special: special,
+          };
+        }),
     );
+    const result = await addRacerBulk(props.team.id, dtos);
+    if (!result.success) {
+      showAlert(result.error);
+      return;
+    }
     reloadPage();
   };
 

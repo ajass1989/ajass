@@ -210,6 +210,7 @@ export function RacerTable(props: Props) {
         gender: props.gender,
         category: props.category,
         special: props.special,
+        teamId: props.teamId,
       });
 
       const r = racers
