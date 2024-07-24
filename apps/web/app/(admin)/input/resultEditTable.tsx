@@ -1,6 +1,5 @@
 'use client';
 import {
-  Alert,
   AutoComplete,
   Button,
   Flex,
@@ -16,7 +15,6 @@ import { useState } from 'react';
 import { EditOutlined, WarningFilled } from '@ant-design/icons';
 import { Racer, Team } from '@repo/database';
 import {
-  AlertType,
   CategoryType,
   GenderType,
   SpecialType,
@@ -39,6 +37,7 @@ import { UpdateBibRequestDto } from '../../actions/racer/updateBib';
 import { updatePoints } from '../../actions/racer/updatePoints';
 import { updateResult } from '../../actions/racer/updateResult';
 import { RacerWithTeam } from '../../actions/racer/listRacers';
+import { AlertData, CommonAlert } from '../../common/components/commonAlert';
 
 dayjs.extend(duration);
 
@@ -280,10 +279,13 @@ interface DataType {
 type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
 
 export function ResultEditTable(props: Props) {
-  const [alertType, setAlertType] = useState<AlertType>('error');
-  const [alertVisible, setAlertVisible] = useState(false);
-  const [alertMessage, setAlertMessage] = useState('');
   const [dataSource, setDataSource] = useState<RacerWithTeam[]>(props.racers);
+  const [alerts, setAlerts] = useState<AlertData[]>([]);
+  const addAlert = (alert: AlertData) => {
+    setAlerts((prevAlerts) => {
+      return [...prevAlerts, alert];
+    });
+  };
 
   // ソート順を定義
   const sortOrderSummary: { [key in DataType['summary']]: number } = {
@@ -476,7 +478,8 @@ export function ResultEditTable(props: Props) {
   const handleChangeBib = async (row: DataType) => {
     const result = await updateBibs([{ ...row }]);
     if (!result.success) {
-      showAlert('error', result.error);
+      addAlert({ message: result.error!, type: 'error' });
+      return;
     }
     setNewData(row);
   };
@@ -507,7 +510,8 @@ export function ResultEditTable(props: Props) {
       });
     }
     if (!result.success) {
-      showAlert('error', result.error);
+      addAlert({ message: result.error!, type: 'error' });
+      return;
     }
     replaceRacers(result.result!);
   };
@@ -538,7 +542,8 @@ export function ResultEditTable(props: Props) {
       });
     }
     if (!result.success) {
-      showAlert('error', result.error);
+      addAlert({ message: result.error!, type: 'error' });
+      return;
     }
     replaceRacers(result.result!);
   };
@@ -570,16 +575,16 @@ export function ResultEditTable(props: Props) {
       return { id: data.id, bib: index + 1 };
     });
     const result = await updateBibs(params);
-    if (result.success) {
-      const newDataSource: RacerWithTeam[] = dataSource.map((data) => {
-        data.bib = result.result!.find((item) => item.id == data.id)!.bib;
-        return data;
-      });
-      setDataSource(newDataSource);
-      showAlert('success', 'ビブを一括付与しました。');
-    } else {
-      showAlert('error', result.error);
+    if (!result.success) {
+      addAlert({ message: result.error!, type: 'error' });
+      return;
     }
+    const newDataSource: RacerWithTeam[] = dataSource.map((data) => {
+      data.bib = result.result!.find((item) => item.id == data.id)!.bib;
+      return data;
+    });
+    setDataSource(newDataSource);
+    addAlert({ message: 'ビブを一括付与しました。', type: 'success' });
   };
 
   /**
@@ -587,29 +592,16 @@ export function ResultEditTable(props: Props) {
    */
   const handleUpdatePoints: PopconfirmProps['onConfirm'] = async () => {
     const result = await updatePoints();
-    if (result.success) {
-      const newDataSource: RacerWithTeam[] = dataSource.map((data) => {
-        data.point = result.result!.find((item) => item.id == data.id)!.point;
-        return data;
-      });
-      setDataSource(newDataSource);
-      showAlert('success', 'ポイントを一括更新しました。');
-    } else {
-      showAlert('error', result.error);
+    if (!result.success) {
+      addAlert({ message: result.error!, type: 'error' });
+      return;
     }
-  };
-
-  // Alert を表示する関数
-  const showAlert = (alertType: AlertType, error?: string) => {
-    setAlertMessage(error ?? '');
-    setAlertVisible(true);
-    setAlertType(alertType);
-  };
-
-  // Alert を非表示にする関数
-  const closeAlert = () => {
-    setAlertMessage('');
-    setAlertVisible(false);
+    const newDataSource: RacerWithTeam[] = dataSource.map((data) => {
+      data.point = result.result!.find((item) => item.id == data.id)!.point;
+      return data;
+    });
+    setDataSource(newDataSource);
+    addAlert({ message: 'ポイントを一括更新しました。', type: 'success' });
   };
 
   return (
@@ -636,15 +628,15 @@ export function ResultEditTable(props: Props) {
           <Button type="primary">ポイント更新</Button>
         </Popconfirm>
       </Flex>
-      {alertVisible && (
-        <Alert
-          message={alertMessage}
-          type={alertType}
-          closable
-          onClose={closeAlert}
-          style={{ marginBottom: 16 }}
-        />
-      )}
+      {alerts.map((alert, index) => {
+        return (
+          <CommonAlert
+            key={index.toString()}
+            message={alert.message}
+            type={alert.type}
+          />
+        );
+      })}
       <Table
         components={{
           body: {

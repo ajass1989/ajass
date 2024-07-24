@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useId, useMemo, useState } from 'react';
-import { Alert, TableProps } from 'antd';
+import { TableProps } from 'antd';
 import {
   Button,
   Form,
@@ -34,7 +34,6 @@ import { SyntheticListenerMap } from '@dnd-kit/core/dist/hooks/utilities';
 import { Rule } from 'antd/es/form';
 import { getRowStyle, summary } from '../../../../common/racerUtil';
 import {
-  AlertType,
   CategoryType,
   GenderType,
   SpecialType,
@@ -47,6 +46,10 @@ import {
 } from '../../../../actions/racer/updateRacer';
 import { FEMALE, MALE, SKI, SNOWBOARD } from '../../../../common/constant';
 import { listRacers } from '../../../../actions/racer/listRacers';
+import {
+  AlertData,
+  CommonAlert,
+} from '../../../../common/components/commonAlert';
 
 type Props = {
   teamId: string;
@@ -198,11 +201,14 @@ const Row: React.FC<RowProps> = (props) => {
 
 export function RacerTable(props: Props) {
   const [form] = Form.useForm();
-  const [alertType, setAlertType] = useState<AlertType>('error');
-  const [alertVisible, setAlertVisible] = useState<boolean>(false);
-  const [alertMessage, setAlertMessage] = useState<string>('');
   const [dataSource, setDataSource] = useState<RacerType[]>([]);
   const [count, setCount] = useState<number>(dataSource.length);
+  const [alerts, setAlerts] = useState<AlertData[]>([]);
+  const addAlert = (alert: AlertData) => {
+    setAlerts((prevAlerts) => {
+      return [...prevAlerts, alert];
+    });
+  };
 
   useEffect(() => {
     const getData = async () => {
@@ -326,30 +332,30 @@ export function RacerTable(props: Props) {
       };
       result = await updateRacer(dataSource[index].key, dto);
     }
-    if (result.success) {
-      const r: RacerType = {
-        id: result.result!.id,
-        key: result.result!.id as string,
-        name: result.result!.name,
-        kana: result.result!.kana,
-        category: result.result!.category,
-        gender: result.result!.gender,
-        seed: result.result!.seed,
-        // teamId: props.teamId,
-        isFirstTime: result.result!.isFirstTime,
-        age: result.result!.age!,
-        special: props.special,
-        bib: null,
-      };
-      newDataSource.splice(index, 1, {
-        ...r,
-        ...row,
-      });
-      setDataSource(newDataSource);
-      setEditingKey('');
-    } else {
-      showAlert('error', result.error);
+    if (!result.success) {
+      addAlert({ message: result.error!, type: 'error' });
+      return;
     }
+    const r: RacerType = {
+      id: result.result!.id,
+      key: result.result!.id as string,
+      name: result.result!.name,
+      kana: result.result!.kana,
+      category: result.result!.category,
+      gender: result.result!.gender,
+      seed: result.result!.seed,
+      // teamId: props.teamId,
+      isFirstTime: result.result!.isFirstTime,
+      age: result.result!.age!,
+      special: props.special,
+      bib: null,
+    };
+    newDataSource.splice(index, 1, {
+      ...r,
+      ...row,
+    });
+    setDataSource(newDataSource);
+    setEditingKey('');
   };
 
   const columns = [
@@ -511,7 +517,7 @@ export function RacerTable(props: Props) {
 
     const result = await updateSeed(active.id as string, over!.id as string);
     if (!result.success) {
-      // TODO エラー処理
+      addAlert({ message: result.error!, type: 'error' });
       return;
     }
     const newDataSource = [...dataSource];
@@ -526,21 +532,8 @@ export function RacerTable(props: Props) {
   // https://github.com/clauderic/dnd-kit/issues/926#issuecomment-1640115665
   const id = useId();
 
-  // Alert を表示する関数
-  const showAlert = (alertType: AlertType, error?: string) => {
-    setAlertMessage(error ?? '');
-    setAlertVisible(true);
-    setAlertType(alertType);
-  };
-
-  // Alert を非表示にする関数
-  const closeAlert = () => {
-    setAlertMessage('');
-    setAlertVisible(false);
-  };
-
   return (
-    <div>
+    <>
       <h2>{summary(props.special, props.gender, props.category)}</h2>
       <Button
         onClick={handleAdd}
@@ -550,15 +543,24 @@ export function RacerTable(props: Props) {
       >
         追加
       </Button>
-      {alertVisible && (
-        <Alert
-          message={alertMessage}
-          type={alertType}
-          closable
-          onClose={closeAlert}
-          style={{ marginBottom: 16 }}
-        />
-      )}
+      {alerts.map((alert, index) => {
+        return (
+          <CommonAlert
+            key={index.toString()}
+            message={alert.message}
+            type={alert.type}
+          />
+        );
+      })}
+      {alerts.map((alert, index) => {
+        return (
+          <CommonAlert
+            key={index.toString()}
+            message={alert.message}
+            type={alert.type}
+          />
+        );
+      })}
       <Form form={form} component={false}>
         <DndContext
           modifiers={[restrictToVerticalAxis]}
@@ -595,6 +597,6 @@ export function RacerTable(props: Props) {
           </SortableContext>
         </DndContext>
       </Form>
-    </div>
+    </>
   );
 }

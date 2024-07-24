@@ -1,17 +1,17 @@
 'use client';
 import { EditOutlined } from '@ant-design/icons';
-import { Alert, Button, Form, FormInstance, InputNumber, Table } from 'antd';
+import { Button, Form, FormInstance, InputNumber, Table } from 'antd';
 import React, { useEffect, useRef } from 'react';
 import { useContext, useState } from 'react';
 import { updatePoint } from '../../../actions/point/updatePoint';
 import { Point } from '@repo/database';
-import { AlertType } from '../../../common/types';
 import {
   SKI_FEMALE,
   SKI_MALE,
   SNOWBOARD_FEMALE,
   SNOWBOARD_MALE,
 } from '../../../common/constant';
+import { AlertData, CommonAlert } from '../../../common/components/commonAlert';
 
 type Props = {
   points: Point[];
@@ -136,9 +136,12 @@ interface DataType {
 type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
 
 export function PointTable(props: Props) {
-  const [alertType, setAlertType] = useState<AlertType>('error');
-  const [alertVisible, setAlertVisible] = useState(false);
-  const [alertMessage, setErrorMessage] = useState('');
+  const [alerts, setAlerts] = useState<AlertData[]>([]);
+  const addAlert = (alert: AlertData) => {
+    setAlerts((prevAlerts) => {
+      return [...prevAlerts, alert];
+    });
+  };
 
   const data: DataType[] = props.points.map((point: Point) => {
     return {
@@ -204,37 +207,24 @@ export function PointTable(props: Props) {
       pointSnowboardMale: row.pointSnowboardMale,
       pointSnowboardFemale: row.pointSnowboardFemale,
     });
-    if (result.success) {
-      props.updatePoint(result.result!);
-    } else {
-      showAlert('error', result.error);
+    if (!result.success) {
+      addAlert({ message: result.error!, type: 'error' });
+      return;
     }
-  };
-
-  // Alert を表示する関数
-  const showAlert = (alertType: AlertType, error?: string) => {
-    setErrorMessage(error ?? '');
-    setAlertVisible(true);
-    setAlertType(alertType);
-  };
-
-  // Alert を非表示にする関数
-  const closeAlert = () => {
-    setErrorMessage('');
-    setAlertVisible(false);
+    props.updatePoint(result.result!);
   };
 
   return (
     <>
-      {alertVisible && (
-        <Alert
-          message={alertMessage}
-          type={alertType}
-          closable
-          onClose={closeAlert}
-          style={{ marginBottom: 16 }}
-        />
-      )}
+      {alerts.map((alert, index) => {
+        return (
+          <CommonAlert
+            key={index.toString()}
+            message={alert.message}
+            type={alert.type}
+          />
+        );
+      })}
       <Table
         components={{
           body: {

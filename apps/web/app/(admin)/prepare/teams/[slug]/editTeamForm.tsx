@@ -1,6 +1,5 @@
 'use client';
 import {
-  Alert,
   Breadcrumb,
   Button,
   Flex,
@@ -21,6 +20,10 @@ import {
   validateData,
 } from '../../../../common/csvReader';
 import { addRacerBulk } from '../../../../actions/racer/addRacerBulk';
+import {
+  AlertData,
+  CommonAlert,
+} from '../../../../common/components/commonAlert';
 
 type Props = {
   team: Team & {
@@ -53,39 +56,23 @@ export interface RacerType {
 
 export function EditTeamForm(props: Props) {
   const router = useRouter();
-  const [alertVisible, setAlertVisible] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string>('');
   const [edited, setEdited] = useState<boolean>(false);
 
-  // Alert を表示する関数
-  const showAlert = (error?: string) => {
-    setErrorMessage(error ?? '');
-    setAlertVisible(true);
-  };
-
-  // Alert を非表示にする関数
-  const closeAlert = () => {
-    setErrorMessage('');
-    setAlertVisible(false);
-  };
-
+  /**
+   * フォーム保存ボタン選択時処理
+   * @param values フィールド値
+   */
   const onFinish: FormProps<FieldType>['onFinish'] = async (
     values: FieldType,
   ) => {
-    const team = {
-      fullname: values.fullname,
-      shortname: values.shortname,
-      eventId: values.eventId,
-      orderMale: values.orderMale,
-      orderFemale: values.orderFemale,
-    };
-    const res = await updateTeam(values.key, team);
-    if (res.success) {
-      localStorage.setItem('newTeam', JSON.stringify(res.result));
-      router.push(`/prepare/teams`);
-    } else {
-      showAlert(res.error);
+    const team = { ...values };
+    const result = await updateTeam(values.key, team);
+    if (!result.success) {
+      addAlert({ message: result.error!, type: 'error' });
+      return;
     }
+    localStorage.setItem('newTeam', JSON.stringify(result.result));
+    router.push(`/prepare/teams`);
   };
 
   const team = props.team;
@@ -113,10 +100,15 @@ export function EditTeamForm(props: Props) {
       const parsedData = await parseCSV(content);
       const errors = validateData(parsedData);
       if (errors.length > 0) {
-        showAlert(errors.join('\n'));
-      } else {
-        onBulkAdd(parsedData);
+        errors.forEach((error) => {
+          addAlert({
+            message: error,
+            type: 'error',
+          });
+        });
+        return;
       }
+      onBulkAdd(parsedData);
     }
   };
 
@@ -138,7 +130,7 @@ export function EditTeamForm(props: Props) {
     const dtos = await Promise.all(
       data
         .sort((a, b) => a.seed - b.seed)
-        .filter((racer) => racer.other === false) // 応援は排除
+        .filter((racer) => racer.other === false) // 応援は除外
         .map(async (racer) => {
           let category = '';
           if (racer.skiFemale || racer.skiMale) category = 'ski';
@@ -154,7 +146,7 @@ export function EditTeamForm(props: Props) {
             gender: racer.gender,
             seed: racer.seed,
             teamId: props.team.id,
-            isFirstTime: false,
+            isFirstTime: racer.isFirstTime,
             age: racer.age ? racer.age : null,
             special: special,
           };
@@ -162,10 +154,17 @@ export function EditTeamForm(props: Props) {
     );
     const result = await addRacerBulk(props.team.id, dtos);
     if (!result.success) {
-      showAlert(result.error);
+      addAlert({ message: result.error!, type: 'error' });
       return;
     }
     reloadPage();
+  };
+
+  const [alerts, setAlerts] = useState<AlertData[]>([]);
+  const addAlert = (alert: AlertData) => {
+    setAlerts((prevAlerts) => {
+      return [...prevAlerts, alert];
+    });
   };
 
   return (
@@ -184,14 +183,15 @@ export function EditTeamForm(props: Props) {
         ]}
       />
       <h1>チーム編集</h1>
-      {alertVisible && (
-        <Alert
-          message={errorMessage}
-          type="error"
-          closable
-          onClose={closeAlert}
-        />
-      )}
+      {alerts.map((alert, index) => {
+        return (
+          <CommonAlert
+            key={index.toString()}
+            message={alert.message}
+            type={alert.type}
+          />
+        );
+      })}
       <Form
         name="basic"
         labelCol={{ span: 8 }}
@@ -253,7 +253,6 @@ export function EditTeamForm(props: Props) {
           </Button>
         </Form.Item>
       </Form>
-
       <Flex style={{ marginBottom: 16 }}>
         <Button type="primary" onClick={handleUploadButtonClick}>
           選手一括追加
@@ -266,7 +265,6 @@ export function EditTeamForm(props: Props) {
           onChange={handleFileChange}
         />
       </Flex>
-
       <RacerTable
         teamId={props.team.id}
         special="normal"

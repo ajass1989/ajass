@@ -1,17 +1,13 @@
 'use client';
-import {
-  Alert,
-  Breadcrumb,
-  Button,
-  Form,
-  FormProps,
-  Input,
-  InputNumber,
-} from 'antd';
+import { Breadcrumb, Button, Form, FormProps, Input, InputNumber } from 'antd';
 import { addTeam } from '../../../../actions/team/addTeam';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { TeamRequestDto } from '../../../../actions/team/teamRequestDto';
+import {
+  AlertData,
+  CommonAlert,
+} from '../../../../common/components/commonAlert';
 
 type FieldType = {
   key: string;
@@ -24,32 +20,24 @@ type FieldType = {
 
 export function AddTeamForm() {
   const router = useRouter();
-  const [alertVisible, setAlertVisible] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string>('');
-
-  // Alert を表示する関数
-  const showAlert = (error?: string) => {
-    setErrorMessage(error ?? '');
-    setAlertVisible(true);
-  };
-
-  // Alert を非表示にする関数
-  const closeAlert = () => {
-    setErrorMessage('');
-    setAlertVisible(false);
+  const [alerts, setAlerts] = useState<AlertData[]>([]);
+  const addAlert = (alert: AlertData) => {
+    setAlerts((prevAlerts) => {
+      return [...prevAlerts, alert];
+    });
   };
 
   const onFinish: FormProps<FieldType>['onFinish'] = async (
     values: FieldType,
   ) => {
     const team: TeamRequestDto = { ...values };
-    const res = await addTeam(team);
-    if (res.success) {
-      localStorage.setItem('newTeam', JSON.stringify(res.result));
-      router.push(`/prepare/teams`);
-    } else {
-      showAlert(res.error);
+    const result = await addTeam(team);
+    if (!result.success) {
+      addAlert({ message: result.error!, type: 'error' });
+      return;
     }
+    localStorage.setItem('newTeam', JSON.stringify(result.result));
+    router.push(`/prepare/teams`);
   };
 
   return (
@@ -68,14 +56,15 @@ export function AddTeamForm() {
         ]}
       />
       <h1>チーム追加</h1>
-      {alertVisible && (
-        <Alert
-          message={errorMessage}
-          type="error"
-          closable
-          onClose={closeAlert}
-        />
-      )}
+      {alerts.map((alert, index) => {
+        return (
+          <CommonAlert
+            key={index.toString()}
+            message={alert.message}
+            type={alert.type}
+          />
+        );
+      })}
       <Form
         name="basic"
         labelCol={{ span: 8 }}

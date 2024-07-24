@@ -1,6 +1,5 @@
 'use client';
 import {
-  Alert,
   Breadcrumb,
   Button,
   Form,
@@ -15,7 +14,6 @@ import { updateTeamOrder } from '../../../actions/team/updateTeamOrder';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { Team } from '@repo/database';
-import { AlertType } from '../../../common/types';
 import { useRouter } from 'next/navigation';
 import { TeamWithRacers } from '../../../actions/team/listTeamsWithRacers';
 import { deleteTeam } from '../../../actions/team/deleteTeam';
@@ -27,6 +25,7 @@ import {
   SKI,
   SNOWBOARD,
 } from '../../../common/constant';
+import { AlertData, CommonAlert } from '../../../common/components/commonAlert';
 
 type Props = {
   teams: TeamWithRacers[];
@@ -164,12 +163,15 @@ interface DataType {
 type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
 
 export function TeamTable(props: Props) {
-  const [alertType, setAlertType] = useState<AlertType>('error');
-  const [alertVisible, setAlertVisible] = useState<boolean>(false);
-  const [alertMessage, setAlertMessage] = useState<string>('');
   const [dataSource, setDataSource] = useState<TeamWithRacers[]>(props.teams);
   const [newTeam, setNewTeam] = useState<Team | null>(null);
   const router = useRouter();
+  const [alerts, setAlerts] = useState<AlertData[]>([]);
+  const addAlert = (alert: AlertData) => {
+    setAlerts((prevAlerts) => {
+      return [...prevAlerts, alert];
+    });
+  };
 
   // 表示用データに一旦変換
   const data: DataType[] = dataSource.map((d) => {
@@ -371,7 +373,7 @@ export function TeamTable(props: Props) {
     const teamData = localStorage.getItem('newTeam');
     if (teamData) {
       setNewTeam(JSON.parse(teamData));
-      showAlert('success', '保存しました。');
+      addAlert({ message: '保存しました。', type: 'success' });
       localStorage.removeItem('newTeam'); // 読み込み後は削除
     }
   }, []);
@@ -382,24 +384,24 @@ export function TeamTable(props: Props) {
       row.orderFemale,
       row.orderMale,
     );
-    if (result.success) {
-      const newData = [...dataSource];
-      const index = newData.findIndex((item) => row.id === item.id);
-      const item = newData[index];
-      newData.splice(index, 1, {
-        ...item,
-        ...row,
-      });
-      setDataSource(newData);
-    } else {
-      showAlert('error', result.error);
+    if (!result.success) {
+      addAlert({ message: result.error!, type: 'error' });
+      return;
     }
+    const newData = [...dataSource];
+    const index = newData.findIndex((item) => row.id === item.id);
+    const item = newData[index];
+    newData.splice(index, 1, {
+      ...item,
+      ...row,
+    });
+    setDataSource(newData);
   };
 
   const handleDelete = async (key: React.Key) => {
     const result = await deleteTeam(key as string);
     if (!result.success) {
-      showAlert('error', result.error);
+      addAlert({ message: result.error!, type: 'error' });
       return;
     }
     const newDataSource = dataSource.filter((item) => item.id != key);
@@ -409,19 +411,6 @@ export function TeamTable(props: Props) {
   const handleClick = (key: React.Key) => {
     router.push(`/prepare/teams/${key}`, { scroll: true });
     router.refresh();
-  };
-
-  // Alert を表示する関数
-  const showAlert = (alertType: AlertType, error?: string) => {
-    setAlertMessage(error ?? '');
-    setAlertVisible(true);
-    setAlertType(alertType);
-  };
-
-  // Alert を非表示にする関数
-  const closeAlert = () => {
-    setAlertMessage('');
-    setAlertVisible(false);
   };
 
   return (
@@ -440,15 +429,15 @@ export function TeamTable(props: Props) {
       <Button type="primary" style={{ marginBottom: 16 }}>
         <Link href="/prepare/teams/add">追加</Link>
       </Button>
-      {alertVisible && (
-        <Alert
-          message={alertMessage}
-          type={alertType}
-          closable
-          onClose={closeAlert}
-          style={{ marginBottom: 16 }}
-        />
-      )}
+      {alerts.map((alert, index) => {
+        return (
+          <CommonAlert
+            key={index.toString()}
+            message={alert.message}
+            type={alert.type}
+          />
+        );
+      })}
       <Table
         components={{
           body: {

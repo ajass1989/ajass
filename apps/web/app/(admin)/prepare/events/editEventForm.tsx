@@ -1,21 +1,13 @@
 'use client';
-import {
-  Alert,
-  Breadcrumb,
-  Button,
-  DatePicker,
-  Form,
-  FormProps,
-  Input,
-} from 'antd';
+import { Breadcrumb, Button, DatePicker, Form, FormProps, Input } from 'antd';
 import {
   UpdateEventRequestDto,
   updateEvent,
 } from '../../../actions/event/updateEvent';
 import { useState } from 'react';
-import { AlertType } from '../../../common/types';
 import { Event } from '@repo/database';
 import dayjs from 'dayjs';
+import { AlertData, CommonAlert } from '../../../common/components/commonAlert';
 
 type Props = {
   dataSource: Event;
@@ -32,22 +24,12 @@ export type FieldType = {
 };
 
 export function EditEventForm(props: Props) {
-  const [alertType, setAlertType] = useState<AlertType>('error');
-  const [alertVisible, setAlertVisible] = useState<boolean>(false);
-  const [alertMessage, setErrorMessage] = useState<string>('');
   const [edited, setEdited] = useState<boolean>(false);
-
-  // Alert を表示する関数
-  const showAlert = (alertType: AlertType, error?: string) => {
-    setErrorMessage(error ?? '');
-    setAlertVisible(true);
-    setAlertType(alertType);
-  };
-
-  // Alert を非表示にする関数
-  const closeAlert = () => {
-    setErrorMessage('');
-    setAlertVisible(false);
+  const [alerts, setAlerts] = useState<AlertData[]>([]);
+  const addAlert = (alert: AlertData) => {
+    setAlerts((prevAlerts) => {
+      return [...prevAlerts, alert];
+    });
   };
 
   const onFinish: FormProps<FieldType>['onFinish'] = async (
@@ -61,13 +43,13 @@ export function EditEventForm(props: Props) {
       setter: values.setter,
       management: values.management,
     };
-    const res = await updateEvent(values.key, event);
-    if (res.success) {
-      setEdited(false);
-      showAlert('success', '保存しました。');
-    } else {
-      showAlert('error', res.error);
+    const result = await updateEvent(values.key, event);
+    if (!result.success) {
+      addAlert({ message: result.error!, type: 'error' });
+      return;
     }
+    setEdited(false);
+    addAlert({ message: '保存しました。', type: 'success' });
   };
 
   const data = props.dataSource;
@@ -89,14 +71,15 @@ export function EditEventForm(props: Props) {
         ]}
       />
       <h1>大会</h1>
-      {alertVisible && (
-        <Alert
-          message={alertMessage}
-          type={alertType}
-          closable
-          onClose={closeAlert}
-        />
-      )}
+      {alerts.map((alert, index) => {
+        return (
+          <CommonAlert
+            key={index.toString()}
+            message={alert.message}
+            type={alert.type}
+          />
+        );
+      })}
       <Form
         name="basic"
         labelCol={{ span: 8 }}

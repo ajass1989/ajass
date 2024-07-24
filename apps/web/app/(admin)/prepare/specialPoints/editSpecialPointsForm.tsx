@@ -1,12 +1,12 @@
 'use client';
-import { Alert, Button, Form, FormProps, InputNumber } from 'antd';
+import { Button, Form, FormProps, InputNumber } from 'antd';
 import { useState } from 'react';
-import { AlertType } from '../../../common/types';
 import { SpecialPoint } from '@repo/database';
 import {
   UpdateSpecialPointRequestDto,
   updateSpecialPoint,
 } from '../../../actions/specialPoint/updateSpecialPoint';
+import { AlertData, CommonAlert } from '../../../common/components/commonAlert';
 
 type Props = {
   specialPoints: SpecialPoint[];
@@ -16,31 +16,15 @@ export type FieldType = {
   key: string;
   boobyPoint: number;
   boobyMakerPoint: number;
-  // name: string;
-  // date: Date;
-  // location: string;
-  // race: string;
-  // setter: string;
-  // management: string;
 };
 
 export function EditSpecialPointsForm(props: Props) {
-  const [alertType, setAlertType] = useState<AlertType>('error');
-  const [alertVisible, setAlertVisible] = useState<boolean>(false);
-  const [alertMessage, setErrorMessage] = useState<string>('');
   const [edited, setEdited] = useState<boolean>(false);
-
-  // Alert を表示する関数
-  const showAlert = (alertType: AlertType, error?: string) => {
-    setErrorMessage(error ?? '');
-    setAlertVisible(true);
-    setAlertType(alertType);
-  };
-
-  // Alert を非表示にする関数
-  const closeAlert = () => {
-    setErrorMessage('');
-    setAlertVisible(false);
+  const [alerts, setAlerts] = useState<AlertData[]>([]);
+  const addAlert = (alert: AlertData) => {
+    setAlerts((prevAlerts) => {
+      return [...prevAlerts, alert];
+    });
   };
 
   const onFinish: FormProps<FieldType>['onFinish'] = async (
@@ -50,13 +34,13 @@ export function EditSpecialPointsForm(props: Props) {
       boobyPoint: values.boobyPoint,
       boobyMakerPoint: values.boobyMakerPoint,
     };
-    const res = await updateSpecialPoint(dto);
-    if (res.success) {
-      setEdited(false);
-      showAlert('success', '保存しました。');
-    } else {
-      showAlert('error', res.error);
+    const result = await updateSpecialPoint(dto);
+    if (!result.success) {
+      addAlert({ message: result.error!, type: 'error' });
+      return;
     }
+    setEdited(false);
+    addAlert({ message: '保存しました。', type: 'success' });
   };
 
   const data = props.specialPoints;
@@ -67,14 +51,15 @@ export function EditSpecialPointsForm(props: Props) {
 
   return (
     <div>
-      {alertVisible && (
-        <Alert
-          message={alertMessage}
-          type={alertType}
-          closable
-          onClose={closeAlert}
-        />
-      )}
+      {alerts.map((alert, index) => {
+        return (
+          <CommonAlert
+            key={index.toString()}
+            message={alert.message}
+            type={alert.type}
+          />
+        );
+      })}
       <Form
         name="basic"
         labelCol={{ span: 8 }}
