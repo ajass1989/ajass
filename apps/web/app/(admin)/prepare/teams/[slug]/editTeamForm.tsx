@@ -92,23 +92,30 @@ export function EditTeamForm(props: Props) {
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    const files = Array.from(event.target.files || []);
+    try {
+      const files = Array.from(event.target.files || []);
 
-    if (files.length > 0) {
-      const file = files[0];
-      const content = await readFileAsText(file);
-      const parsedData = await parseCSV(content);
-      const errors = validateData(parsedData);
-      if (errors.length > 0) {
-        errors.forEach((error) => {
-          addAlert({
-            message: error,
-            type: 'error',
-          });
+      if (files.length > 0) {
+        const file = files[0];
+        const content = await readFileAsText(file);
+        const parsedData = await parseCSV(content);
+        const errors = validateData(parsedData);
+        if (errors.length > 0) {
+          const message = '一括追加に失敗しました。\n' + errors.join('\n');
+          addAlert({ message: message, type: 'error' });
+          return;
+        }
+        onBulkAdd(parsedData);
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        addAlert({
+          message: `一括追加に失敗しました。\n${error.message}`,
+          type: 'error',
         });
         return;
       }
-      onBulkAdd(parsedData);
+      throw error;
     }
   };
 
