@@ -2,12 +2,9 @@
 import { Breadcrumb, Button, Form, FormProps, Input, InputNumber } from 'antd';
 import { addTeam } from '../../../../actions/team/addTeam';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 import { TeamRequestDto } from '../../../../actions/team/teamRequestDto';
-import {
-  AlertData,
-  CommonAlert,
-} from '../../../../common/components/commonAlert';
+import { CommonAlertList } from '../../../../common/components/commonAlertList';
+import { useAlertContext } from '../../../../common/components/commonAlertProvider';
 
 type FieldType = {
   key: string;
@@ -20,12 +17,7 @@ type FieldType = {
 
 export function AddTeamForm() {
   const router = useRouter();
-  const [alerts, setAlerts] = useState<AlertData[]>([]);
-  const addAlert = (alert: AlertData) => {
-    setAlerts((prevAlerts) => {
-      return [...prevAlerts, alert];
-    });
-  };
+  const { addAlert } = useAlertContext();
 
   const onFinish: FormProps<FieldType>['onFinish'] = async (
     values: FieldType,
@@ -56,15 +48,7 @@ export function AddTeamForm() {
         ]}
       />
       <h1>チーム追加</h1>
-      {alerts.map((alert, index) => {
-        return (
-          <CommonAlert
-            key={index.toString()}
-            message={alert.message}
-            type={alert.type}
-          />
-        );
-      })}
+      <CommonAlertList />
       <Form
         name="basic"
         labelCol={{ span: 8 }}

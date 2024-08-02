@@ -25,7 +25,8 @@ import {
   SKI,
   SNOWBOARD,
 } from '../../../common/constant';
-import { AlertData, CommonAlert } from '../../../common/components/commonAlert';
+import { CommonAlertList } from '../../../common/components/commonAlertList';
+import { useAlertContext } from '../../../common/components/commonAlertProvider';
 
 type Props = {
   teams: TeamWithRacers[];
@@ -166,12 +167,7 @@ export function TeamTable(props: Props) {
   const [dataSource, setDataSource] = useState<TeamWithRacers[]>(props.teams);
   const [newTeam, setNewTeam] = useState<Team | null>(null);
   const router = useRouter();
-  const [alerts, setAlerts] = useState<AlertData[]>([]);
-  const addAlert = (alert: AlertData) => {
-    setAlerts((prevAlerts) => {
-      return [...prevAlerts, alert];
-    });
-  };
+  const { addAlert } = useAlertContext();
 
   // 表示用データに一旦変換
   const data: DataType[] = dataSource.map((d) => {
@@ -429,15 +425,7 @@ export function TeamTable(props: Props) {
       <Button type="primary" style={{ marginBottom: 16 }}>
         <Link href="/prepare/teams/add">追加</Link>
       </Button>
-      {alerts.map((alert, index) => {
-        return (
-          <CommonAlert
-            key={index.toString()}
-            message={alert.message}
-            type={alert.type}
-          />
-        );
-      })}
+      <CommonAlertList />
       <Table
         components={{
           body: {

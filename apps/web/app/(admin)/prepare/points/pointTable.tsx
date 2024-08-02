@@ -11,7 +11,8 @@ import {
   SNOWBOARD_FEMALE,
   SNOWBOARD_MALE,
 } from '../../../common/constant';
-import { AlertData, CommonAlert } from '../../../common/components/commonAlert';
+import { CommonAlertList } from '../../../common/components/commonAlertList';
+import { useAlertContext } from '../../../common/components/commonAlertProvider';
 
 type Props = {
   points: Point[];
@@ -136,12 +137,7 @@ interface DataType {
 type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
 
 export function PointTable(props: Props) {
-  const [alerts, setAlerts] = useState<AlertData[]>([]);
-  const addAlert = (alert: AlertData) => {
-    setAlerts((prevAlerts) => {
-      return [...prevAlerts, alert];
-    });
-  };
+  const { addAlert } = useAlertContext();
 
   const data: DataType[] = props.points.map((point: Point) => {
     return {
@@ -216,15 +212,7 @@ export function PointTable(props: Props) {
 
   return (
     <>
-      {alerts.map((alert, index) => {
-        return (
-          <CommonAlert
-            key={index.toString()}
-            message={alert.message}
-            type={alert.type}
-          />
-        );
-      })}
+      <CommonAlertList />
       <Table
         components={{
           body: {

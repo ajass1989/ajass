@@ -46,10 +46,7 @@ import {
 } from '../../../../actions/racer/updateRacer';
 import { FEMALE, MALE, SKI, SNOWBOARD } from '../../../../common/constant';
 import { listRacers } from '../../../../actions/racer/listRacers';
-import {
-  AlertData,
-  CommonAlert,
-} from '../../../../common/components/commonAlert';
+import { useAlertContext } from '../../../../common/components/commonAlertProvider';
 
 type Props = {
   teamId: string;
@@ -203,12 +200,7 @@ export function RacerTable(props: Props) {
   const [form] = Form.useForm();
   const [dataSource, setDataSource] = useState<RacerType[]>([]);
   const [count, setCount] = useState<number>(dataSource.length);
-  const [alerts, setAlerts] = useState<AlertData[]>([]);
-  const addAlert = (alert: AlertData) => {
-    setAlerts((prevAlerts) => {
-      return [...prevAlerts, alert];
-    });
-  };
+  const { addAlert } = useAlertContext();
 
   useEffect(() => {
     const getData = async () => {
@@ -543,24 +535,6 @@ export function RacerTable(props: Props) {
       >
         追加
       </Button>
-      {alerts.map((alert, index) => {
-        return (
-          <CommonAlert
-            key={index.toString()}
-            message={alert.message}
-            type={alert.type}
-          />
-        );
-      })}
-      {alerts.map((alert, index) => {
-        return (
-          <CommonAlert
-            key={index.toString()}
-            message={alert.message}
-            type={alert.type}
-          />
-        );
-      })}
       <Form form={form} component={false}>
         <DndContext
           modifiers={[restrictToVerticalAxis]}

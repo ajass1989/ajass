@@ -33,12 +33,12 @@ import {
 } from '../../common/racerUtil';
 import { ActionResult } from '../../common/actionResult';
 import { updateBibs } from '../../actions/racer/updateBibs';
-import { UpdateBibRequestDto } from '../../actions/racer/updateBib';
+import { updateBib, UpdateBibRequestDto } from '../../actions/racer/updateBib';
 import { updatePoints } from '../../actions/racer/updatePoints';
 import { updateResult } from '../../actions/racer/updateResult';
 import { RacerWithTeam } from '../../actions/racer/listRacers';
-import { AlertData, CommonAlert } from '../../common/components/commonAlert';
-
+import { CommonAlertList } from '../../common/components/commonAlertList';
+import { useAlertContext } from '../../common/components/commonAlertProvider';
 dayjs.extend(duration);
 
 type Props = {
@@ -280,12 +280,7 @@ type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
 
 export function ResultEditTable(props: Props) {
   const [dataSource, setDataSource] = useState<RacerWithTeam[]>(props.racers);
-  const [alerts, setAlerts] = useState<AlertData[]>([]);
-  const addAlert = (alert: AlertData) => {
-    setAlerts((prevAlerts) => {
-      return [...prevAlerts, alert];
-    });
-  };
+  const { addAlert } = useAlertContext();
 
   // ソート順を定義
   const sortOrderSummary: { [key in DataType['summary']]: number } = {
@@ -473,10 +468,15 @@ export function ResultEditTable(props: Props) {
       ...row,
     });
     setDataSource(newData);
+    setDisableUpdatePoints(isDisableUpdatePoints(newData));
   };
 
   const handleChangeBib = async (row: DataType) => {
-    const result = await updateBibs([{ ...row }]);
+    const dto: UpdateBibRequestDto = {
+      id: row.id,
+      bib: row.bib,
+    };
+    const result = await updateBib(dto);
     if (!result.success) {
       addAlert({ message: result.error!, type: 'error' });
       return;
@@ -584,8 +584,23 @@ export function ResultEditTable(props: Props) {
       return data;
     });
     setDataSource(newDataSource);
-    addAlert({ message: 'ビブを一括付与しました。', type: 'success' });
+    setDisableUpdatePoints(isDisableUpdatePoints(newDataSource));
+    addAlert({
+      message: 'ビブを一括付与しました。',
+      type: 'success',
+    });
   };
+
+  /**
+   * ポイント更新ボタンの有効化
+   */
+  const isDisableUpdatePoints = (racers: RacerWithTeam[]) => {
+    return racers.some((racer) => racer.bib === null);
+  };
+
+  const [disableUpdatePoints, setDisableUpdatePoints] = useState(
+    isDisableUpdatePoints(props.racers),
+  );
 
   /**
    * ポイント更新処理
@@ -601,7 +616,10 @@ export function ResultEditTable(props: Props) {
       return data;
     });
     setDataSource(newDataSource);
-    addAlert({ message: 'ポイントを一括更新しました。', type: 'success' });
+    addAlert({
+      message: 'ポイントを一括更新しました。',
+      type: 'success',
+    });
   };
 
   return (
@@ -625,18 +643,12 @@ export function ResultEditTable(props: Props) {
           okText="はい"
           cancelText="いいえ"
         >
-          <Button type="primary">ポイント更新</Button>
+          <Button disabled={disableUpdatePoints} type="primary">
+            ポイント更新
+          </Button>
         </Popconfirm>
       </Flex>
-      {alerts.map((alert, index) => {
-        return (
-          <CommonAlert
-            key={index.toString()}
-            message={alert.message}
-            type={alert.type}
-          />
-        );
-      })}
+      <CommonAlertList />
       <Table
         components={{
           body: {

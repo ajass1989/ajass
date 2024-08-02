@@ -1,8 +1,13 @@
 import { getEvent } from '../../../actions/event/getEvent';
+import { CommonAlertProvider } from '../../../common/components/commonAlertProvider';
 import { EditEventForm } from './editEventForm';
 import { Event } from '@repo/database';
 
 export default async function Page() {
   const dataSource: Event = await getEvent();
-  return <EditEventForm dataSource={dataSource} />;
+  return (
+    <CommonAlertProvider>
+      <EditEventForm dataSource={dataSource} />;
+    </CommonAlertProvider>
+  );
 }

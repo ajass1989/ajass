@@ -20,10 +20,8 @@ import {
   validateData,
 } from '../../../../common/csvReader';
 import { addRacerBulk } from '../../../../actions/racer/addRacerBulk';
-import {
-  AlertData,
-  CommonAlert,
-} from '../../../../common/components/commonAlert';
+import { CommonAlertList } from '../../../../common/components/commonAlertList';
+import { useAlertContext } from '../../../../common/components/commonAlertProvider';
 
 type Props = {
   team: Team & {
@@ -57,6 +55,7 @@ export interface RacerType {
 export function EditTeamForm(props: Props) {
   const router = useRouter();
   const [edited, setEdited] = useState<boolean>(false);
+  const { addAlert } = useAlertContext();
 
   /**
    * フォーム保存ボタン選択時処理
@@ -167,13 +166,6 @@ export function EditTeamForm(props: Props) {
     reloadPage();
   };
 
-  const [alerts, setAlerts] = useState<AlertData[]>([]);
-  const addAlert = (alert: AlertData) => {
-    setAlerts((prevAlerts) => {
-      return [...prevAlerts, alert];
-    });
-  };
-
   return (
     <>
       <Breadcrumb
@@ -190,15 +182,7 @@ export function EditTeamForm(props: Props) {
         ]}
       />
       <h1>チーム編集</h1>
-      {alerts.map((alert, index) => {
-        return (
-          <CommonAlert
-            key={index.toString()}
-            message={alert.message}
-            type={alert.type}
-          />
-        );
-      })}
+      <CommonAlertList />
       <Form
         name="basic"
         labelCol={{ span: 8 }}
