@@ -18,14 +18,14 @@ describe('actions', () => {
       expect(result.success).toBeTruthy();
       expect(result.result!.length).toBe(18);
       const racer3 = result.result!.find((racer) => racer.id === '3');
-      expect(racer3!.point).toBe(130);
-      expect(racer3!.specialPoint).toBe(20);
+      expect(racer3!.point).toBe(0);
+      expect(racer3!.specialPoint).toBe(0);
       const racer2 = result.result!.find((racer) => racer.id === '2');
       expect(racer2!.point).toBe(0);
       expect(racer2!.specialPoint).toBe(0);
       const racer1 = result.result!.find((racer) => racer.id === '1');
       expect(racer1!.point).toBe(0);
-      expect(racer1!.specialPoint).toBe(15);
+      expect(racer1!.specialPoint).toBe(0);
     });
   });
 });

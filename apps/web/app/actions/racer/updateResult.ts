@@ -76,6 +76,8 @@ export async function updateResult(
     const racers = await prisma.racer.findMany({
       where: {
         bib: { not: null },
+        category: updateRacer.category,
+        gender: updateRacer.gender,
       },
       orderBy: [
         {
@@ -108,7 +110,9 @@ export async function updateResult(
     // 全選手の個人成績（特別ポイント）の更新
     const specialPoints = await prisma.specialPoint.findMany({});
     const specialRacers = await prisma.racer.findMany({
-      where: {},
+      where: {
+        bestTime: { not: null },
+      },
       orderBy: [
         {
           bestTime: 'desc',
@@ -127,7 +131,9 @@ export async function updateResult(
     });
     if (specialRacers.length >= 1) {
       await prisma.racer.update({
-        where: { id: specialRacers[0].id },
+        where: {
+          id: specialRacers[0].id,
+        },
         data: {
           specialPoint:
             specialPoints.find((point) => point.id === 'booby')?.point ?? 0,

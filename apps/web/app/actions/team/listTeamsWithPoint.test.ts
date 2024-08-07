@@ -16,7 +16,7 @@ describe('actions', () => {
     test('正常系', async () => {
       const result = await listTeamsWithPoint();
       const team1 = result.find((team) => team.id === '1');
-      expect(team1!.point).toBe(1250);
+      expect(team1!.point).toBe(0);
       const team2 = result.find((team) => team.id === '2');
       expect(team2!.point).toBe(0);
     });
