@@ -5,7 +5,7 @@ import { deleteTeam } from './deleteTeam';
 
 describe('actions', () => {
   beforeEach(async () => {
-    generateTestData(prisma);
+    await generateTestData(prisma);
   });
 
   afterEach(() => {

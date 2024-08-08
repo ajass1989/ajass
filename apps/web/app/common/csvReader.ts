@@ -1,4 +1,3 @@
-// import { parse } from 'csv-parse/browser/esm';
 import { parse } from 'csv-parse';
 
 // 共通のCSV属性
@@ -86,6 +85,21 @@ export const validateData = (data: CsvRacerType[]): string[] => {
     if (!record.kana) {
       errors.push(`行 ${index + 2}: ふりがなが指定されていません`);
     }
+    // 競技または応援いずれか1つが指定されていること
+    const summaries = [
+      record.snowboardFemale, // 女子スノボ
+      record.snowboardMale, // 男子スノボ
+      record.skiFemale, // 女子スキー
+      record.skiMale, // 男子スキー
+      record.other, // 応援
+    ];
+    const summariesCount = summaries.filter((item) => item == true).length;
+    if (summariesCount !== 1) {
+      errors.push(
+        `行 ${index + 2}: 競技または応援いずれか1つを指定してください`,
+      );
+    }
+    // ジュニアとシニアの排他
     // ジュニアの場合、15歳以下
     if (record.junior && record.age! > 15) {
       errors.push(`行 ${index + 2}: ジュニアは15歳以下である必要があります`);
@@ -94,7 +108,7 @@ export const validateData = (data: CsvRacerType[]): string[] => {
     if (record.senior && record.age! < 60) {
       errors.push(`行 ${index + 2}: シニアは60歳以上である必要があります`);
     }
-    // 男子と女子の整合性
+    // 男子と女子の排他
     if (record.gender === 'f' && (record.skiMale || record.snowboardMale)) {
       errors.push(
         `行 ${index + 2}: 女子選手は男子の種目に登録することはできません`,
@@ -105,6 +119,81 @@ export const validateData = (data: CsvRacerType[]): string[] => {
         `行 ${index + 2}: 男子選手は女子の種目に登録することはできません`,
       );
     }
+    // 応援以外は種目別シード必須
+    if (record.other === false && !record.seed) {
+      errors.push(
+        `行 ${index + 2}: 競技参加者の種目別シードが指定されていません`,
+      );
+    }
   });
+
+  // 競技内でシードが一意であること
+  const seedsSnowboardFemale = data
+    .filter(
+      (record) =>
+        record.snowboardFemale == true &&
+        record.senior == false &&
+        record.junior == false,
+    )
+    .map((record) => record.seed);
+  const uniqueSeedsSnowboardFemale = new Set(seedsSnowboardFemale);
+  if (seedsSnowboardFemale.length !== uniqueSeedsSnowboardFemale.size) {
+    errors.push(`女子スノボの種目別シードが一意でありません`);
+  }
+
+  const seedsSnowboardMale = data
+    .filter(
+      (record) =>
+        record.snowboardMale == true &&
+        record.senior == false &&
+        record.junior == false,
+    )
+    .map((record) => record.seed);
+  const uniqueSeedsSnowboardMale = new Set(seedsSnowboardMale);
+  if (seedsSnowboardMale.length !== uniqueSeedsSnowboardMale.size) {
+    errors.push(`男子スノボの種目別シードが一意でありません`);
+  }
+
+  const seedsSkiFemale = data
+    .filter(
+      (record) =>
+        record.skiFemale == true &&
+        record.senior == false &&
+        record.junior == false,
+    )
+    .map((record) => record.seed);
+  const uniqueSeedsSkiFemale = new Set(seedsSkiFemale);
+  if (seedsSkiFemale.length !== uniqueSeedsSkiFemale.size) {
+    errors.push(`女子スキーの種目別シードが一意でありません`);
+  }
+
+  const seedsSkiMale = data
+    .filter(
+      (record) =>
+        record.skiMale == true &&
+        record.senior == false &&
+        record.junior == false,
+    )
+    .map((record) => record.seed);
+  const uniqueSeedsSkiMale = new Set(seedsSkiMale);
+  if (seedsSkiMale.length !== uniqueSeedsSkiMale.size) {
+    errors.push(`男子スキーの種目別シードが一意でありません`);
+  }
+
+  const seedsJunior = data
+    .filter((record) => record.junior == true)
+    .map((record) => record.seed);
+  const uniqueSeedsJunior = new Set(seedsJunior);
+  if (seedsJunior.length !== uniqueSeedsJunior.size) {
+    errors.push(`ジュニアの種目別シードが一意でありません`);
+  }
+
+  const seedsSenior = data
+    .filter((record) => record.junior == true)
+    .map((record) => record.seed);
+  const uniqueSeedsSenior = new Set(seedsSenior);
+  if (seedsSenior.length !== uniqueSeedsSenior.size) {
+    errors.push(`シニアの種目別シードが一意でありません`);
+  }
   return errors;
 };

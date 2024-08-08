@@ -1,6 +1,12 @@
 import { PrismaClient } from '@prisma/client';
 
 export async function generateTestData(prisma: PrismaClient) {
+  await prisma.event.deleteMany({});
+  // await prisma.team.deleteMany({});
+  // await prisma.racer.deleteMany({});
+  // await prisma.point.deleteMany({});
+  // await prisma.specialPoint.deleteMany({});
+
   await prisma.event.upsert({
     where: { id: '2023' },
     update: {
@@ -40,7 +46,6 @@ export async function generateTestData(prisma: PrismaClient) {
       orderFemale: 2,
     },
   ];
-  await prisma.team.deleteMany({});
   await Promise.all(
     TEST_TEAMS.map(
       async (team) =>
