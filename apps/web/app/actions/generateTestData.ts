@@ -4,8 +4,8 @@ export async function generateTestData(prisma: PrismaClient) {
   await prisma.event.deleteMany({});
   // await prisma.team.deleteMany({});
   // await prisma.racer.deleteMany({});
-  // await prisma.point.deleteMany({});
-  // await prisma.specialPoint.deleteMany({});
+  await prisma.point.deleteMany({});
+  await prisma.specialPoint.deleteMany({});
 
   await prisma.event.upsert({
     where: { id: '2023' },
