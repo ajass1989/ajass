@@ -274,6 +274,7 @@ interface DataType {
   summary: string;
   formatBestTime: string;
   point: number;
+  // specialPoint: number;
 }
 
 type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
@@ -315,6 +316,7 @@ export function ResultEditTable(props: Props) {
         ),
         formatBestTime: renderTime(racer.bestTime),
         point: racer.point,
+        specialPoint: racer.specialPoint,
       };
     })
     .sort((a, b) => {
@@ -435,8 +437,13 @@ export function ResultEditTable(props: Props) {
       width: 128,
     },
     {
-      title: 'ポイント',
+      title: '個人ポイント',
       dataIndex: 'point',
+      width: 80,
+    },
+    {
+      title: '特別ポイント',
+      dataIndex: 'specialPoint',
       width: 80,
     },
   ];
@@ -559,6 +566,7 @@ export function ResultEditTable(props: Props) {
       newItem.status2 = racer.status2;
       newItem.bestTime = racer.bestTime;
       newItem.point = racer.point;
+      newItem.specialPoint = racer.specialPoint;
       newItem.totalOrder = racer.totalOrder;
       newData.splice(index, 1, {
         ...newItem,
@@ -613,6 +621,9 @@ export function ResultEditTable(props: Props) {
     }
     const newDataSource: RacerWithTeam[] = dataSource.map((data) => {
       data.point = result.result!.find((item) => item.id == data.id)!.point;
+      data.specialPoint = result.result!.find(
+        (item) => item.id == data.id,
+      )!.specialPoint;
       return data;
     });
     setDataSource(newDataSource);

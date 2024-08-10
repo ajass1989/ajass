@@ -1,5 +1,5 @@
 import { Breadcrumb, Button, Flex } from 'antd';
-import { ResultTeamTable } from '../components/resultTeamTable';
+import { ResultTeamTable } from './resultTeamTable';
 import { listRacersWithSummaryPoint } from '../../../actions/racer/listRacersWithSummaryPoint';
 import Link from 'next/link';
 import { listTeamsWithPoint } from '../../../actions/team/listTeamsWithPoint';

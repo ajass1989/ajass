@@ -102,7 +102,32 @@ export async function updateResult(
         }
         return await prisma.racer.update({
           where: { id: racer.id },
-          data: { point, totalOrder: i + 1 },
+          data: { point },
+        });
+      }),
+    );
+
+    // 総合順位の更新
+    const racersTotal = await prisma.racer.findMany({
+      where: {
+        bib: { not: null },
+      },
+      orderBy: [
+        {
+          bestTime: { sort: 'asc', nulls: 'last' },
+        },
+        {
+          bib: 'desc', // タイムが同じ場合、bibの昇順
+        },
+      ],
+    });
+
+    await Promise.all(
+      racersTotal.map(async (racer, i) => {
+        const totalOrder = racer.bestTime === null ? null : i + 1;
+        return await prisma.racer.update({
+          where: { id: racer.id },
+          data: { totalOrder },
         });
       }),
     );
