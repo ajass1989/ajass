@@ -23,6 +23,11 @@ export async function updateSeed(
       id: overId,
     },
   });
+  // シニアとジュニアの場合、性別と種目は限定しない
+  const gender =
+    activeRacer.special !== 'normal' ? undefined : activeRacer.gender;
+  const category =
+    activeRacer.special !== 'normal' ? undefined : activeRacer.category;
   // 移動対象のシードと移動先のシードの大小関係を確認
   // 下に移動
   if (activeRacer.seed < overRacer.seed) {
@@ -33,8 +38,8 @@ export async function updateSeed(
         AND: [
           { seed: { gt: activeRacer.seed } },
           { seed: { lte: overRacer.seed } },
-          { gender: activeRacer.gender },
-          { category: activeRacer.category },
+          { gender: gender },
+          { category: category },
           { teamId: activeRacer.teamId },
           { special: activeRacer.special },
         ],
@@ -75,8 +80,8 @@ export async function updateSeed(
         AND: [
           { seed: { gte: overRacer.seed } }, // 2
           { seed: { lt: activeRacer.seed } }, // 3
-          { gender: activeRacer.gender },
-          { category: activeRacer.category },
+          { gender: gender },
+          { category: category },
           { teamId: activeRacer.teamId },
           { special: activeRacer.special },
         ],
