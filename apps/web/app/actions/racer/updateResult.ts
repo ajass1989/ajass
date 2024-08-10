@@ -129,6 +129,7 @@ export async function updateResult(
         specialPoint: 0,
       },
     });
+    // タイムがある選手が1人以上の場合、特別ポイントbooby_maker(ビリ)を付与
     if (specialRacers.length >= 1) {
       await prisma.racer.update({
         where: {
@@ -136,17 +137,18 @@ export async function updateResult(
         },
         data: {
           specialPoint:
-            specialPoints.find((point) => point.id === 'booby')?.point ?? 0,
+            specialPoints.find((point) => point.id === 'booby_maker')?.point ??
+            0,
         },
       });
     }
+    // タイムがある選手が2人以上の場合、さらに特別ポイントbooby(ビリ前)を付与
     if (specialRacers.length >= 2) {
       await prisma.racer.update({
         where: { id: specialRacers[1].id },
         data: {
           specialPoint:
-            specialPoints.find((point) => point.id == 'booby_maker')?.point ??
-            0,
+            specialPoints.find((point) => point.id == 'booby')?.point ?? 0,
         },
       });
     }

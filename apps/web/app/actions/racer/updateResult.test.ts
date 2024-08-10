@@ -29,6 +29,7 @@ describe('actions', () => {
       expect(racer2!.time2).toBe(null);
       expect(racer2!.bestTime).toBe(null);
       expect(racer2!.point).toBe(0);
+      expect(racer2!.specialPoint).toBe(0);
     });
 
     test('正常系:status1=dqで更新', async () => {
@@ -48,6 +49,7 @@ describe('actions', () => {
       expect(racer3!.time2).toBe(null);
       expect(racer3!.bestTime).toBe(null);
       expect(racer3!.point).toBe(0);
+      expect(racer3!.specialPoint).toBe(0);
     });
 
     test('正常系:status2=nullで更新', async () => {
@@ -67,6 +69,7 @@ describe('actions', () => {
       expect(racer2!.time2).toBe(null);
       expect(racer2!.bestTime).toBe(null);
       expect(racer2!.point).toBe(0);
+      expect(racer2!.specialPoint).toBe(0);
     });
 
     test('正常系:status2=dqで更新', async () => {
@@ -86,6 +89,7 @@ describe('actions', () => {
       expect(racer3!.time2).toBe(null);
       expect(racer3!.bestTime).toBe(null);
       expect(racer3!.point).toBe(0);
+      expect(racer3!.specialPoint).toBe(0);
     });
 
     test('準正常系:存在しないid', async () => {
@@ -117,6 +121,7 @@ describe('actions', () => {
       expect(racer1!.time2).toBe(null);
       expect(racer1!.bestTime).toBe(null);
       expect(racer1!.point).toBe(0);
+      expect(racer1!.specialPoint).toBe(0);
     });
 
     test('正常系:time1=123456で更新', async () => {
@@ -136,6 +141,7 @@ describe('actions', () => {
       expect(racer1!.time2).toBe(null);
       expect(racer1!.bestTime).toBe(123456);
       expect(racer1!.point).toBe(130);
+      expect(racer1!.specialPoint).toBe(15);
     });
 
     test('正常系:time2=123456で更新', async () => {
@@ -155,6 +161,7 @@ describe('actions', () => {
       expect(racer1!.time2).toBe(123456);
       expect(racer1!.bestTime).toBe(123456);
       expect(racer1!.point).toBe(130);
+      expect(racer1!.specialPoint).toBe(15);
     });
 
     test('正常系:3レコード更新:女子スキー', async () => {
@@ -174,6 +181,7 @@ describe('actions', () => {
       expect(racer11!.time2).toBe(123456);
       expect(racer11!.bestTime).toBe(123456);
       expect(racer11!.point).toBe(130);
+      expect(racer11!.specialPoint).toBe(15);
       const racer12 = result1.result!.find((r) => r.id === '2');
       expect(racer12!.id).toBe('2');
       expect(racer12!.status1).toBe(null);
@@ -182,6 +190,7 @@ describe('actions', () => {
       expect(racer12!.time2).toBe(null);
       expect(racer12!.bestTime).toBe(null);
       expect(racer12!.point).toBe(0);
+      expect(racer12!.specialPoint).toBe(0);
       const racer13 = result1.result!.find((r) => r.id === '3');
       expect(racer13!.id).toBe('3');
       expect(racer13!.status1).toBe(null);
@@ -190,6 +199,7 @@ describe('actions', () => {
       expect(racer13!.time2).toBe(null);
       expect(racer13!.bestTime).toBe(null);
       expect(racer13!.point).toBe(0);
+      expect(racer13!.specialPoint).toBe(0);
 
       const dto2: UpdateResultRequestDto = {
         time1: undefined,
@@ -207,6 +217,7 @@ describe('actions', () => {
       expect(racer21!.time2).toBe(123456);
       expect(racer21!.bestTime).toBe(123456);
       expect(racer21!.point).toBe(105);
+      expect(racer21!.specialPoint).toBe(15);
       const racer22 = result2.result!.find((r) => r.id === '2');
       expect(racer22!.id).toBe('2');
       expect(racer22!.status1).toBe(null);
@@ -215,6 +226,7 @@ describe('actions', () => {
       expect(racer22!.time2).toBe(123450);
       expect(racer22!.bestTime).toBe(123450);
       expect(racer22!.point).toBe(130);
+      expect(racer22!.specialPoint).toBe(20);
       const racer23 = result2.result!.find((r) => r.id === '3');
       expect(racer23!.id).toBe('3');
       expect(racer23!.status1).toBe(null);
@@ -223,6 +235,7 @@ describe('actions', () => {
       expect(racer23!.time2).toBe(null);
       expect(racer23!.bestTime).toBe(null);
       expect(racer23!.point).toBe(0);
+      expect(racer23!.specialPoint).toBe(0);
 
       const dto3: UpdateResultRequestDto = {
         time1: undefined,
@@ -240,6 +253,7 @@ describe('actions', () => {
       expect(racer31!.time2).toBe(123456);
       expect(racer31!.bestTime).toBe(123456);
       expect(racer31!.point).toBe(105);
+      expect(racer31!.specialPoint).toBe(15);
       const racer32 = result3.result!.find((r) => r.id === '2');
       expect(racer32!.id).toBe('2');
       expect(racer32!.status1).toBe(null);
@@ -248,6 +262,7 @@ describe('actions', () => {
       expect(racer32!.time2).toBe(123450);
       expect(racer32!.bestTime).toBe(123450);
       expect(racer32!.point).toBe(105);
+      expect(racer32!.specialPoint).toBe(20);
       const racer33 = result3.result!.find((r) => r.id === '3');
       expect(racer33!.id).toBe('3');
       expect(racer33!.status1).toBe(null);
@@ -256,6 +271,7 @@ describe('actions', () => {
       expect(racer33!.time2).toBe(123440);
       expect(racer33!.bestTime).toBe(123440);
       expect(racer33!.point).toBe(130);
+      expect(racer33!.specialPoint).toBe(0);
     });
 
     test('正常系:3レコード更新:男子スキー', async () => {
@@ -275,6 +291,7 @@ describe('actions', () => {
       expect(racer111!.time2).toBe(123456);
       expect(racer111!.bestTime).toBe(123456);
       expect(racer111!.point).toBe(130);
+      expect(racer111!.specialPoint).toBe(15);
       const racer112 = result11.result!.find((r) => r.id === '12');
       expect(racer112!.id).toBe('12');
       expect(racer112!.status1).toBe(null);
@@ -283,6 +300,7 @@ describe('actions', () => {
       expect(racer112!.time2).toBe(null);
       expect(racer112!.bestTime).toBe(null);
       expect(racer112!.point).toBe(0);
+      expect(racer112!.specialPoint).toBe(0);
       const racer113 = result11.result!.find((r) => r.id === '13');
       expect(racer113!.id).toBe('13');
       expect(racer113!.status1).toBe(null);
@@ -291,6 +309,7 @@ describe('actions', () => {
       expect(racer113!.time2).toBe(null);
       expect(racer113!.bestTime).toBe(null);
       expect(racer113!.point).toBe(0);
+      expect(racer113!.specialPoint).toBe(0);
 
       const dto2: UpdateResultRequestDto = {
         time1: undefined,
@@ -308,6 +327,7 @@ describe('actions', () => {
       expect(racer121!.time2).toBe(123456);
       expect(racer121!.bestTime).toBe(123456);
       expect(racer121!.point).toBe(120);
+      expect(racer121!.specialPoint).toBe(15);
       const racer122 = result12.result!.find((r) => r.id === '12');
       expect(racer122!.id).toBe('12');
       expect(racer122!.status1).toBe(null);
@@ -316,6 +336,7 @@ describe('actions', () => {
       expect(racer122!.time2).toBe(123450);
       expect(racer122!.bestTime).toBe(123450);
       expect(racer122!.point).toBe(130);
+      expect(racer122!.specialPoint).toBe(20);
       const racer123 = result12.result!.find((r) => r.id === '13');
       expect(racer123!.id).toBe('13');
       expect(racer123!.status1).toBe(null);
@@ -324,6 +345,7 @@ describe('actions', () => {
       expect(racer123!.time2).toBe(null);
       expect(racer123!.bestTime).toBe(null);
       expect(racer123!.point).toBe(0);
+      expect(racer123!.specialPoint).toBe(0);
 
       const dto3: UpdateResultRequestDto = {
         time1: undefined,
@@ -341,6 +363,7 @@ describe('actions', () => {
       expect(racer131!.time2).toBe(123456);
       expect(racer131!.bestTime).toBe(123456);
       expect(racer131!.point).toBe(120);
+      expect(racer131!.specialPoint).toBe(15);
       const racer132 = result13.result!.find((r) => r.id === '12');
       expect(racer132!.id).toBe('12');
       expect(racer132!.status1).toBe(null);
@@ -349,6 +372,7 @@ describe('actions', () => {
       expect(racer132!.time2).toBe(123450);
       expect(racer132!.bestTime).toBe(123450);
       expect(racer132!.point).toBe(120);
+      expect(racer132!.specialPoint).toBe(20);
       const racer133 = result13.result!.find((r) => r.id === '13');
       expect(racer133!.id).toBe('13');
       expect(racer133!.status1).toBe(null);
@@ -357,6 +381,7 @@ describe('actions', () => {
       expect(racer133!.time2).toBe(123440);
       expect(racer133!.bestTime).toBe(123440);
       expect(racer133!.point).toBe(130);
+      expect(racer133!.specialPoint).toBe(0);
     });
 
     test('準正常系:存在しないid', async () => {
